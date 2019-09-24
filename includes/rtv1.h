@@ -6,7 +6,7 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 13:24:18 by rsatterf          #+#    #+#             */
-/*   Updated: 2019/09/20 18:16:39 by rsatterf         ###   ########.fr       */
+/*   Updated: 2019/09/24 20:01:45 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,9 @@ typedef struct	s_rtv
 	void		*window;
 	t_image		image;
 	char		*name;
+	int			fd;
+	char		**scene;
+	char		*buf;
 
 }				t_rtv;
 
