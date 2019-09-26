@@ -14,6 +14,7 @@
 # define RTV1_H
 
 # include "../libft/libft.h"
+# include "vector3.h"
 # ifdef __APPLE__
 #  include <mlx.h>
 #  define OS_VER 0
@@ -27,6 +28,7 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <sys/types.h>
+# include <math.h>
 
 # define WIDTH 1024
 # define HEIGHT 768
@@ -40,23 +42,16 @@ typedef struct	s_image
 	int			endian;
 }				t_image;
 
-typedef struct	s_vec
-{
-	double		x;
-	double		y;
-	double		z;
-}				t_vec;
-
 typedef struct	s_sphere
 {
-	t_vec		centr;
+	t_vector3	center;
 	double		radius;
 }				t_sphere;
 
 typedef struct	s_cam
 {
-	t_vec		pos;
-	t_vec		dir;
+	t_vector3	pos;
+	t_vector3	dir;
 }				t_cam;
 
 
@@ -71,5 +66,7 @@ typedef struct	s_rtv
 	char		*buf;
 
 }				t_rtv;
+
+int 	key_release(int key, t_rtv *rtv);
 
 #endif

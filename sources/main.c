@@ -181,6 +181,23 @@ static	void	init(t_rtv *rtv)
 	image->bpp /= 8;
 }
 
+void normalize(t_vector3 *vec)
+{
+	double len;
+
+	len = sqrt(pow(vec->x, 2) + pow(vec->y, 2) + pow(vec->z, 2));
+	vec->x /= len;
+	vec->y /= len;
+	vec->z /= len;
+}
+
+
+
+static int loop()
+{
+	return (1);
+}
+
 int				main(int argc, char **argv)
 {
 	t_rtv *rtv;
@@ -198,8 +215,41 @@ int				main(int argc, char **argv)
 		ft_error("error scene\n", 0);
 	}
 	init(rtv);
+
+	t_cam *camera;
+	t_sphere *sphere;
+
+	camera = malloc(sizeof(t_cam));			//add malloc protection
+	sphere = malloc(sizeof(t_sphere));
+
+	sphere->center = *new_vector3(2,3,4);
+	sphere->radius = 5.0;
+
+	camera->pos = *new_vector3(0, 0, 0);
+
+	int i = 0, j;
+
+	double fov = M_PI / 3.;
+
+	while (i < HEIGHT)
+	{
+		j = 0;
+		while (j < WIDTH)
+		{
+			double x =  (2*(i + 0.5)/(double)WIDTH  - 1)*tan(fov/2.)*WIDTH/(double)HEIGHT;
+			double y = -(2*(j + 0.5)/(double)HEIGHT - 1)*tan(fov/2.);
+
+			camera->dir = *new_vector3(x, y, -1);
+			normalize(&camera->dir);
+
+			j++;
+		}
+		i++;
+	}
+	mlx_put_image_to_window(rtv->mlx, rtv->window, rtv->image.image, 0, 0);
+	mlx_hook(rtv->window, 3, 1L << 1, key_release, rtv);
 	mlx_hook(rtv->window, 17, 1L << 17, close_app, rtv);
-	//mlx_loop_hook(rtv->mlx, loop, rtv);
+	mlx_loop_hook(rtv->mlx, loop, rtv);
 	mlx_loop(rtv->mlx);
 	return (0);
 }

@@ -1,8 +1,8 @@
 NAME = RTv1
 
-SRC_FILES  = main.c
+SRC_FILES  = main.c keys.c vector3.c
 SRC_FOLDER = ./sources
-INC_FOLDER = ./includes/
+INC_FOLDER = ./includes
 SRC = $(addprefix $(SRC_FOLDER)/, $(SRC_FILES))
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
