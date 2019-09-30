@@ -202,14 +202,14 @@ int valid_scene2(t_rtv *rtv)
 	}
 	if (valid_count(str) != 0)
 		return (-1);
-	rtv->cam.pos.x = ft_atoi(str);
+	rtv->cam.pos->x = ft_atoi(str);
 	while (*str != ' ')
 		str++;
 	str++;
-	rtv->cam.pos.y = ft_atoi(str);
+	rtv->cam.pos->y = ft_atoi(str);
 	while (*str != ' ')
 		str++;
-	rtv->cam.pos.z = ft_atoi(str);
+	rtv->cam.pos->z = ft_atoi(str);
 	if (ft_strncmp(rtv->scene[3], "	cam_dir(", 9) != 0)
 		return (-1);
 	str = rtv->scene[3];
@@ -221,14 +221,14 @@ int valid_scene2(t_rtv *rtv)
 	}
 	if (valid_count(str) != 0)
 		return (-1);
-	rtv->cam.dir.x = ft_atoi(str);
+	rtv->cam.dir->x = ft_atoi(str);
 	while (*str != ' ')
 		str++;
 	str++;
-	rtv->cam.dir.y = ft_atoi(str);
+	rtv->cam.dir->y = ft_atoi(str);
 	while (*str != ' ')
 		str++;
-	rtv->cam.dir.z = ft_atoi(str);
+	rtv->cam.dir->z = ft_atoi(str);
 	return(0);
 }
 
@@ -325,6 +325,12 @@ static	void	init(t_rtv *rtv)
 	image->bpp /= 8;
 }
 
+void	img_pixel_put_one(t_image *img, int x, int y, int color)
+{
+	if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
+		*(int *)(img->ptr + (int)((WIDTH * y + x) * img->bpp)) = color;
+}
+
 void normalize(t_vector3 *vec)
 {
 	double len;
@@ -335,7 +341,28 @@ void normalize(t_vector3 *vec)
 	vec->z /= len;
 }
 
+double ray_intersect(t_cam *ray, t_sphere *sphere)
+{
+	t_vector3 *len;
+	double t0, t1;
 
+	len = sub_vector3(sphere->center, ray->pos, 0);
+	double tca = scalar_vector3(len,ray->dir, 0);
+	double d2 = scalar_vector3(len, len, 0) - tca * tca;
+
+	if (d2 > sphere->radius * sphere->radius)
+		return (0);
+	float thc = sqrtf(sphere->radius * sphere->radius - d2);
+	t0 = tca - thc;
+	t1 = tca + thc;
+	if (t0 < 0 && t1 < 0)
+		return (0);
+	if (t0 < t1)
+		return (t0);
+	else
+		return (t1);
+
+}
 
 static int loop()
 {
@@ -353,42 +380,54 @@ int				main(int argc, char **argv)
 	if (!(rtv = (t_rtv *)malloc(sizeof(t_rtv))))
 		ft_error("Can't allocate enough memory for the structure\n", 0);
 	rtv->name = argv[1];
-	if (valid(rtv) != 0)
-	{
-		free(rtv);
-		ft_error("error scene\n", 0);
-	}
+	//if (valid(rtv) != 0)
+	//{
+	//	free(rtv);
+	//	ft_error("error scene\n", 0);
+	//}
 	init(rtv);
 
 	t_cam *camera;
 	t_sphere *sphere;
+	t_sphere *sphere1;
 
 	camera = malloc(sizeof(t_cam));			//add malloc protection
 	sphere = malloc(sizeof(t_sphere));
+	sphere1 = malloc(sizeof(t_sphere));
 
-	sphere->center = *new_vector3(2,3,4);
+	sphere->center = new_vector3(3, -10, -16);
 	sphere->radius = 5.0;
 
-	camera->pos = *new_vector3(0, 0, 0);
+	sphere1->center = new_vector3(0, 0, -16);
+	sphere1->radius = 5.0;
 
-	int i = 0, j;
+	camera->pos = new_vector3(0, 0, 0);
 
-	double fov = M_PI / 3.;
+	int i, j = 0;
 
-	while (i < HEIGHT)
+	double fov = M_PI / 2.;
+
+	while (j < HEIGHT)
 	{
-		j = 0;
-		while (j < WIDTH)
+		i = 0;
+		while (i < WIDTH)
 		{
-			double x =  (2*(i + 0.5)/(double)WIDTH  - 1)*tan(fov/2.)*WIDTH/(double)HEIGHT;
-			double y = -(2*(j + 0.5)/(double)HEIGHT - 1)*tan(fov/2.);
+			double x =  (2 * (i + 0.5) / (double) WIDTH  - 1) * tan(fov/2.) * WIDTH / (double) HEIGHT;
+			double y = -(2 * (j + 0.5) / (double) HEIGHT - 1) * tan(fov/2.);
 
-			camera->dir = *new_vector3(x, y, -1);
-			normalize(&camera->dir);
+			camera->dir = new_vector3(x, y, -1);
+			normalize(camera->dir);
 
-			j++;
+			if (ray_intersect(camera, sphere) > 0.0)
+				img_pixel_put_one(&rtv->image, i, j, 0xFFFFFF);
+			//else
+				//img_pixel_put_one(&rtv->image, i, j, 0xFF00FF);
+
+			if (ray_intersect(camera, sphere1) > 0.0)
+				img_pixel_put_one(&rtv->image, i, j, 0xFF0000);
+			i++;
 		}
-		i++;
+		j++;
 	}
 	mlx_put_image_to_window(rtv->mlx, rtv->window, rtv->image.image, 0, 0);
 	mlx_hook(rtv->window, 3, 1L << 1, key_release, rtv);

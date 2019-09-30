@@ -44,14 +44,14 @@ typedef struct	s_image
 
 typedef struct	s_sphere
 {
-	t_vector3	center;
+	t_vector3	*center;
 	double		radius;
 }				t_sphere;
 
 typedef struct	s_cam
 {
-	t_vector3	pos;
-	t_vector3	dir;
+	t_vector3	*pos;
+	t_vector3	*dir;
 }				t_cam;
 
 
