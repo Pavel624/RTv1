@@ -60,6 +60,7 @@ typedef struct	s_rtv
 	void		*mlx;
 	void		*window;
 	t_image		image;
+	t_cam		cam;
 	char		*name;
 	int			fd;
 	char		**scene;
