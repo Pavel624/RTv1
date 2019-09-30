@@ -95,17 +95,75 @@ int ft_line_count(char *line)
 	return (i);
 }
 
+int valid_scene(t_rtv *rtv)
+{
+	if (ft_strcmp(rtv->scene[0], "scene\0") != 0)
+	{
+		printf("%s\n", rtv->scene[0]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[1], "{\0") != 0)
+	{
+		printf("%s\n", rtv->scene[1]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[4], "}\0") != 0)
+	{
+		printf("%s\n", rtv->scene[4]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[5], "content\0") != 0)
+	{
+		printf("%s\n", rtv->scene[5]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[6], "{\0") != 0)
+	{
+		printf("%s\n", rtv->scene[6]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[7], "	object(light)\0") != 0)
+	{
+		printf("%s\n", rtv->scene[7]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[8], "	{\0") != 0)
+	{
+		printf("%s\n", rtv->scene[8]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[11], "	}\0") != 0)
+	{
+		printf("%s\n", rtv->scene[11]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[12], "	object(plane)\0") != 0)
+	{
+		printf("%s\n", rtv->scene[12]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[13], "	{\0") != 0)
+	{
+		printf("%s\n", rtv->scene[13]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[17], "	}\0") != 0)
+	{
+		printf("%s\n", rtv->scene[17]);
+		return (-1);
+	}
+	return (0);
+}
+
 void render2(t_rtv *rtv)
 {
 	char *line;
-	int i;
 
 	rtv->buf = ft_strnew(1);
 	rtv->fd = open(rtv->name, O_RDONLY);
 	while (get_next_line(rtv->fd, &line) > 0)
 		rtv->buf = ft_strjoin(rtv->buf, (ft_strjoin(line, "\n")));
-	i = ft_line_count(rtv->buf);
-	printf("%d\n", i);
+	rtv->scene = ft_strsplit(rtv->buf, '\n');
 }
 
 /*int render1(t_rtv *rtv)
@@ -141,9 +199,11 @@ void render2(t_rtv *rtv)
 
 int valid(t_rtv *rtv)
 {
+	char *str;
+
 	if ((valid1(rtv) != 0))
 	{
-		write(1, "one", 3);
+		write(1, "one\n", 4);
 		return (-1);
 	}
 	else if ((valid2(rtv) != 0))
@@ -152,7 +212,13 @@ int valid(t_rtv *rtv)
 		return (-1);
 	}
 	render2(rtv);
-	printf("%s", rtv->buf);
+	if (valid_scene(rtv) != 0)
+	{
+		write(1, "three\n", 6);
+		return (-1);
+	}
+	str = rtv->scene[2];
+	printf("%s\n", str);
 	return (0);
 
 }
