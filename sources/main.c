@@ -155,6 +155,83 @@ int valid_scene(t_rtv *rtv)
 	return (0);
 }
 
+int valid_count(char *str)
+{
+	int i;
+	int j;
+	int k;
+
+	i = 0;
+	k = 0;
+	j = 0;
+	while (str[i] != '\0')
+	{
+		if ((str[i] >= 48 && str[i] <= 57) || (str[i] == '-'))
+			i++;
+		else if (str[i] == ' ')
+		{
+			j++;
+			i++;
+		}
+		else if (str[i] == ')')
+		{
+			k++;
+			i++;
+		}
+		else
+			return (-1);
+	}
+	if ((j != 2) && (k != 1))
+		return (-1);
+	return (0);
+}
+
+int valid_scene2(t_rtv *rtv)
+{
+	char *str;
+	int i;
+
+	if (ft_strncmp(rtv->scene[2], "	cam_pos(", 9) != 0)
+		return (-1);
+	str = rtv->scene[2];
+	i = 0;
+	while(i != 9)
+	{
+		str++;
+		i++;
+	}
+	if (valid_count(str) != 0)
+		return (-1);
+	rtv->cam.pos.x = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	str++;
+	rtv->cam.pos.y = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	rtv->cam.pos.z = ft_atoi(str);
+	if (ft_strncmp(rtv->scene[3], "	cam_dir(", 9) != 0)
+		return (-1);
+	str = rtv->scene[3];
+	i = 0;
+	while(i != 9)
+	{
+		str++;
+		i++;
+	}
+	if (valid_count(str) != 0)
+		return (-1);
+	rtv->cam.dir.x = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	str++;
+	rtv->cam.dir.y = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	rtv->cam.dir.z = ft_atoi(str);
+	return(0);
+}
+
 void render2(t_rtv *rtv)
 {
 	char *line;
@@ -199,8 +276,6 @@ void render2(t_rtv *rtv)
 
 int valid(t_rtv *rtv)
 {
-	char *str;
-
 	if ((valid1(rtv) != 0))
 	{
 		write(1, "one\n", 4);
@@ -217,8 +292,11 @@ int valid(t_rtv *rtv)
 		write(1, "three\n", 6);
 		return (-1);
 	}
-	str = rtv->scene[2];
-	printf("%s\n", str);
+	if (valid_scene2(rtv) != 0)
+	{
+		write(1, "four\n", 5);
+		return (-1);
+	}
 	return (0);
 
 }
