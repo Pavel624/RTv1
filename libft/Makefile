@@ -77,7 +77,7 @@ $(NAME): $(OBJ)
 	ar rcs $(NAME) $(OBJ)
 
 $(OBJ): $(FILES)
-	gcc $(CFLAGS) $ $(FILES)
+	gcc $(CFLAGS) $(FILES)
 
 clean:
 	rm -f $(OBJ)

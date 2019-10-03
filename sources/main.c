@@ -500,7 +500,7 @@ void normalize(t_vector3 *vec)
 	vec->z /= len;
 }
 
-/*double ray_intersect(t_cam *ray, t_sphere *sphere)
+double ray_intersect(t_cam *ray, t_sphere *sphere)
 {
 	t_vector3 *len;
 	double t0, t1;
@@ -522,7 +522,15 @@ void normalize(t_vector3 *vec)
 		return (t1);
 
 }
-*/
+
+t_vector3 *get_normal(t_vector3 *vec, t_sphere *sphere)
+{
+	t_vector3 *vector3;
+
+	vector3 = mult_nbr_vector3(sub_vector3(vec, sphere->center, 0), -1 / sphere->radius, 0);
+	return (vector3);
+}
+
 static int loop()
 {
 	return (1);
@@ -547,22 +555,26 @@ int				main(int argc, char **argv)
 		ft_error("error scene\n", 0);
 	}
 	init(rtv);
-/*
+
 	t_cam *camera;
 	t_sphere *sphere;
 	t_sphere *sphere1;
+	t_light	*light;
 
 	camera = malloc(sizeof(t_cam));			//add malloc protection
 	sphere = malloc(sizeof(t_sphere));
 	sphere1 = malloc(sizeof(t_sphere));
+	light = malloc(sizeof(t_light));
 
-	sphere->center = new_vector3(3, -10, -16);
+	sphere->center = new_vector3(3, 10, -16);
 	sphere->radius = 5.0;
 
 	sphere1->center = new_vector3(0, 0, -16);
 	sphere1->radius = 5.0;
 
 	camera->pos = new_vector3(0, 0, 0);
+
+	light->pos = new_vector3(0, 0, 0);
 
 	int i, j = 0;
 
@@ -590,7 +602,7 @@ int				main(int argc, char **argv)
 		}
 		j++;
 	}
-	*/mlx_put_image_to_window(rtv->mlx, rtv->window, rtv->image.image, 0, 0);
+	mlx_put_image_to_window(rtv->mlx, rtv->window, rtv->image.image, 0, 0);
 	mlx_hook(rtv->window, 3, 1L << 1, key_release, rtv);
 	mlx_hook(rtv->window, 17, 1L << 17, close_app, rtv);
 	mlx_loop_hook(rtv->mlx, loop, rtv);

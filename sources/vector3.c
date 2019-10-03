@@ -81,3 +81,15 @@ t_vector3	*mult_vector3(t_vector3 *vec1, t_vector3 *vec2, int free)
 	}
 	return (vec_mult);
 }
+
+t_vector3	*mult_nbr_vector3(t_vector3 *vec, double nbr, int free)
+{
+	t_vector3 *vec_mult;
+
+	if (!vec)
+		return (NULL);
+	vec_mult = new_vector3(nbr * vec->x, nbr * vec->y, nbr * vec->z);
+	if (free)
+		ft_memdel((void **) &vec);
+	return (vec_mult);
+}
