@@ -484,10 +484,14 @@ static	void	init(t_rtv *rtv)
 	image->bpp /= 8;
 }
 
-void	img_pixel_put_one(t_image *img, int x, int y, int color)
+void	img_pixel_put_one(t_image *img, int x, int y, t_vector3 *color)
 {
+	int color_draw;
+	color_draw = (int)color->z | (int)(color->y) << 8 | (int)(color->x) << 16;
 	if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
-		*(int *)(img->ptr + (int)((WIDTH * y + x) * img->bpp)) = color;
+	{
+		*(int *) (img->ptr + (int) ((WIDTH * y + x) * img->bpp)) = color_draw;
+	}
 }
 
 void normalize(t_vector3 *vec)
@@ -498,6 +502,27 @@ void normalize(t_vector3 *vec)
 	vec->x /= len;
 	vec->y /= len;
 	vec->z /= len;
+}
+
+t_vector3 *sphere_color(double intersect, t_cam *camera, t_sphere *sphere,t_light *light)
+{
+	t_vector3 *hit_point;
+	t_vector3 *hit_line;
+
+	hit_line = new_vector3(camera->dir->x * intersect, camera->dir->y * intersect, camera->dir->z * intersect);
+	hit_point = add_vector3(camera->pos, hit_line, 0);
+
+	t_vector3 *light_dist = sub_vector3(light->pos, hit_point, 0);
+	double magnitude = sqrtf(pow(light_dist->x, 2) + pow(light_dist->y, 2) + pow(light_dist->z, 2));
+	t_vector3 *sphere_color = new_vector3(255, 0, 0);
+
+	sphere_color->x = light->brightness / magnitude;
+	sphere_color->y = light->brightness / magnitude;
+	sphere_color->z = light->brightness / magnitude;
+
+	normalize(light_dist);
+
+	return (sphere_color);
 }
 
 double ray_intersect(t_cam *ray, t_sphere *sphere)
@@ -549,22 +574,24 @@ int				main(int argc, char **argv)
 	rtv->name = argv[1];
 	
 
-	if (valid(rtv) != 0)
-	{
-		free(rtv);
-		ft_error("error scene\n", 0);
-	}
+	//if (valid(rtv) != 0)
+	//{
+	//	free(rtv);
+	//	ft_error("error scene\n", 0);
+	//}
 	init(rtv);
 
 	t_cam *camera;
 	t_sphere *sphere;
 	t_sphere *sphere1;
 	t_light	*light;
+	t_vector3 *screen;
 
 	camera = malloc(sizeof(t_cam));			//add malloc protection
 	sphere = malloc(sizeof(t_sphere));
 	sphere1 = malloc(sizeof(t_sphere));
 	light = malloc(sizeof(t_light));
+	screen = malloc(sizeof(t_vector3));
 
 	sphere->center = new_vector3(3, 10, -16);
 	sphere->radius = 5.0;
@@ -574,30 +601,30 @@ int				main(int argc, char **argv)
 
 	camera->pos = new_vector3(0, 0, 0);
 
-	light->pos = new_vector3(0, 0, 0);
+	light->pos = new_vector3(30, 30, 5);
+	light->color = new_vector3(255, 255, 255);
 
 	int i, j = 0;
 
-	double fov = M_PI / 2.;
-
+	double fov = 90;
+	double scaling = tan(fov / 2.0 * M_PI / 180);
+	double aspect_ratio = (double) WIDTH / (double) HEIGHT;
+	printf("net");
 	while (j < HEIGHT)
 	{
 		i = 0;
 		while (i < WIDTH)
 		{
-			double x =  (2 * (i + 0.5) / (double) WIDTH  - 1) * tan(fov/2.) * WIDTH / (double) HEIGHT;
-			double y = -(2 * (j + 0.5) / (double) HEIGHT - 1) * tan(fov/2.);
-
-			camera->dir = new_vector3(x, y, -1);
+			double x =  (2 * (i + 0.5) / (double) WIDTH  - 1) * scaling * aspect_ratio;
+			double y = -(2 * (j + 0.5) / (double) HEIGHT - 1) * scaling;
+			screen = new_vector3(x, y, -1);
+			camera->dir = sub_vector3(screen, camera->pos, 0);
 			normalize(camera->dir);
+			t_vector3 *cur_color = sphere_color(ray_intersect(camera, sphere1), camera, sphere, light);
 
-			if (ray_intersect(camera, sphere) > 0.0)
-				img_pixel_put_one(&rtv->image, i, j, 0xFFFFFF);
+			img_pixel_put_one(&rtv->image, i, j, cur_color);
 			//else
 				//img_pixel_put_one(&rtv->image, i, j, 0xFF00FF);
-
-			if (ray_intersect(camera, sphere1) > 0.0)
-				img_pixel_put_one(&rtv->image, i, j, 0xFF0000);
 			i++;
 		}
 		j++;

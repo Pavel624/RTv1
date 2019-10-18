@@ -59,6 +59,7 @@ typedef struct	s_cam
 typedef struct	s_light
 {
 	t_vector3	*color;
+	double 		brightness;
 	t_vector3	*pos;
 	struct s_light *next;
 }				t_light;
