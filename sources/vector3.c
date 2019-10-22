@@ -24,7 +24,7 @@ t_vector3	new_vector3(double x, double y, double z)
 
 t_vector3	add_vector3(t_vector3 vec1, t_vector3 vec2)
 {
-	t_vector3 *vec_add;
+	t_vector3 vec_add;
 
     vec_add.x = vec1.x + vec2.x;
     vec_add.y = vec1.y + vec2.y;
@@ -47,7 +47,7 @@ double		dot_vector3(t_vector3 vec1, t_vector3 vec2)
 	double dot;
 
 	dot = vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
-	return (scalar);
+	return (dot);
 }
 
 t_vector3	cross_vector3(t_vector3 vec1, t_vector3 vec2)
@@ -68,4 +68,15 @@ t_vector3	scale_vector3(t_vector3 vec, double nbr)
     vec_mult.y = nbr * vec.y;
     vec_mult.z = nbr * vec.z;
 	return (vec_mult);
+}
+
+t_vector3	normalize(t_vector3 vec)
+{
+	double len;
+
+	len = sqrt(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2));
+	vec.x /= len;
+	vec.y /= len;
+	vec.z /= len;
+	return (vec);
 }
