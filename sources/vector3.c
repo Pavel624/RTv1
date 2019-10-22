@@ -12,84 +12,60 @@
 
 #include "../includes/vector3.h"
 
-t_vector3	*new_vector3(double x, double y, double z)
+t_vector3	new_vector3(double x, double y, double z)
 {
-	t_vector3 *vec_new;
+	t_vector3 vec_new;
 
-	if (!(vec_new = malloc(sizeof(t_vector3))))
-		return (NULL);
-	vec_new->x = x;
-	vec_new->y = y;
-	vec_new->z = z;
+	vec_new.x = x;
+	vec_new.y = y;
+	vec_new.z = z;
 	return (vec_new);
 }
 
-t_vector3	*add_vector3(t_vector3 *vec1, t_vector3 *vec2, int free)
+t_vector3	add_vector3(t_vector3 vec1, t_vector3 vec2)
 {
 	t_vector3 *vec_add;
 
-	if (!vec1 || !vec2)
-		return (NULL);
-	vec_add = new_vector3(vec1->x + vec2->x, vec1->y + vec2->y, vec1->z + vec2->z);
-	if (free)
-	{
-		ft_memdel((void **) &vec1);
-		ft_memdel((void **) &vec2);
-	}
+    vec_add.x = vec1.x + vec2.x;
+    vec_add.y = vec1.y + vec2.y;
+    vec_add.z = vec1.z + vec2.z;
 	return (vec_add);
 }
 
-t_vector3	*sub_vector3(t_vector3 *vec1, t_vector3 *vec2, int free)
+t_vector3	sub_vector3(t_vector3 vec1, t_vector3 vec2)
 {
-	t_vector3 *vec_sub;
+	t_vector3 vec_sub;
 
-	if (!vec1 || !vec2)
-		return (NULL);
-	vec_sub = new_vector3(vec1->x - vec2->x, vec1->y - vec2->y, vec1->z - vec2->z);
-	if (free)
-	{
-		ft_memdel((void **) &vec1);
-		ft_memdel((void **) &vec2);
-	}
+	vec_sub.x = vec1.x - vec2.x;
+    vec_sub.y = vec1.y - vec2.y;
+    vec_sub.z = vec1.z - vec2.z;
 	return (vec_sub);
 }
 
-double		scalar_vector3(t_vector3 *vec1, t_vector3 *vec2, int free)
+double		dot_vector3(t_vector3 vec1, t_vector3 vec2)
 {
-	double scalar;
+	double dot;
 
-	scalar = vec1->x * vec2->x + vec1->y * vec2->y + vec1->z * vec2->z;
-	if (free)
-	{
-		ft_memdel((void **) &vec1);
-		ft_memdel((void **) &vec2);
-	}
+	dot = vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
 	return (scalar);
 }
 
-t_vector3	*mult_vector3(t_vector3 *vec1, t_vector3 *vec2, int free)
+t_vector3	cross_vector3(t_vector3 vec1, t_vector3 vec2)
 {
-	t_vector3 *vec_mult;
+	t_vector3 vec_mult;
 
-	if (!vec1 || !vec2)
-		return (NULL);
-	vec_mult = new_vector3(vec1->y * vec2->z - vec1->z * vec2->y, vec1->z * vec2->x - vec1->x * vec2->z, vec1->x * vec2->y - vec1->y * vec2->x);
-	if (free)
-	{
-		ft_memdel((void **) &vec1);
-		ft_memdel((void **) &vec2);
-	}
+	vec_mult.x = vec1.y * vec2.z - vec1.z * vec2.y;
+	vec_mult.y = vec1.z * vec2.x - vec1.x * vec2.z;
+    vec_mult.z = vec1.x * vec2.y - vec1.y * vec2.x;
 	return (vec_mult);
 }
 
-t_vector3	*mult_nbr_vector3(t_vector3 *vec, double nbr, int free)
+t_vector3	scale_vector3(t_vector3 vec, double nbr)
 {
-	t_vector3 *vec_mult;
+	t_vector3 vec_mult;
 
-	if (!vec)
-		return (NULL);
-	vec_mult = new_vector3(nbr * vec->x, nbr * vec->y, nbr * vec->z);
-	if (free)
-		ft_memdel((void **) &vec);
+	vec_mult.x = nbr * vec.x;
+    vec_mult.y = nbr * vec.y;
+    vec_mult.z = nbr * vec.z;
 	return (vec_mult);
 }
