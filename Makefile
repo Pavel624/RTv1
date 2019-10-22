@@ -1,6 +1,6 @@
 NAME = RTv1
 
-SRC_FILES  = main.c keys.c vector3.c
+SRC_FILES  = main.c keys.c vector3.c color.c sphere.c
 SRC_FOLDER = ./sources
 INC_FOLDER = ./includes
 SRC = $(addprefix $(SRC_FOLDER)/, $(SRC_FILES))
@@ -9,14 +9,14 @@ OBJ_FILES = $(SRC_FILES:.c=.o)
 OBJ_FOLDER = ./objs
 OBJ = $(addprefix $(OBJ_FOLDER)/, $(OBJ_FILES))
 
-FLAGS = -Wall -Werror -Wextra -O3
-
 OSVER := $(shell uname -s)
 
 ifeq ($(OSVER), Linux)
-	LIBFLAGS = -lXext -lX11 minilibx/libmlx.a -g3 -lbsd -lm -lmlx
+	LIBFLAGS = -L/usr/X11/lib /usr/X11/lib/libmlx.a -g3 -lXext -lX11 -lm -lmlx -pthread
+	FLAGS = -Wall -O3
 else
-	LIBFLAGS = -framework OpenGL -framework AppKit -lm -lmlx
+	LIBFLAGS = -framework OpenGL -framework AppKit -lm -lmlx -pthread
+	FLAGS = -Wall -Werror -Wextra -O3
 endif
 
 LIBFT = libft/libft.a
