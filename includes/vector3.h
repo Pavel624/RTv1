@@ -14,9 +14,7 @@
 # define VECTOR3_H
 
 # include "../libft/libft.h"
-# ifdef __linux__
 # include <math.h>
-# endif
 
 typedef struct	s_vector3
 {

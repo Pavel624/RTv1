@@ -74,7 +74,7 @@ t_vector3	normalize(t_vector3 vec)
 {
 	double len;
 
-	len = sqrt(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2));
+	len = sqrtf(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2));
 	vec.x /= len;
 	vec.y /= len;
 	vec.z /= len;

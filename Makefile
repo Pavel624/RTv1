@@ -15,7 +15,7 @@ ifeq ($(OSVER), Linux)
 	LIBFLAGS = -L/usr/X11/lib /usr/X11/lib/libmlx.a -g3 -lXext -lX11 -lm -lmlx -pthread
 	FLAGS = -Wall -O3
 else
-	LIBFLAGS = -framework OpenGL -framework AppKit -lm -lmlx -pthread
+	LIBFLAGS = -framework OpenGL -framework AppKit -lm -lmlx
 	FLAGS = -Wall -Werror -Wextra -O3
 endif
 

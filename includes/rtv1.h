@@ -36,7 +36,7 @@
 # define THREAD_NUM 4
 # define THREAD_WIDTH (WIDTH / THREAD_NUM)
 # define ASPECT_RATIO (WIDTH / HEIGHT)
-# define FOV 1.0
+# define FOV 2.0
 
 typedef struct	s_image
 {
@@ -89,9 +89,9 @@ typedef struct s_cur_ray
 
 typedef struct	s_sphere
 {
-	t_color	color;
-	t_vector3	center;
-	double		radius;
+	t_color			color;
+	t_vector3		center;
+	double			radius;
 	struct s_sphere *next;
 }				t_sphere;
 
@@ -120,7 +120,7 @@ typedef struct	s_rtv
 	t_cam		*cam;
 	t_light		light;
 	t_plane		*plane;
-	t_sphere	sphere;
+	t_sphere	*sphere;
 	t_cylinder  *cylinder;
 	pthread_t	threads[THREAD_NUM];
 	char		*name;
@@ -130,16 +130,17 @@ typedef struct	s_rtv
 
 }				t_rtv;
 
-t_sphere 	new_sphere(t_vector3 center, double radius, t_color color);
-int     	intersect_sphere(t_sphere sphere, t_ray ray, double *point);
-int     	calc_intersect(double k1, double k2, double k3, double *point);
+t_sphere 	*new_sphere(t_vector3 center, double radius, t_color color);
+int     	intersect_sphere(t_sphere *sphere, t_ray ray, double *hit);
+int     	calc_intersect(double k1, double k2, double k3, double *hit);
 
 t_color 	set_color(double r, double g, double b);
 t_color		calculate_color(t_rtv *rtv, int x, int y);
 t_vector3 	calculate_ray_dir(int x, int y, t_rtv *rtv);
-void		calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray);
-void 		get_light(t_rtv *rtv, t_cur_ray *cur_ray);
-double 		light_shape(t_ray light_ray, t_vector3 norm, double k);
+int			calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray);
+void 		get_light(t_rtv *rtv,t_vector3 hit_vector, t_cur_ray *cur_ray);
+double 		light_shape(t_ray light_ray, t_vector3 norm);
+void		get_light_color(t_color *color, double f, t_light light);
 
 int 		key_release(int key, t_rtv *rtv);
 
