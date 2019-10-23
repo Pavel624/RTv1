@@ -6,14 +6,14 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 13:32:35 by rsatterf          #+#    #+#             */
-/*   Updated: 2019/10/02 18:35:12 by rsatterf         ###   ########.fr       */
+/*   Updated: 2019/10/23 15:02:06 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 #include <stdio.h>
 
-int valid1(t_rtv *rtv)
+/*int valid1(t_rtv *rtv)
 {
 	char *line;
 
@@ -463,6 +463,510 @@ int valid(t_rtv *rtv)
 	return (0);
 
 }
+
+*/
+
+
+int valid1(t_rtv *rtv)
+{
+	char *line;
+
+	rtv->fd = open(rtv->name, O_RDONLY);
+	if (rtv->fd < 0)
+	{
+		close(rtv->fd);
+		return (-1);
+	}
+	if ((get_next_line(rtv->fd, &line) < 0))
+	{
+		ft_strdel(&line);
+		return (-1);
+	}
+	ft_strdel(&line);
+	close(rtv->fd);
+	return (0);
+}
+
+int valid2(t_rtv *rtv)
+{
+	char *line;
+	int i;
+
+	rtv->fd = open(rtv->name, O_RDONLY);
+	while (get_next_line(rtv->fd, &line) > 0)
+	{
+		i = 0;
+		while (line[i])
+		{
+			if (((line[i] >= 48) && (line[i] <= 57)) || (line[i] == ' ') ||
+				(line[i] == '\n') || (line[i] == '-') || (line[i] == '\t')
+				|| ((line[i] >= 97) && (line[i] <= 122)) || (line[i] == ')') ||
+					(line[i] == '(') || (line[i] == '{') || (line[i] == '}') || (line[i] == '_'))
+				i++;
+			else
+			{
+				ft_strdel(&line);
+				return (-1);
+			}
+		}
+		ft_strdel(&line);
+	}
+	ft_strdel(&line);
+	close(rtv->fd);
+	return (0);
+}
+
+int count(t_rtv *rtv)
+{
+	char *line;
+	int i;
+	int j;
+
+	j = 0;
+	rtv->fd = open(rtv->name, O_RDONLY);
+	while (get_next_line(rtv->fd, &line) > 0)
+	{
+		i = 0;
+		while (line[i])
+		{
+			if (line[i] == '\n')
+				j++;
+		}
+		ft_strdel(&line);
+	}
+	ft_strdel(&line);
+	close(rtv->fd);
+	return (j);
+}
+
+int ft_line_count(char *line)
+{
+	int i;
+
+	i = 0;
+	while ((line[i] != '\n') && (line[i] != '\0'))
+		i++;
+	return (i);
+}
+
+int valid_scene(t_rtv *rtv)
+{
+	int i;
+
+	if (ft_strcmp(rtv->scene[0], "scene\0") != 0)
+	{
+		printf("%s\n", rtv->scene[0]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[1], "{\0") != 0)
+	{
+		printf("%s\n", rtv->scene[1]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[4], "}\0") != 0)
+	{
+		printf("%s\n", rtv->scene[4]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[5], "content\0") != 0)
+	{
+		printf("%s\n", rtv->scene[5]);
+		return (-1);
+	}
+	else if (ft_strcmp(rtv->scene[6], "{\0") != 0)
+	{
+		printf("%s\n", rtv->scene[6]);
+		return (-1);
+	}
+	i = 0;
+	while (rtv->scene[i] != NULL)
+		i++;
+	if (ft_strcmp(rtv->scene[i - 1], "}\0") != 0)
+	{
+		printf("%s\n", rtv->scene[i - 1]);
+		return (-1);
+	}
+	return (0);
+}
+
+int valid_count(char *str)
+{
+	int i;
+	int j;
+	int k;
+
+	i = 0;
+	k = 0;
+	j = 0;
+	while (str[i] != '\0')
+	{
+		if ((str[i] >= 48 && str[i] <= 57) || (str[i] == '-'))
+			i++;
+		else if (str[i] == ' ')
+		{
+			j++;
+			i++;
+		}
+		else if (str[i] == ')')
+		{
+			k++;
+			i++;
+		}
+		else
+			return (-1);
+	}
+	if ((j != 2) && (k != 1))
+		return (-1);
+	return (0);
+}
+
+int valid_count2(char *str)
+{
+	int i;
+	int k;
+
+	i = 0;
+	k = 0;
+	while (str[i] != '\0')
+	{
+		if ((str[i] >= 48 && str[i] <= 57) || (str[i] == '-'))
+			i++;
+		else if (str[i] == ')')
+		{
+			k++;
+			i++;
+		}
+		else
+			return (-1);
+	}
+	if (k != 1)
+		return (-1);
+	return (0);
+}
+
+int valid_scene2(t_rtv *rtv)
+{
+	char *str;
+	int i;
+
+	rtv->cam = (t_cam *)malloc(sizeof(t_cam));
+	//rtv->cam->pos = malloc(sizeof(t_vector3));
+	//rtv->cam->dir = malloc(sizeof(t_vector3));
+	if (ft_strncmp(rtv->scene[2], "	cam_pos(", 9) != 0)
+		return (-1);
+	str = rtv->scene[2];
+	i = 0;
+	while(i != 9)
+	{
+		str++;
+		i++;
+	}
+	if (valid_count(str) != 0)
+		return (-1);
+	rtv->cam->pos.x = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	str++;
+	rtv->cam->pos.y = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	rtv->cam->pos.z = ft_atoi(str);
+	if (ft_strncmp(rtv->scene[3], "	cam_dir(", 9) != 0)
+		return (-1);
+	str = rtv->scene[3];
+	i = 0;
+	while(i != 9)
+	{
+		str++;
+		i++;
+	}
+	if (valid_count(str) != 0)
+		return (-1);
+	rtv->cam->dir.x = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	str++;
+	rtv->cam->dir.y = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	rtv->cam->dir.z = ft_atoi(str);
+	return(0);
+}
+
+t_light *init_light(t_light *light)
+{
+	light = (t_light *)malloc(sizeof(t_light));
+	//light->intensity = (t_color *)malloc(sizeof(t_vector3));
+	//light->pos = (t_vector3 *)malloc(sizeof(t_vector3));
+	return (light);
+}
+
+t_plane *init_plane(t_plane *plane)
+{
+	plane = (t_plane *)malloc(sizeof(t_plane));
+	//plane->color = (t_color *)malloc(sizeof(t_vector3));
+	//plane->pos = (t_vector3 *)malloc(sizeof(t_vector3));
+	//plane->rot = (t_vector3 *)malloc(sizeof(t_vector3));
+	return (plane);
+}
+
+t_sphere *init_sphere(t_sphere *sphere)
+{
+	sphere = (t_sphere *)malloc(sizeof(t_sphere));
+	//sphere->color = (t_color *)malloc(sizeof(t_vector3));
+	//sphere->center = (t_vector3 *)malloc(sizeof(t_vector3));
+	return (sphere);
+}
+
+void add_light(t_light *light, t_rtv *rtv)
+{
+	t_light *begin;
+
+	if (!rtv->light)
+		rtv->light = light;
+	else
+	{
+		begin = rtv->light;
+		while (begin->next != NULL)
+			begin = begin->next;
+		begin->next = light;
+	}
+}
+
+void add_plane(t_plane *plane, t_rtv *rtv)
+{
+	t_plane *begin;
+
+	if (!rtv->plane)
+		rtv->plane = plane;
+	else
+	{
+		begin = rtv->plane;
+		while (begin->next != NULL)
+			begin = begin->next;
+		begin->next = plane;
+	}
+}
+
+void add_sphere(t_sphere *sphere, t_rtv *rtv)
+{
+	t_sphere *begin;
+
+	if (!rtv->sphere)
+		rtv->sphere = sphere;
+	else
+	{
+		begin = rtv->sphere;
+		while (begin->next != NULL)
+			begin = begin->next;
+		begin->next = sphere;
+	}
+}
+
+int	data_color(char *str, t_color *vec, int k)
+{
+	int i;
+
+	i = 0;
+	while (i != k)
+	{
+		str++;
+		i++;
+	}
+	if (valid_count(str) != 0)
+		return (-1);
+	vec->r = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	str++;
+	vec->g = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	vec->b = ft_atoi(str);
+	return (0);
+}
+
+int	data_vector(char *str, t_vector3 *vec, int k)
+{
+	int i;
+
+	i = 0;
+	while (i != k)
+	{
+		str++;
+		i++;
+	}
+	if (valid_count(str) != 0)
+		return (-1);
+	vec->x = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	str++;
+	vec->y = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	vec->z = ft_atoi(str);
+	return (0);
+}
+
+int valid_objects(t_rtv *rtv)
+{
+	char *str;
+	t_light *light;
+	t_plane *plane;
+	t_sphere *sphere;
+	int i;
+	int k;
+	int j;
+
+	i = 0;
+	while (rtv->scene[i] != NULL)
+		i++;
+	k = i;
+	i = 7;
+	while (i != k - 1)
+	{
+		if (ft_strcmp(rtv->scene[i], "	object(light)\0") == 0)
+		{
+			if ((i + 4) >= k)
+				return (-1);
+			if (ft_strcmp(rtv->scene[i + 1], "	{\0") != 0 || ft_strcmp(rtv->scene[i + 4], "	}\0") != 0)
+				return (-1);
+			if (ft_strncmp(rtv->scene[i + 2], "		col(", 6) != 0)
+				return (-1);
+			if (ft_strncmp(rtv->scene[i + 3], "		pos(", 6) != 0)
+				return (-1);
+			light = init_light(light);
+			str = rtv->scene[i + 2];
+			if (data_color(str, &light->intensity, 6) != 0)
+				return (-1);
+			str = rtv->scene[i + 3];
+			if (data_vector(str, &light->pos, 6) != 0)
+				return (-1);
+			add_light(light, rtv);
+			i = i + 5;
+		}
+		else if (ft_strcmp(rtv->scene[i], "	object(plane)\0") == 0)
+		{
+			if ((i + 5) >= k)
+				return (-1);
+			if (ft_strcmp(rtv->scene[i + 1], "	{\0") != 0 || ft_strcmp(rtv->scene[i + 5], "	}\0") != 0)
+				return (-1);
+			if (ft_strncmp(rtv->scene[i + 2], "		col(", 6) != 0)
+				return (-1);
+			if (ft_strncmp(rtv->scene[i + 3], "		pos(", 6) != 0)
+				return (-1);
+			if (ft_strncmp(rtv->scene[i + 4], "		rot(", 6) != 0)
+				return (-1);
+			plane = init_plane(plane);
+			str = rtv->scene[i + 2];
+			if (data_color(str, &plane->color, 6) != 0)
+				return (-1);
+			str = rtv->scene[i + 3];
+			if (data_vector(str, &plane->pos, 6) != 0)
+				return (-1);
+			str = rtv->scene[i + 4];
+			if (data_vector(str, &plane->rot, 6) != 0)
+				return (-1);
+			add_plane(plane, rtv);
+			i = i + 6;
+		}
+		else if (ft_strcmp(rtv->scene[i], "	object(sphere)\0") == 0)
+		{
+			if ((i + 5) >= k)
+				return (-1);
+			if (ft_strcmp(rtv->scene[i + 1], "	{\0") != 0 || ft_strcmp(rtv->scene[i + 5], "	}\0") != 0)
+				return (-1);
+			if (ft_strncmp(rtv->scene[i + 2], "		col(", 6) != 0)
+				return (-1);
+			if (ft_strncmp(rtv->scene[i + 3], "		pos(", 6) != 0)
+				return (-1);
+			if (ft_strncmp(rtv->scene[i + 4], "		size(", 7) != 0)
+				return (-1);
+			sphere = init_sphere(sphere);
+			str = rtv->scene[i + 2];
+			if (data_color(str, &sphere->color, 6) != 0)
+				return (-1);
+			str = rtv->scene[i + 3];
+			if (data_vector(str, &sphere->center, 6) != 0)
+				return (-1);
+			str = rtv->scene[i + 4];
+			j = 0;
+			while (j != 7)
+			{
+				str++;
+				j++;
+			}
+			if (valid_count2(str) != 0)
+				return (-1);
+			sphere->radius = ft_atoi(str);
+			add_sphere(sphere, rtv);
+			i = i + 6;
+		}
+	}
+	return (0);
+}
+
+void render2(t_rtv *rtv)
+{
+	char *line;
+
+	rtv->buf = ft_strnew(1);
+	rtv->fd = open(rtv->name, O_RDONLY);
+	while (get_next_line(rtv->fd, &line) > 0)
+		rtv->buf = ft_strjoin(rtv->buf, (ft_strjoin(line, "\n")));
+	rtv->scene = ft_strsplit(rtv->buf, '\n');
+}
+
+int valid(t_rtv *rtv)
+{
+	if ((valid1(rtv) != 0))     // norm
+	{
+		write(1, "one\n", 4);
+		return (-1);
+	}
+	else if ((valid2(rtv) != 0)) // norm
+	{
+		write(1, "two\n", 4);
+		return (-1);
+	}
+	render2(rtv);  // norm
+	if (valid_scene(rtv) != 0) // if no content or scene?
+	{
+		write(1, "three\n", 6);
+		return (-1);
+	}
+	if (valid_scene2(rtv) != 0)  // norm, but if '/t' or '+' or something else, it will be not a valid
+	{
+		write(1, "four\n", 5);
+		return (-1);
+	}
+	if (valid_objects(rtv) != 0) // norm
+	{
+		write(1, "five\n", 5);
+		return (-1);
+	}
+	/*while (rtv->sphere)
+	{
+		printf("%f\n", rtv->sphere->center.x);
+		printf("%f\n", rtv->sphere->center.y);
+		printf("%f\n", rtv->sphere->center.z);
+		printf("%f\n", rtv->sphere->radius);
+		rtv->sphere = rtv->sphere->next;
+	}
+	printf("%f\n", rtv->sphere->center.x);
+	printf("%f\n", rtv->sphere->center.y);
+	printf("%f\n", rtv->sphere->center.z);
+	*/
+	printf("%f\n", rtv->sphere->color.r);
+	printf("%f\n", rtv->sphere->color.g);
+	printf("%f\n", rtv->sphere->color.b);
+	//printf("%f\n", rtv->sphere->radius);
+	return (0);
+
+}
+
+
 static	int		close_app(t_rtv *rtv)
 {
 	free(rtv);
@@ -495,15 +999,15 @@ void	img_pixel_put_one(t_rtv *rtv, int x, int y, t_color color)
 		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp] = (char) color.r;
 		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp + 1] = (char) color.g;
 		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp + 2] = (char) color.b;
+
 	}
 }
 
-void init_shapes(t_rtv *rtv)
+/*void init_shapes(t_rtv *rtv)
 {
 	rtv->cam = malloc(sizeof(t_cam));
 	//rtv->sphere = malloc(sizeof(t_sphere));
 	//rtv->light = malloc(sizeof(t_light));
-
 	t_vector3 center = new_vector3(0, 0, 20);
 	t_color	color = set_color(100, 100, 100);
 	rtv->sphere = new_sphere(center, 5, color);
@@ -514,11 +1018,11 @@ void init_shapes(t_rtv *rtv)
 
 	rtv->cam->pos = new_vector3(0, 0, 0);
 	rtv->cam->dir = new_vector3(0, 0, 1);
-
-	rtv->light.pos = new_vector3(-50, 50, -100);
-	rtv->light.intensity = set_color(0, 255, 255);
+	rtv->light = malloc(sizeof(t_light));
+	rtv->light->pos = new_vector3(-50, 50, -100);
+	rtv->light->intensity = set_color(0, 255, 255);
 }
-
+*/
 void *draw_scene(void *rtv)
 {
 	t_threads	thread;
@@ -551,13 +1055,52 @@ void *draw_scene(void *rtv)
 int rtv_pthread(t_rtv *rtv)
 {
 	int i;
-
+	//int 		x;
+	//int			y;
+	//int Sx;
+	//int Sy;
+	//int Cw;
+	//int Ch;
+	//t_color		color;
+	
 	i = -1;
 	while (++i < THREAD_NUM)
 		pthread_create(&rtv->threads[i], NULL, draw_scene, rtv);
 	while (i--)
 		pthread_join(rtv->threads[i], NULL);
-	mlx_put_image_to_window(rtv->mlx, rtv->window, rtv->image.image, 0, 0);
+	
+	/*y = 0;  // если использовать этот цикл, то рисует немного по другому, чем через многопоточность
+	while (y < HEIGHT)
+	{
+		x = 0;
+		while (x < WIDTH)
+		{
+			color = calculate_color((t_rtv*)rtv, x , y);
+			img_pixel_put_one((t_rtv*)rtv, x , y, color);
+			x++;
+		}
+		y++;
+	}
+	*/
+	/*Cw = WIDTH / 2;
+	Ch = HEIGHT / 2;
+
+	x = -Cw;  
+	while (x <= Cw)
+	{
+		y = -Ch;
+		while (y <= Ch)
+		{
+			color = calculate_color((t_rtv*)rtv, x , y);
+			Sx = Cw + x;
+			Sy = Ch - y;
+			img_pixel_put_one((t_rtv*)rtv, Sx , Sy, color);
+			y++;
+		}
+		x++;
+	
+	}
+	*/mlx_put_image_to_window(rtv->mlx, rtv->window, rtv->image.image, 0, 0);
 	return (0);
 }
 
@@ -572,8 +1115,7 @@ int				main(int argc, char **argv)
 	if (!(rtv = (t_rtv *)malloc(sizeof(t_rtv))))
 		ft_error("can't allocate enough memory for the structure\n", 0);
 	rtv->name = argv[1];
-
-	init_shapes(rtv);
+	//init_shapes(rtv);
 	if (valid(rtv) != 0)
 	{
 		free(rtv);

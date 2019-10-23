@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   color.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbethany <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 20:42:17 by nbethany          #+#    #+#             */
-/*   Updated: 2019/10/21 20:42:18 by nbethany         ###   ########.fr       */
+/*   Updated: 2019/10/23 14:57:34 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
+#include <stdio.h>
 
 t_color set_color(double r, double g, double b)
 {
@@ -26,17 +27,27 @@ t_color	calculate_color(t_rtv *rtv, int x, int y)
 {
 	t_cur_ray	cur_ray;
 	int			num_intersect;
+	//int Cw;
+	//int Ch;
 
+	//Cw = WIDTH;
+	//Ch = HEIGHT;
 	cur_ray.color = set_color(0, 0, 0);
 	num_intersect = 0;
 	cur_ray.ray.origin = rtv->cam->pos;
 	cur_ray.ray.dir = calculate_ray_dir(x, y, rtv); //calculate where ray goes denending on screen parametrs (x and y)
+	//cur_ray.ray.dir = new_vector3(x /Cw, y /Ch, 1);
 	while (num_intersect < 1)
 	{
 		if (calculate_ray(rtv, &cur_ray) != 1)
 			break;
 		num_intersect++;
 	}
+	
+	//cur_ray.color = intersect_sphere(rtv->sphere, cur_ray.ray);
+	//printf("%f\n", cur_ray.color.r);
+	//printf("%f\n", cur_ray.color.g);
+	//printf("%f\n", cur_ray.color.b);
 	return (cur_ray.color);
 }
 
@@ -78,13 +89,13 @@ int			calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray)
 
 void get_light(t_rtv *rtv, t_vector3 hit_vector, t_cur_ray *cur_ray)
 {
-	t_light 	light;
+	t_light 	*light;
 	t_vector3 	distance;
 	t_ray 		light_ray;
 	double 		f;
 
 	light = rtv->light;
-	distance = sub_vector3(light.pos, hit_vector);
+	distance = sub_vector3(light->pos, hit_vector);
 	light_ray.origin = hit_vector;
 	light_ray.dir = normalize(distance);
 
@@ -102,9 +113,9 @@ double light_shape(t_ray light_ray, t_vector3 norm)
 	return (f);
 }
 
-void get_light_color(t_color *color, double f, t_light light)
+void get_light_color(t_color *color, double f, t_light *light)
 {
-	color->r += f * light.intensity.r;
-	color->g += f * light.intensity.g;
-	color->b += f * light.intensity.b;
+	color->r += f * light->intensity.r;
+	color->g += f * light->intensity.g;
+	color->b += f * light->intensity.b;
 }

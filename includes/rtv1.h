@@ -6,7 +6,7 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 13:24:18 by rsatterf          #+#    #+#             */
-/*   Updated: 2019/10/02 17:22:10 by rsatterf         ###   ########.fr       */
+/*   Updated: 2019/10/23 14:56:14 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ typedef struct	s_rtv
 	void		*window;
 	t_image		image;
 	t_cam		*cam;
-	t_light		light;
+	t_light		*light;
 	t_plane		*plane;
 	t_sphere	*sphere;
 	t_cylinder  *cylinder;
@@ -132,15 +132,16 @@ typedef struct	s_rtv
 
 t_sphere 	*new_sphere(t_vector3 center, double radius, t_color color);
 int     	intersect_sphere(t_sphere *sphere, t_ray ray, double *hit);
+//t_color     intersect_sphere(t_sphere *sphere, t_ray ray);
 int     	calc_intersect(double k1, double k2, double k3, double *hit);
-
+//t_color     calc_intersect(double k1, double k2, double k3, t_sphere *sphere);
 t_color 	set_color(double r, double g, double b);
 t_color		calculate_color(t_rtv *rtv, int x, int y);
 t_vector3 	calculate_ray_dir(int x, int y, t_rtv *rtv);
 int			calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray);
 void 		get_light(t_rtv *rtv,t_vector3 hit_vector, t_cur_ray *cur_ray);
 double 		light_shape(t_ray light_ray, t_vector3 norm);
-void		get_light_color(t_color *color, double f, t_light light);
+void		get_light_color(t_color *color, double f, t_light *light);
 
 int 		key_release(int key, t_rtv *rtv);
 
