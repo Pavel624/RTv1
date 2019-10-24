@@ -13,28 +13,27 @@
 #include "rtv1.h"
 #include <stdio.h>
 
-t_sphere *new_sphere(t_vector3 center, double radius, t_color color)
+t_sphere new_sphere(t_vector3 center, double radius)
 {
-	t_sphere *sphere;
+	t_sphere sphere;
 
-	if (!(sphere = (t_sphere*)malloc(sizeof(t_sphere))))
-		return (NULL);
-	sphere->center = center;
-	sphere->radius = radius;
-	sphere->color = color;
+	sphere.center = center;
+	sphere.radius = radius;
 	return (sphere);
 }
 
-int     intersect_sphere(t_sphere *sphere, t_ray ray, double *hit)
+int     intersect_sphere(t_sphere sphere, t_ray ray, double *hit)
 {
     double k1, k2, k3;
     double discriminant;
     t_vector3 distance;
 
     k1 = dot_vector3(ray.dir, ray.dir);
-    distance = sub_vector3(ray.origin, sphere->center);
+    if (k1 == 0)
+		return (0);
+    distance = sub_vector3(ray.origin, sphere.center);
     k2 = 2 * dot_vector3(distance, ray.dir);
-    k3 = dot_vector3(distance, distance) - sphere->radius * sphere->radius;
+    k3 = dot_vector3(distance, distance) - sphere.radius * sphere.radius;
     discriminant = k2 * k2 - 4 * k1 * k3;
     if (discriminant < 0)
         return (0);
@@ -51,9 +50,9 @@ int     calc_intersect(double k1, double k2, double k3, double *hit)
     sqrt_discr = sqrtf(k2 * k2 - 4 * k1 * k3);
     t1 = (-k2 + sqrt_discr) / (2 * k1);
     t2 = (-k2 - sqrt_discr) / (2 * k1);
-    if (t1 > t2 && t2 > FOV)
+    if (t1 > t2)
     	t1 = t2;
-    if (t1 > 0.001f)
+    if (t1 > 0.01f && (t1 < *hit || *hit == -1))
     {
         *hit = t1;
         return (1);
@@ -119,6 +118,5 @@ t_color     calc_intersect(double k1, double k2, double k3, t_sphere *sphere)
 		return (color);
 	else
 		return(close_sphere->color);
-	
 }
 */

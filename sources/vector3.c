@@ -80,3 +80,11 @@ t_vector3	normalize(t_vector3 vec)
 	vec.z /= len;
 	return (vec);
 }
+
+double 		len_vector(t_vector3 vec)
+{
+	double len;
+
+	len = sqrtf(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2));
+	return(len);
+}

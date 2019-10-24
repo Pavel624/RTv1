@@ -8,8 +8,19 @@ content
 {
 	object(light)
 	{
-		col(0 250 250)
+		col(255 0 255)
 		pos(-50 50 -100)
+	}
+	object(light)
+	{
+		col(255 255 255)
+		pos(50 50 -100)
+	}
+	object(plane)
+	{
+		col(160 160 160)
+		pos(0 0 20)
+		rot(0 0 -1)
 	}
 	object(plane)
 	{
@@ -19,8 +30,14 @@ content
 	}
 	object(sphere)
 	{
-		col(100 100 255)
-		pos(0 0 20)
+		col(255 127 0)
+		pos(0 0 10)
+		size(2)
+	}
+	object(sphere)
+	{
+		col(255 127 0)
+		pos(-70 70 10)
 		size(5)
 	}
 }

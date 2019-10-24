@@ -30,5 +30,6 @@ double		dot_vector3(t_vector3 vec1, t_vector3 vec2);
 t_vector3	cross_vector3(t_vector3 vec1, t_vector3 vec2);
 t_vector3	scale_vector3(t_vector3 vec, double nbr);
 t_vector3 	normalize(t_vector3 vec);
+double 		len_vector(t_vector3 vec);
 
 #endif

@@ -27,17 +27,13 @@ t_color	calculate_color(t_rtv *rtv, int x, int y)
 {
 	t_cur_ray	cur_ray;
 	int			num_intersect;
-	//int Cw;
-	//int Ch;
 
-	//Cw = WIDTH;
-	//Ch = HEIGHT;
 	cur_ray.color = set_color(0, 0, 0);
 	num_intersect = 0;
+	cur_ray.k = 1.0;
 	cur_ray.ray.origin = rtv->cam->pos;
-	cur_ray.ray.dir = calculate_ray_dir(x, y, rtv); //calculate where ray goes denending on screen parametrs (x and y)
-	//cur_ray.ray.dir = new_vector3(x /Cw, y /Ch, 1);
-	while (num_intersect < 1)
+	cur_ray.ray.dir = calculate_ray_dir(x, y, rtv); //calculate where ray goes depending on screen parameters (x and y)
+	while (cur_ray.k > 0.0f && num_intersect < 3)
 	{
 		if (calculate_ray(rtv, &cur_ray) != 1)
 			break;
@@ -53,69 +49,165 @@ t_color	calculate_color(t_rtv *rtv, int x, int y)
 
 t_vector3 calculate_ray_dir(int x, int y, t_rtv *rtv)
 {
-	t_vector3	i;
-	t_vector3	j;
-	t_vector3	k;
-	t_vector3	l;
+	double i;
+	double j;
+	t_vector3 l;
 
-	k = rtv->cam->dir;
-	l = new_vector3(0.0f, 1.0f, 0.0f);
-	i = cross_vector3(k, l);
-	j = cross_vector3(i, k); //screen plane consisting of 2 perpendicular vectors
-	//i, j, k - basis for l vector
-	l.x = (WIDTH - 2.0 * (double) x) / WIDTH * i.x + (HEIGHT - 2.0 * (double) y) / WIDTH * j.x + FOV * k.x;
-	l.y = (WIDTH - 2.0 * (double) x) / WIDTH * i.y + (HEIGHT - 2.0 * (double) y) / WIDTH * j.y + FOV * k.y;
-	l.z = (WIDTH - 2.0 * (double) x) / WIDTH * i.z + (HEIGHT - 2.0 * (double) y) / WIDTH * j.z + FOV * k.z;
+	(void) rtv;
+	i =  (2 * (x + 0.5) / (float) WIDTH  - 1) * tan(FOV / 2. * M_PI / 180) * WIDTH / (double) HEIGHT;
+	j = -(2 * (y + 0.5) / (float) HEIGHT - 1) * tan(FOV / 2. * M_PI / 180);
+
+	l = new_vector3(i, j, 1);
 	l = normalize(l);
 	return (l);
 }
 
-int			calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray)
-{
-	t_vector3	hit_vector;
-	double 		hit;
+//find color, reflective and specular values from item and it's number
 
-	intersect_sphere(rtv->sphere, cur_ray->ray, &hit);
-	if (hit == 0.0f)
+t_prop find_prop(t_rtv *rtv, int item, int *cur)
+{
+	t_prop prop;
+
+	if (item == SPHERE)
+		prop = rtv->sphere[*cur].prop;
+	else if (item == PLANE)
+		prop = rtv->plane[*cur].prop;
+	else
+		prop = rtv->sphere[*cur].prop; // TODO change this line
+	return (prop);
+}
+
+int	calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray)
+{
+	int 		current;
+	int 		item;
+	t_vector3	hit_point;
+	t_prop		prop;
+
+	current = -1;
+	item = find_closest_object(cur_ray->ray, rtv, &hit_point, &current);
+	if (item == -1)
 		return (0);
-	hit_vector = add_vector3(scale_vector3(cur_ray->ray.dir, hit), cur_ray->ray.origin);
-	cur_ray->norm = sub_vector3(hit_vector, rtv->sphere->center);
-	if (dot_vector3(cur_ray->norm, cur_ray->norm) == 0)
+	//else if (item == SPHERE)
+		cur_ray->norm = sub_vector3(hit_point, rtv->sphere[current].center);
+
+	// TODO THIS DOESN'T WORK!
+	// item = 0 for some reason
+	//else if (item == PLANE)
+	//{
+	//	if (dot_vector3(cur_ray->ray.dir, rtv->plane[current].norm) > 0)
+	//		cur_ray->norm = rtv->plane[current].norm;
+	//	else
+	//		cur_ray->norm = scale_vector3(rtv->plane[current].norm, -1);
+	//}
+
+	//protection so cur_ray->norm is not zero
+	if (len_vector(cur_ray->norm) == 0)
 		return (0);
 	cur_ray->norm = normalize(cur_ray->norm);
-	get_light(rtv, hit_vector, cur_ray);
+	prop = find_prop(rtv, item, &current);
+	get_light(rtv, hit_point, cur_ray, prop);
+	cur_ray->k *= prop.reflective;
+	reflect_ray(&cur_ray->ray, cur_ray->norm, hit_point);
 	return (1);
 }
 
-void get_light(t_rtv *rtv, t_vector3 hit_vector, t_cur_ray *cur_ray)
+//doesn't work for some reason
+t_vector3 find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_ray ray)
 {
-	t_light 	*light;
-	t_vector3 	distance;
-	t_ray 		light_ray;
-	double 		f;
+	t_vector3 norm;
 
-	light = rtv->light;
-	distance = sub_vector3(light->pos, hit_vector);
-	light_ray.origin = hit_vector;
-	light_ray.dir = normalize(distance);
-
-	f = light_shape(light_ray, cur_ray->norm);
-	get_light_color(&cur_ray->color, f, rtv->light);
+	norm = new_vector3(0, 0, 0);
+	if (item == SPHERE)
+		norm = sub_vector3(hit_point, rtv->sphere[*current].center);
+	if (item == PLANE)
+	{
+		if (dot_vector3(ray.dir, rtv->plane[*current].norm) > 0)
+			norm = rtv->plane[*current].norm;
+		else
+			norm = scale_vector3(rtv->plane[*current].norm, -1);
+	}
+	return (norm);
 }
 
-double light_shape(t_ray light_ray, t_vector3 norm)
+void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 {
-	double	f;
+	int j;
+	t_light current_light;
+	t_vector3	dist;
+	t_ray	light_ray;
+	double k;
 
-	f = dot_vector3(light_ray.dir, norm);
-	if (f < 0)
-		return (0);
-	return (f);
+	j = 0;
+	while (j < rtv->nbr[LIGHT])
+	{
+		current_light = rtv->light[j];
+		// light.position - p
+		dist = sub_vector3(current_light.pos, hit_point);
+		if (dot_vector3(cur_ray->norm, dist) <= 0)
+		{
+			j++;
+			continue;
+		}
+		light_ray.origin = hit_point;
+		light_ray.dir = normalize(dist);
+		if (!is_in_shadow(light_ray, rtv, len_vector(dist)))
+		{
+			k = diffuse(light_ray, cur_ray->norm, cur_ray->k);
+			color_diffuse(&cur_ray->color, k, current_light, prop);
+			k = phong(light_ray, cur_ray->norm, &cur_ray->ray, prop);
+			color_phong(&cur_ray->color, k, current_light, cur_ray->k);
+		}
+		j++;
+	}
 }
 
-void get_light_color(t_color *color, double f, t_light *light)
+int find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *cur_item)
 {
-	color->r += f * light->intensity.r;
-	color->g += f * light->intensity.g;
-	color->b += f * light->intensity.b;
+	int i;
+	double dist;
+	int closest[2];
+
+	dist = -1;
+	closest[0] = find_closest_sphere(ray, rtv, &dist);
+	closest[1] = find_closest_plane(ray, rtv, &dist);
+	*hit_vector = add_vector3(scale_vector3(ray.dir, dist), ray.origin);
+	i = -1;
+	while (++i < 2)
+	{
+		if (closest[i] > -1)
+		{
+			*cur_item = closest[i];
+			return (i);
+		}
+		//i++;
+	}
+	return (-1);
+}
+
+int find_closest_sphere(t_ray ray, t_rtv *rtv, double *t)
+{
+	int i, current;
+
+	i = 0;
+	current = -1;
+	while (i < rtv->nbr[SPHERE])
+	{
+		if (intersect_sphere(rtv->sphere[i], ray, t))
+			current = i;
+		i++;
+	}
+	return (current);
+}
+
+void	reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector)
+{
+	double f;
+	t_vector3 tmp;
+
+	ray->origin = hit_vector;
+	f = dot_vector3(ray->dir, norm);
+	tmp = scale_vector3(norm, f);
+	ray->dir = sub_vector3(ray->dir, tmp);
+	ray->dir = normalize(ray->dir);
 }

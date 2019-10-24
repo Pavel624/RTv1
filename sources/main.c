@@ -717,7 +717,7 @@ t_sphere *init_sphere(t_sphere *sphere)
 	//sphere->center = (t_vector3 *)malloc(sizeof(t_vector3));
 	return (sphere);
 }
-
+/*
 void add_light(t_light *light, t_rtv *rtv)
 {
 	t_light *begin;
@@ -946,7 +946,7 @@ int valid(t_rtv *rtv)
 		write(1, "five\n", 5);
 		return (-1);
 	}
-	/*while (rtv->sphere)
+	while (rtv->sphere)
 	{
 		printf("%f\n", rtv->sphere->center.x);
 		printf("%f\n", rtv->sphere->center.y);
@@ -957,7 +957,7 @@ int valid(t_rtv *rtv)
 	printf("%f\n", rtv->sphere->center.x);
 	printf("%f\n", rtv->sphere->center.y);
 	printf("%f\n", rtv->sphere->center.z);
-	*/
+
 	printf("%f\n", rtv->sphere->color.r);
 	printf("%f\n", rtv->sphere->color.g);
 	printf("%f\n", rtv->sphere->color.b);
@@ -965,8 +965,7 @@ int valid(t_rtv *rtv)
 	return (0);
 
 }
-
-
+*/
 static	int		close_app(t_rtv *rtv)
 {
 	free(rtv);
@@ -996,111 +995,92 @@ void	img_pixel_put_one(t_rtv *rtv, int x, int y, t_color color)
 {
 	if (x > 0 && x < WIDTH && y > 0 && y < HEIGHT)
 	{
-		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp] = (char) color.r;
-		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp + 1] = (char) color.g;
-		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp + 2] = (char) color.b;
+		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp + 2] = (char) fmin(color.r * 255.0f, 255.0f);
+		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp + 1] = (char) fmin(color.g * 255.0f, 255.0f);
+		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp] = (char) fmin(color.b * 255.0f, 255.0f);
 
 	}
 }
 
-/*void init_shapes(t_rtv *rtv)
+void init_shapes(t_rtv *rtv)
 {
-	rtv->cam = malloc(sizeof(t_cam));
-	//rtv->sphere = malloc(sizeof(t_sphere));
-	//rtv->light = malloc(sizeof(t_light));
-	t_vector3 center = new_vector3(0, 0, 20);
-	t_color	color = set_color(100, 100, 100);
-	rtv->sphere = new_sphere(center, 5, color);
+	int i = 0;
+	while (i++ < 6)
+		rtv->nbr[i] = 0;
+	rtv->nbr[SPHERE] = 3;
+	rtv->nbr[CYLINDER] = 1;
+	rtv->nbr[CAM] = 1; //there can be only 1 cam
+	rtv->nbr[LIGHT] = 2;
+	rtv->nbr[PLANE] = 1;
 
-	//center = new_vector3(10, 10, 10);
-	//color = set_color(255, 0, 0);
-	//rtv->sphere.next = new_sphere(center, 10., color);
+	rtv->sphere = malloc(rtv->nbr[SPHERE] * sizeof(t_sphere));
+	rtv->cylinder = malloc(rtv->nbr[CYLINDER] * sizeof(t_cylinder));
+	rtv->light = malloc(rtv->nbr[LIGHT] * sizeof(t_light));
+	rtv->cam = malloc(rtv->nbr[CAM] * sizeof(t_cam));
+	rtv->plane = malloc(rtv->nbr[PLANE] * sizeof(t_plane));
+
+	t_vector3 center = new_vector3(0, 0, 15);
+	rtv->sphere[0] = new_sphere(center, 4);
+	rtv->sphere[0].prop.reflective = 0.1; // FROM 0 to 1!
+	rtv->sphere[0].prop.specular = 100;
+	rtv->sphere[0].prop.color = set_color(255, 127, 0);
+
+	center = new_vector3(-6, 6, 20);
+	rtv->sphere[1] = new_sphere(center, 1);
+	rtv->sphere[1].prop.reflective = 0.6;
+	rtv->sphere[1].prop.specular = 1000;
+	rtv->sphere[1].prop.color = set_color(255, 0, 0);
+
+	center = new_vector3(6, 5, 14);
+	rtv->sphere[2] = new_sphere(center, 2);
+	rtv->sphere[2].prop.reflective = 0.1;
+	rtv->sphere[2].prop.specular = 250;
+	rtv->sphere[2].prop.color = set_color(127, 127, 127);
 
 	rtv->cam->pos = new_vector3(0, 0, 0);
 	rtv->cam->dir = new_vector3(0, 0, 1);
-	rtv->light = malloc(sizeof(t_light));
-	rtv->light->pos = new_vector3(-50, 50, -100);
-	rtv->light->intensity = set_color(0, 255, 255);
+
+	rtv->light[0].pos = new_vector3(3, 0, 0);
+	rtv->light[0].intensity = set_color(255, 255, 255);
+
+	//rtv->light[1].pos = new_vector3(0, 20, 20);
+	//rtv->light[1].intensity = set_color(255, 255, 255);
+
+	rtv->plane[0] = new_plane(new_vector3(0,0,-1), 5); //plane norm not equal to (0;0;0)
+	rtv->plane[0].prop.reflective = 0.1;
+	rtv->plane[0].prop.specular = 1000;
+	rtv->plane[0].prop.color = set_color(255, 127, 0);
 }
-*/
-void *draw_scene(void *rtv)
+
+
+int draw(t_rtv *rtv)
 {
-	t_threads	thread;
-	pthread_t		id;
 	int 		x;
 	int			y;
+	int Sx;
+	int Sy;
+	int Cw;
+	int Ch;
 	t_color		color;
 
-	thread.start = 0;
-	id = pthread_self();
-	while (id != ((t_rtv*)rtv)->threads[thread.start])
-		thread.start++;
-	thread.end = THREAD_WIDTH * (thread.start + 1);
-	thread.start = THREAD_WIDTH * thread.start;
-	y = HEIGHT;
-	while (y > -1)
-	{
-		x = thread.start;
-		while (x < thread.end)
-		{
-			color = calculate_color((t_rtv*)rtv, x , y);
-			img_pixel_put_one((t_rtv*)rtv, x , y, color);
-			x++;
-		}
-		y--;
-	}
-	pthread_exit(NULL);
-}
-
-int rtv_pthread(t_rtv *rtv)
-{
-	int i;
-	//int 		x;
-	//int			y;
-	//int Sx;
-	//int Sy;
-	//int Cw;
-	//int Ch;
-	//t_color		color;
-	
-	i = -1;
-	while (++i < THREAD_NUM)
-		pthread_create(&rtv->threads[i], NULL, draw_scene, rtv);
-	while (i--)
-		pthread_join(rtv->threads[i], NULL);
-	
-	/*y = 0;  // если использовать этот цикл, то рисует немного по другому, чем через многопоточность
-	while (y < HEIGHT)
-	{
-		x = 0;
-		while (x < WIDTH)
-		{
-			color = calculate_color((t_rtv*)rtv, x , y);
-			img_pixel_put_one((t_rtv*)rtv, x , y, color);
-			x++;
-		}
-		y++;
-	}
-	*/
-	/*Cw = WIDTH / 2;
+	Cw = WIDTH / 2;
 	Ch = HEIGHT / 2;
 
-	x = -Cw;  
-	while (x <= Cw)
+	x = -Cw;
+	while (x < Cw)
 	{
 		y = -Ch;
-		while (y <= Ch)
+		while (y < Ch)
 		{
-			color = calculate_color((t_rtv*)rtv, x , y);
 			Sx = Cw + x;
 			Sy = Ch - y;
+			color = calculate_color((t_rtv*)rtv, Sx , Sy);
 			img_pixel_put_one((t_rtv*)rtv, Sx , Sy, color);
 			y++;
 		}
 		x++;
-	
 	}
-	*/mlx_put_image_to_window(rtv->mlx, rtv->window, rtv->image.image, 0, 0);
+	mlx_put_image_to_window(rtv->mlx, rtv->window, rtv->image.image, 0, 0);
 	return (0);
 }
 
@@ -1115,14 +1095,14 @@ int				main(int argc, char **argv)
 	if (!(rtv = (t_rtv *)malloc(sizeof(t_rtv))))
 		ft_error("can't allocate enough memory for the structure\n", 0);
 	rtv->name = argv[1];
-	//init_shapes(rtv);
-	if (valid(rtv) != 0)
-	{
-		free(rtv);
-		ft_error("something is wrong with scene input\n", 0);
-	}
+	init_shapes(rtv);
+	//if (valid(rtv) != 0)
+	//{
+	//	free(rtv);
+	//	ft_error("something is wrong with scene input\n", 0);
+	//}
 	init(rtv);
-	mlx_expose_hook(rtv->window, rtv_pthread, rtv);
+	mlx_expose_hook(rtv->window, draw, rtv);
 	mlx_hook(rtv->window, 3, 1L << 1, key_release, rtv);
 	mlx_hook(rtv->window, 17, 1L << 17, close_app, rtv);
 	mlx_loop(rtv->mlx);

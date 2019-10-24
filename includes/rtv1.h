@@ -36,7 +36,14 @@
 # define THREAD_NUM 4
 # define THREAD_WIDTH (WIDTH / THREAD_NUM)
 # define ASPECT_RATIO (WIDTH / HEIGHT)
-# define FOV 2.0
+# define FOV 60.0
+
+# define CAM 0
+# define LIGHT 1
+# define SPHERE 2
+# define PLANE 3
+# define CONE 4
+# define CYLINDER 5
 
 typedef struct	s_image
 {
@@ -60,24 +67,11 @@ typedef struct	s_color
     double      b;
 }				t_color;
 
-typedef struct	s_cam
-{
-    t_vector3	pos;
-    t_vector3	dir;
-}				t_cam;
-
 typedef struct	s_ray
 {
     t_vector3	origin;
     t_vector3	dir;
 }				t_ray;
-
-typedef struct	s_light
-{
-    t_vector3	pos;
-    t_color     intensity;
-    struct s_light *next;
-}				t_light;
 
 typedef struct s_cur_ray
 {
@@ -87,30 +81,54 @@ typedef struct s_cur_ray
 	double		k;
 }				t_cur_ray;
 
+typedef struct s_prop
+{
+	t_color		color;
+	double		reflective;
+	double 		specular;
+}				t_prop;
+
+typedef struct	s_light
+{
+	t_vector3	pos;
+	t_color		intensity;
+}				t_light;
+
+typedef struct	s_cam
+{
+	t_vector3	pos;
+	t_vector3	dir;
+}				t_cam;
+
 typedef struct	s_sphere
 {
-	t_color			color;
-	t_vector3		center;
-	double			radius;
-	struct s_sphere *next;
+	t_prop		prop;
+	t_vector3	center;
+	double		radius;
 }				t_sphere;
 
 typedef struct	s_plane
 {
-	t_color     color;
-	t_vector3	pos;
-	t_vector3	rot;
-	struct s_plane *next;
+	t_prop		prop;
+	t_vector3	norm;
+	double		point;
 }				t_plane;
 
 typedef struct	s_cylinder
 {
-    t_color	    color;
+	t_prop		prop;
     t_vector3	center;
     t_vector3   dir;
     double      radius;
-    struct s_cylinder *next;
 }				t_cylinder;
+
+typedef struct	s_cone
+{
+	t_prop		prop;
+	t_vector3	center;
+	t_vector3   dir;
+	double      angle;
+}				t_cone;
 
 typedef struct	s_rtv
 {
@@ -122,6 +140,8 @@ typedef struct	s_rtv
 	t_plane		*plane;
 	t_sphere	*sphere;
 	t_cylinder  *cylinder;
+	t_cylinder  *cone;
+	int 		nbr[6];
 	pthread_t	threads[THREAD_NUM];
 	char		*name;
 	int			fd;
@@ -130,21 +150,32 @@ typedef struct	s_rtv
 
 }				t_rtv;
 
-t_sphere 	*new_sphere(t_vector3 center, double radius, t_color color);
-int     	intersect_sphere(t_sphere *sphere, t_ray ray, double *hit);
-//t_color     intersect_sphere(t_sphere *sphere, t_ray ray);
+t_sphere 	new_sphere(t_vector3 center, double radius);
+t_plane 	new_plane(t_vector3 norm, double point);
+int     	intersect_sphere(t_sphere sphere, t_ray ray, double *hit);
+int 		intersect_plane(t_plane plane, t_ray ray, double *hit);
 int     	calc_intersect(double k1, double k2, double k3, double *hit);
-//t_color     calc_intersect(double k1, double k2, double k3, t_sphere *sphere);
 t_color 	set_color(double r, double g, double b);
 t_color		calculate_color(t_rtv *rtv, int x, int y);
 t_vector3 	calculate_ray_dir(int x, int y, t_rtv *rtv);
 int			calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray);
-void 		get_light(t_rtv *rtv,t_vector3 hit_vector, t_cur_ray *cur_ray);
-double 		light_shape(t_ray light_ray, t_vector3 norm);
-void		get_light_color(t_color *color, double f, t_light *light);
+void 		get_light(t_rtv *rtv,t_vector3 hit_vector, t_cur_ray *cur_ray, t_prop prop);
+double 		diffuse(t_ray light_ray, t_vector3 norm, double k);
+void 		color_diffuse(t_color *color, double f, t_light light, t_prop prop);
+double 		phong(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop);
+void 		color_phong(t_color *color, double f, t_light light, double coef);
+t_prop 		find_prop(t_rtv *rtv, int item, int *current);
+int 		is_in_shadow(t_ray light_ray, t_rtv *rtv, double t);
+void		reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector);
 
 int 		key_release(int key, t_rtv *rtv);
 
 void		img_pixel_put_one(t_rtv *rtv, int x, int y, t_color color);
+
+t_vector3 	find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_ray ray);
+
+int 		find_closest_plane(t_ray ray, t_rtv *rtv, double *t);
+int 		find_closest_sphere(t_ray ray, t_rtv *rtv, double *t);
+int 		find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *current);
 
 #endif
