@@ -57,14 +57,21 @@ double phong(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop)
 
 int is_in_shadow(t_ray light_ray, t_rtv *rtv, double t)
 {
-	int k;
+	int i;
 
-	k = 0;
-	while (k < rtv->nbr[SPHERE])
+	i = 0;
+	while (i < rtv->nbr[SPHERE])
 	{
-		if (intersect_sphere(rtv->sphere[k], light_ray, &t))
+		if (intersect_sphere(rtv->sphere[i], light_ray, &t))
 			return (1);
-		k++;
+		i++;
 	}
+	i = 0;
+    while (i < rtv->nbr[PLANE])
+    {
+        if (intersect_plane(rtv->plane[i], light_ray, &t))
+            return (1);
+        i++;
+    }
 	return (0);
 }

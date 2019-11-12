@@ -33,7 +33,7 @@ t_color	calculate_color(t_rtv *rtv, int x, int y)
 	cur_ray.k = 1.0;
 	cur_ray.ray.origin = rtv->cam->pos;
 	cur_ray.ray.dir = calculate_ray_dir(x, y, rtv); //calculate where ray goes depending on screen parameters (x and y)
-	while (cur_ray.k > 0.0f && num_intersect < 3)
+	while (cur_ray.k > 0.0f && num_intersect < 4)
 	{
 		if (calculate_ray(rtv, &cur_ray) != 1)
 			break;
@@ -88,19 +88,7 @@ int	calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray)
 	item = find_closest_object(cur_ray->ray, rtv, &hit_point, &current);
 	if (item == -1)
 		return (0);
-	//else if (item == SPHERE)
-		cur_ray->norm = sub_vector3(hit_point, rtv->sphere[current].center);
-
-	// TODO THIS DOESN'T WORK!
-	// item = 0 for some reason
-	//else if (item == PLANE)
-	//{
-	//	if (dot_vector3(cur_ray->ray.dir, rtv->plane[current].norm) > 0)
-	//		cur_ray->norm = rtv->plane[current].norm;
-	//	else
-	//		cur_ray->norm = scale_vector3(rtv->plane[current].norm, -1);
-	//}
-
+	cur_ray->norm = find_norm(rtv, item, &current, hit_point, cur_ray->ray);
 	//protection so cur_ray->norm is not zero
 	if (len_vector(cur_ray->norm) == 0)
 		return (0);
@@ -112,7 +100,6 @@ int	calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray)
 	return (1);
 }
 
-//doesn't work for some reason
 t_vector3 find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_ray ray)
 {
 	t_vector3 norm;
@@ -120,9 +107,9 @@ t_vector3 find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_r
 	norm = new_vector3(0, 0, 0);
 	if (item == SPHERE)
 		norm = sub_vector3(hit_point, rtv->sphere[*current].center);
-	if (item == PLANE)
+	else if (item == PLANE)
 	{
-		if (dot_vector3(ray.dir, rtv->plane[*current].norm) > 0)
+		if (dot_vector3(ray.dir, rtv->plane[*current].norm) < 0.f)
 			norm = rtv->plane[*current].norm;
 		else
 			norm = scale_vector3(rtv->plane[*current].norm, -1);
@@ -172,15 +159,15 @@ int find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *cur_i
 	closest[0] = find_closest_sphere(ray, rtv, &dist);
 	closest[1] = find_closest_plane(ray, rtv, &dist);
 	*hit_vector = add_vector3(scale_vector3(ray.dir, dist), ray.origin);
-	i = -1;
-	while (++i < 2)
+	i = 0;
+	while (i < 2)
 	{
 		if (closest[i] > -1)
 		{
 			*cur_item = closest[i];
-			return (i);
+			return (i + 2);
 		}
-		//i++;
+		i++;
 	}
 	return (-1);
 }
@@ -207,7 +194,7 @@ void	reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector)
 
 	ray->origin = hit_vector;
 	f = dot_vector3(ray->dir, norm);
-	tmp = scale_vector3(norm, f);
+	tmp = scale_vector3(norm, 2.f * f);
 	ray->dir = sub_vector3(ray->dir, tmp);
 	ray->dir = normalize(ray->dir);
 }
