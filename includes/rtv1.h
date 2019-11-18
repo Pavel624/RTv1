@@ -42,8 +42,8 @@
 # define LIGHT 1
 # define SPHERE 2
 # define PLANE 3
-# define CONE 4
-# define CYLINDER 5
+# define CYLINDER 4
+# define CONE 5
 
 typedef struct	s_image
 {
@@ -152,8 +152,10 @@ typedef struct	s_rtv
 
 t_sphere 	new_sphere(t_vector3 center, double radius);
 t_plane 	new_plane(t_vector3 norm, double point);
+t_cylinder  new_cylinder(t_vector3 dir, t_vector3 center, double radius);
 int     	intersect_sphere(t_sphere sphere, t_ray ray, double *hit);
 int 		intersect_plane(t_plane plane, t_ray ray, double *hit);
+int 		intersect_cylinder(t_cylinder cylinder, t_ray ray, double *hit);
 int     	calc_intersect(double k1, double k2, double k3, double *hit);
 t_color 	set_color(double r, double g, double b);
 t_color		calculate_color(t_rtv *rtv, int x, int y);
@@ -176,6 +178,9 @@ t_vector3 	find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_
 
 int 		find_closest_plane(t_ray ray, t_rtv *rtv, double *t);
 int 		find_closest_sphere(t_ray ray, t_rtv *rtv, double *t);
+int 		find_closest_cylinder(t_ray ray, t_rtv *rtv, double *t);
 int 		find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *current);
+
+t_vector3   find_norm_cylinder(t_vector3 hit_point, t_vector3 center, t_vector3 dir);
 
 #endif

@@ -72,6 +72,8 @@ t_prop find_prop(t_rtv *rtv, int item, int *cur)
 		prop = rtv->sphere[*cur].prop;
 	else if (item == PLANE)
 		prop = rtv->plane[*cur].prop;
+    else if (item == CYLINDER)
+        prop = rtv->cylinder[*cur].prop;
 	else
 		prop = rtv->sphere[*cur].prop; // TODO change this line
 	return (prop);
@@ -114,6 +116,11 @@ t_vector3 find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_r
 		else
 			norm = scale_vector3(rtv->plane[*current].norm, -1);
 	}
+	else if (item == CYLINDER)
+	{
+        norm = find_norm_cylinder(hit_point, rtv->cylinder[*current].center, rtv->cylinder[*current].dir);
+        norm = sub_vector3(norm, hit_point);
+    }
 	return (norm);
 }
 
@@ -153,14 +160,15 @@ int find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *cur_i
 {
 	int i;
 	double dist;
-	int closest[2];
+	int closest[3];
 
 	dist = -1;
 	closest[0] = find_closest_sphere(ray, rtv, &dist);
 	closest[1] = find_closest_plane(ray, rtv, &dist);
+    closest[2] = find_closest_cylinder(ray, rtv, &dist);
 	*hit_vector = add_vector3(scale_vector3(ray.dir, dist), ray.origin);
 	i = 0;
-	while (i < 2)
+	while (i < 3)
 	{
 		if (closest[i] > -1)
 		{

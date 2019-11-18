@@ -1008,7 +1008,7 @@ void init_shapes(t_rtv *rtv)
 	while (i++ < 6)
 		rtv->nbr[i] = 0;
 	rtv->nbr[SPHERE] = 3;
-//	rtv->nbr[CYLINDER] = 1;
+	rtv->nbr[CYLINDER] = 1;
 	rtv->nbr[CAM] = 1; //there can be only 1 cam
 	rtv->nbr[LIGHT] = 2;
 	rtv->nbr[PLANE] = 3;
@@ -1038,7 +1038,7 @@ void init_shapes(t_rtv *rtv)
 	rtv->sphere[2].prop.color = set_color(127, 127, 127);
 
 	rtv->cam->pos = new_vector3(0, 0, 0);
-	rtv->cam->dir = new_vector3(0, 0, 1);
+	rtv->cam->dir = new_vector3(0, 0, 10);
 
 	rtv->light[0].pos = new_vector3(4, 0, 0);
 	rtv->light[0].intensity = set_color(255, 255, 255);
@@ -1047,7 +1047,7 @@ void init_shapes(t_rtv *rtv)
 	rtv->light[1].intensity = set_color(255, 255, 255);
 
     rtv->plane[0] = new_plane(new_vector3 (0, 1, 0), -100); //plane norm not equal to (0;0;0)
-    rtv->plane[0].prop.reflective = 0; // any reflection from a plane will result in some not strange results
+    rtv->plane[0].prop.reflective = 0; // any reflection from a plane will result in some strange results
     rtv->plane[0].prop.specular = 1000;
     rtv->plane[0].prop.color = set_color(255, 0, 0);
 
@@ -1060,6 +1060,11 @@ void init_shapes(t_rtv *rtv)
     rtv->plane[2].prop.reflective = 0;
     rtv->plane[2].prop.specular = 1000;
     rtv->plane[2].prop.color = set_color(0, 0, 255);
+
+    rtv->cylinder[0] = new_cylinder(new_vector3(0, 1, 0), new_vector3(0, 0, 1), 1);
+    rtv->cylinder[0].prop.reflective = 0;
+    rtv->cylinder[0].prop.specular = 1000;
+    rtv->cylinder[0].prop.color = set_color(255, 255, 255);
 }
 
 
