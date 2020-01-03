@@ -13,9 +13,9 @@ OSVER := $(shell uname -s)
 
 ifeq ($(OSVER), Linux)
 	LIBFLAGS = -L/usr/X11/lib /usr/X11/lib/libmlx.a -g3 -lXext -lX11 -lm -lmlx -pthread
-	FLAGS = -Wall -O3
+	FLAGS = -Wall -Werror -Wextra -O3
 else
-	LIBFLAGS = -framework OpenGL -framework AppKit -lm -lmlx
+	LIBFLAGS = -framework OpenGL -framework AppKit -lmlx
 	FLAGS = -Wall -Werror -Wextra -O3
 endif
 
