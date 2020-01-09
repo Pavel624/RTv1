@@ -119,7 +119,6 @@ t_vector3 find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_r
 	else if (item == CYLINDER)
 	{
         norm = find_norm_cylinder(hit_point, rtv->cylinder[*current].center, rtv->cylinder[*current].dir);
-        norm = sub_vector3(norm, hit_point);
     }
 	return (norm);
 }
@@ -159,25 +158,33 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 int find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *cur_item)
 {
 	int i;
-	double dist;
+	int k;
+	double closest_dist;
 	int closest[3];
 
-	dist = -1;
-	closest[0] = find_closest_sphere(ray, rtv, &dist);
-	closest[1] = find_closest_plane(ray, rtv, &dist);
-    closest[2] = find_closest_cylinder(ray, rtv, &dist);
-	*hit_vector = add_vector3(scale_vector3(ray.dir, dist), ray.origin);
-	i = 0;
-	while (i < 3)
-	{
-		if (closest[i] > -1)
-		{
-			*cur_item = closest[i];
-			return (i + 2);
-		}
-		i++;
-	}
-	return (-1);
+	closest_dist = MAXFLOAT;
+    i = 0;
+    k = 0;
+	double dist[] = {-1, -1, -1};
+	closest[0] = find_closest_sphere(ray, rtv, &dist[0]);
+	closest[1] = find_closest_plane(ray, rtv, &dist[1]);
+    closest[2] = find_closest_cylinder(ray, rtv, &dist[2]);
+
+    while (i < 3)
+    {
+        if (dist[i] < closest_dist && dist[i] > 0)
+        {
+            closest_dist = dist[i];
+            *cur_item = closest[i];
+            k = i;
+        }
+        i++;
+    }
+    *hit_vector = add_vector3(scale_vector3(ray.dir, closest_dist), ray.origin);
+    if (closest_dist < MAXFLOAT)
+        return (k + 2);
+    else
+	    return (-1);
 }
 
 int find_closest_sphere(t_ray ray, t_rtv *rtv, double *t)
