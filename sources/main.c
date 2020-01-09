@@ -1008,7 +1008,7 @@ void init_shapes(t_rtv *rtv)
 	while (i++ < 6)
 		rtv->nbr[i] = 0;
 	rtv->nbr[SPHERE] = 3;
-	rtv->nbr[CYLINDER] = 1;
+	rtv->nbr[CYLINDER] = 2;
 	rtv->nbr[CAM] = 1; //there can be only 1 cam
 	rtv->nbr[LIGHT] = 2;
 	rtv->nbr[PLANE] = 3;
@@ -1061,10 +1061,15 @@ void init_shapes(t_rtv *rtv)
     rtv->plane[2].prop.specular = 1000;
     rtv->plane[2].prop.color = set_color(0, 0, 255);
 
-    rtv->cylinder[0] = new_cylinder(new_vector3(0, 1, 0), new_vector3(0, 0, 1), 1);
-    rtv->cylinder[0].prop.reflective = 0;
-    rtv->cylinder[0].prop.specular = 1000;
-    rtv->cylinder[0].prop.color = set_color(255, 255, 255);
+    rtv->cylinder[0] = new_cylinder(normalize(new_vector3(1, 1, 4)), new_vector3(-5, 0, 15), 1);
+    rtv->cylinder[0].prop.reflective = 0.1;
+    rtv->cylinder[0].prop.specular = 250;
+    rtv->cylinder[0].prop.color = set_color(0, 127, 255);
+
+    rtv->cylinder[1] = new_cylinder(normalize(new_vector3(0, 1, 0)), new_vector3(-5, 0, 15), 1);
+    rtv->cylinder[1].prop.reflective = 0.1;
+    rtv->cylinder[1].prop.specular = 250;
+    rtv->cylinder[1].prop.color = set_color(255, 127, 255);
 }
 
 

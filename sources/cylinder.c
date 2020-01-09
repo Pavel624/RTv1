@@ -24,15 +24,14 @@ t_cylinder new_cylinder(t_vector3 dir, t_vector3 center, double radius)
 
 int intersect_cylinder(t_cylinder cylinder, t_ray ray, double *hit)
 {
-    t_vector3 point;
+    t_vector3 distance;
     double a, b, c;
 
-    point = sub_vector3(ray.origin, cylinder.center);
-    a = ray.dir.x * ray.dir.x + ray.dir.y * ray.dir.y;
-    b = 2 * (ray.origin.x * ray.dir.x + ray.origin.y * ray.dir.y);
-    c = ray.origin.x * ray.origin.x + ray.origin.y * ray.origin.y - cylinder.radius * cylinder.radius;
-
-    if (b * b - 4 * a * c < 0.001f)
+    distance = sub_vector3(ray.origin, cylinder.center);
+    a = dot_vector3(ray.dir, ray.dir) - (dot_vector3(ray.dir, cylinder.dir) * dot_vector3(ray.dir, cylinder.dir));
+    b = 2 * (dot_vector3(ray.dir, distance) - (dot_vector3(ray.dir, cylinder.dir) * dot_vector3(distance, cylinder.dir)));
+    c = dot_vector3(distance, distance) - (dot_vector3(distance, cylinder.dir) * dot_vector3(distance, cylinder.dir)) - cylinder.radius * cylinder.radius;
+    if (b * b - 4.0f * a * c < 0.001f)
         return (0);
     else
         return (calc_intersect(a, b, c, hit));
@@ -55,9 +54,10 @@ int find_closest_cylinder(t_ray ray, t_rtv *rtv, double *t)
 
 t_vector3 find_norm_cylinder(t_vector3 hit_point, t_vector3 center, t_vector3 dir)
 {
-    t_vector3 z = sub_vector3(hit_point, center);
-    double d = dot_vector3(dir, z) / dot_vector3(dir, dir);
+
+    t_vector3 norm = sub_vector3(hit_point, center);
+    double d = dot_vector3(norm, dir) / dot_vector3(dir, dir);
     t_vector3 x = scale_vector3(dir, d);
-    t_vector3 y = add_vector3(center, x);
-    return (y);
+    norm = normalize(sub_vector3(norm, x));
+    return (norm);
 }
