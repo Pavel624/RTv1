@@ -73,5 +73,19 @@ int is_in_shadow(t_ray light_ray, t_rtv *rtv, double t)
             return (1);
         i++;
     }
+	i = 0;
+	while (i < rtv->nbr[CYLINDER])
+	{
+		if (intersect_cylinder(rtv->cylinder[i], light_ray, &t))
+			return (1);
+		i++;
+	}
+	i = 0;
+	while (i < rtv->nbr[CONE])
+	{
+		if (intersect_cone(rtv->cone[i], light_ray, &t))
+			return (1);
+		i++;
+	}
 	return (0);
 }

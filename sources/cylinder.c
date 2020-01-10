@@ -54,7 +54,6 @@ int find_closest_cylinder(t_ray ray, t_rtv *rtv, double *t)
 
 t_vector3 find_norm_cylinder(t_vector3 hit_point, t_vector3 center, t_vector3 dir)
 {
-
     t_vector3 norm = sub_vector3(hit_point, center);
     double d = dot_vector3(norm, dir) / dot_vector3(dir, dir);
     t_vector3 x = scale_vector3(dir, d);
