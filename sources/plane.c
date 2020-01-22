@@ -27,9 +27,9 @@ int intersect_plane(t_plane plane, t_ray ray, double *hit)
 	double t1;
 
 	dot = dot_vector3(plane.norm,ray.dir);
-	if (fabs(dot) > 0.001f)
+	if (fabs(dot) > 0.00001f)
 	{
-	    t1 = - (dot_vector3(plane.norm, ray.origin) + plane.point) / dot;
+	    t1 = (plane.point - dot_vector3(plane.norm, ray.origin)) / dot;
 		if (t1 > 0.001f && (t1 < *hit || *hit == -1))
 		{
 			*hit = t1;

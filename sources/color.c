@@ -33,7 +33,7 @@ t_color	calculate_color(t_rtv *rtv, int x, int y)
 	cur_ray.k = 1.0;
 	cur_ray.ray.origin = rtv->cam->pos;
 	cur_ray.ray.dir = calculate_ray_dir(x, y, rtv); //calculate where ray goes depending on screen parameters (x and y)
-	while (cur_ray.k > 0.0f && num_intersect < 4)
+	while (cur_ray.k > 0.1f && num_intersect < 4)
 	{
 		if (calculate_ray(rtv, &cur_ray) != 1)
 			break;
@@ -62,7 +62,9 @@ t_vector3 calculate_ray_dir(int x, int y, t_rtv *rtv)
 	return (l);
 }
 
-//find color, reflective and specular values from item and it's number
+/*
+** Find color, reflective and specular values from item and its number
+*/
 
 t_prop find_prop(t_rtv *rtv, int item, int *cur)
 {
@@ -77,7 +79,10 @@ t_prop find_prop(t_rtv *rtv, int item, int *cur)
     else if (item == CONE)
         prop = rtv->cone[*cur].prop;
 	else
-		prop = rtv->sphere[*cur].prop; // TODO change this line
+	{
+		prop = rtv->sphere[*cur].prop;
+		ft_error("Unknown object!\n", 0);
+	}
 	return (prop);
 }
 

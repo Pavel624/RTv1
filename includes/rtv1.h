@@ -150,6 +150,8 @@ typedef struct	s_rtv
 
 }				t_rtv;
 
+void		ft_error(char *msg, int i);
+
 t_sphere 	new_sphere(t_vector3 center, double radius);
 t_plane 	new_plane(t_vector3 norm, double point);
 t_cylinder  new_cylinder(t_vector3 dir, t_vector3 center, double radius);

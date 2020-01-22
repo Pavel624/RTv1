@@ -972,7 +972,7 @@ static	int		close_app(t_rtv *rtv)
 	exit(0);
 }
 
-static	void	ft_error(char *msg, int i)
+void	ft_error(char *msg, int i)
 {
 	ft_putstr(msg);
 	exit(i);
@@ -1058,7 +1058,7 @@ void init_shapes(t_rtv *rtv)
     rtv->plane[1].prop.specular = 200;
     rtv->plane[1].prop.color = set_color(0, 255, 0);
 
-    rtv->plane[2] = new_plane(new_vector3 (0, 0, 1), -500);
+    rtv->plane[2] = new_plane(new_vector3 (0, 0, 1), 500);
     rtv->plane[2].prop.reflective = 0;
     rtv->plane[2].prop.specular = 200;
     rtv->plane[2].prop.color = set_color(0, 0, 255);
@@ -1126,7 +1126,7 @@ int				main(int argc, char **argv)
 	//if (valid(rtv) != 0)
 	//{
 	//	free(rtv);
-	//	ft_error("something is wrong with scene input\n", 0);
+	//	ft_error("Something is wrong with scene input\n", 0);
 	//}
 	init(rtv);
 	mlx_expose_hook(rtv->window, draw, rtv);
