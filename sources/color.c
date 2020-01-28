@@ -33,7 +33,7 @@ t_color	calculate_color(t_rtv *rtv, int x, int y)
 	cur_ray.k = 1.0;
 	cur_ray.ray.origin = rtv->cam->pos;
 	cur_ray.ray.dir = calculate_ray_dir(x, y, rtv); //calculate where ray goes depending on screen parameters (x and y)
-	while (cur_ray.k > 0.1f && num_intersect < 4)
+	while (cur_ray.k > 0.1f && num_intersect < 3)
 	{
 		if (calculate_ray(rtv, &cur_ray) != 1)
 			break;
@@ -136,6 +136,7 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 	t_light current_light;
 	t_vector3	dist;
 	t_ray	light_ray;
+	double 	dist2;
 	double k;
 
 	j = 0;
@@ -151,12 +152,13 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 		}
 		light_ray.origin = hit_point;
 		light_ray.dir = normalize(dist);
+		dist2 = len_vector(light_ray.dir);
 		if (!is_in_shadow(light_ray, rtv, len_vector(dist)))
 		{
 			k = diffuse(light_ray, cur_ray->norm, cur_ray->k);
-			color_diffuse(&cur_ray->color, k, current_light, prop);
+			color_diffuse(&cur_ray->color, k, current_light, prop, dist2);
 			k = phong(light_ray, cur_ray->norm, &cur_ray->ray, prop);
-			color_phong(&cur_ray->color, k, current_light, cur_ray->k);
+			color_phong(&cur_ray->color, k, current_light, cur_ray->k, dist2);
 		}
 		j++;
 	}

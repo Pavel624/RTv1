@@ -1011,7 +1011,7 @@ void init_shapes(t_rtv *rtv)
 	rtv->nbr[CYLINDER] = 2;
 	rtv->nbr[CAM] = 1; //there can be only 1 cam
 	rtv->nbr[LIGHT] = 2;
-	rtv->nbr[PLANE] = 3;
+	rtv->nbr[PLANE] = 5;
 	rtv->nbr[CONE] = 1;
 
 	rtv->sphere = malloc(rtv->nbr[SPHERE] * sizeof(t_sphere));
@@ -1021,62 +1021,108 @@ void init_shapes(t_rtv *rtv)
 	rtv->plane = malloc(rtv->nbr[PLANE] * sizeof(t_plane));
 	rtv->cone = malloc(rtv->nbr[CONE] * sizeof(t_cone));
 
-	t_vector3 center = new_vector3(4, 0, 15);
-	rtv->sphere[0] = new_sphere(center, 4);
-	rtv->sphere[0].prop.reflective = 0.1; // FROM 0 to 1 or reflected light will produce more than a source
+	rtv->plane[0] = new_plane(new_vector3 (0, 1, 0), -300);
+  	rtv->plane[0].prop.reflective = 0; // any reflection from a plane will result in some strange results
+	rtv->plane[0].prop.specular = 200;
+	rtv->plane[0].prop.color = set_color(255, 0, 0);
+
+	rtv->plane[1] = new_plane(new_vector3 (0, 0, 1), 300);
+	rtv->plane[1].prop.reflective = 0;
+	rtv->plane[1].prop.specular = 200;
+	rtv->plane[1].prop.color = set_color(0, 255, 0);
+
+	rtv->plane[2] = new_plane(new_vector3 (1, 0, 0), -400);
+	rtv->plane[2].prop.reflective = 0;
+	rtv->plane[2].prop.specular = 200;
+	rtv->plane[2].prop.color = set_color(0, 255, 0);
+
+	rtv->plane[3] = new_plane(new_vector3 (1, 0, 0), 400);
+	rtv->plane[3].prop.reflective = 0;
+	rtv->plane[3].prop.specular = 200;
+	rtv->plane[3].prop.color = set_color(0, 255, 0);
+
+	rtv->plane[4] = new_plane(new_vector3 (0, 1, 0), 300);
+	rtv->plane[4].prop.reflective = 0;
+	rtv->plane[4].prop.specular = 200;
+	rtv->plane[4].prop.color = set_color(0, 255, 0);
+
+	rtv->light[0].pos = new_vector3(0, 250, 200);
+	rtv->light[0].intensity = set_color(255, 255, 255);
+
+	rtv->cam->pos = new_vector3(0, 0, -200);
+	rtv->cam->dir = new_vector3(0, 0, 1);
+
+	rtv->sphere[0] = new_sphere(new_vector3(-200, -140, 200), 100);
+	rtv->sphere[0].prop.reflective = 0.5; // FROM 0 to 1 or reflected light will produce more than a source
 	rtv->sphere[0].prop.specular = 200; // light absorption value
 	rtv->sphere[0].prop.color = set_color(255, 127, 0);
 
-	center = new_vector3(-6, 6, 20);
-	rtv->sphere[1] = new_sphere(center, 1);
-	rtv->sphere[1].prop.reflective = 0.2;
-	rtv->sphere[1].prop.specular = 100;
-	rtv->sphere[1].prop.color = set_color(255, 0, 0);
+	rtv->sphere[1] = new_sphere(new_vector3(200, -120, 150), 100);
+	rtv->sphere[1].prop.reflective = 0.3; // FROM 0 to 1 or reflected light will produce more than a source
+	rtv->sphere[1].prop.specular = 200; // light absorption value
+	rtv->sphere[1].prop.color = set_color(255, 255, 0);
 
-	center = new_vector3(6, 5, 14);
-	rtv->sphere[2] = new_sphere(center, 2);
-	rtv->sphere[2].prop.reflective = 0.1;
-	rtv->sphere[2].prop.specular = 250;
-	rtv->sphere[2].prop.color = set_color(127, 127, 127);
+//	rtv->cylinder[0] = new_cylinder(normalize(new_vector3(0, 1, 0)), new_vector3(250, 0, 150), 30);
+//	rtv->cylinder[0].prop.reflective = 0.1;
+//	rtv->cylinder[0].prop.specular = 250;
+//	rtv->cylinder[0].prop.color = set_color(0, 127, 255);
 
-	rtv->cam->pos = new_vector3(0, 0, 0);
-	rtv->cam->dir = new_vector3(0, 0, 10);
-
-	rtv->light[0].pos = new_vector3(10, 0, -10);
-	rtv->light[0].intensity = set_color(255, 255, 255);
-
-	rtv->light[1].pos = new_vector3(-10, 0, -10);
-	rtv->light[1].intensity = set_color(255, 255, 255);
-
-    rtv->plane[0] = new_plane(new_vector3 (0, 1, 0), -100); //plane norm not equal to (0;0;0)
-    rtv->plane[0].prop.reflective = 0; // any reflection from a plane will result in some strange results
-    rtv->plane[0].prop.specular = 200;
-    rtv->plane[0].prop.color = set_color(255, 0, 0);
-
-    rtv->plane[1] = new_plane(new_vector3 (0, -1, 0), -100);
-    rtv->plane[1].prop.reflective = 0;
-    rtv->plane[1].prop.specular = 200;
-    rtv->plane[1].prop.color = set_color(0, 255, 0);
-
-    rtv->plane[2] = new_plane(new_vector3 (0, 0, 1), 500);
-    rtv->plane[2].prop.reflective = 0;
-    rtv->plane[2].prop.specular = 200;
-    rtv->plane[2].prop.color = set_color(0, 0, 255);
-
-    rtv->cylinder[0] = new_cylinder(normalize(new_vector3(1, 1, 0)), new_vector3(-5, 0, 15), 1);
-    rtv->cylinder[0].prop.reflective = 0.1;
-    rtv->cylinder[0].prop.specular = 250;
-    rtv->cylinder[0].prop.color = set_color(0, 127, 255);
-
-    rtv->cylinder[1] = new_cylinder(normalize(new_vector3(0, 1, 0)), new_vector3(5, 0, 40), 1);
-    rtv->cylinder[1].prop.reflective = 0.1;
-    rtv->cylinder[1].prop.specular = 250;
-    rtv->cylinder[1].prop.color = set_color(255, 127, 255);
-
-    rtv->cone[0] = new_cone(normalize(new_vector3(0, 1, 0)), new_vector3(0, 0, 15), 0.1);
-	rtv->cone[0].prop.reflective = 0.1;
-	rtv->cone[0].prop.specular = 200;
-	rtv->cone[0].prop.color = set_color(255, 0, 255);
+//	t_vector3 center = new_vector3(4, 0, 15);
+//	rtv->sphere[0] = new_sphere(center, 4);
+//	rtv->sphere[0].prop.reflective = 0.1; // FROM 0 to 1 or reflected light will produce more than a source
+//	rtv->sphere[0].prop.specular = 200; // light absorption value
+//	rtv->sphere[0].prop.color = set_color(255, 127, 0);
+//
+//	center = new_vector3(-6, 6, 20);
+//	rtv->sphere[1] = new_sphere(center, 1);
+//	rtv->sphere[1].prop.reflective = 0.2;
+//	rtv->sphere[1].prop.specular = 100;
+//	rtv->sphere[1].prop.color = set_color(255, 0, 0);
+//
+//	center = new_vector3(6, 5, 14);
+//	rtv->sphere[2] = new_sphere(center, 2);
+//	rtv->sphere[2].prop.reflective = 0.1;
+//	rtv->sphere[2].prop.specular = 250;
+//	rtv->sphere[2].prop.color = set_color(127, 127, 127);
+//
+//	rtv->cam->pos = new_vector3(0, 0, 0);
+//	rtv->cam->dir = new_vector3(0, 0, 10);
+//
+//	rtv->light[0].pos = new_vector3(10, 0, -10);
+//	rtv->light[0].intensity = set_color(255, 255, 255);
+//
+//	rtv->light[1].pos = new_vector3(-10, 0, -10);
+//	rtv->light[1].intensity = set_color(255, 255, 255);
+//
+//    rtv->plane[0] = new_plane(new_vector3 (0, 1, 0), -100); //plane norm not equal to (0;0;0)
+//    rtv->plane[0].prop.reflective = 0; // any reflection from a plane will result in some strange results
+//    rtv->plane[0].prop.specular = 200;
+//    rtv->plane[0].prop.color = set_color(255, 0, 0);
+//
+//    rtv->plane[1] = new_plane(new_vector3 (0, -1, 0), -100);
+//    rtv->plane[1].prop.reflective = 0;
+//    rtv->plane[1].prop.specular = 200;
+//    rtv->plane[1].prop.color = set_color(0, 255, 0);
+//
+//    rtv->plane[2] = new_plane(new_vector3 (0, 0, 1), 500);
+//    rtv->plane[2].prop.reflective = 0;
+//    rtv->plane[2].prop.specular = 200;
+//    rtv->plane[2].prop.color = set_color(0, 0, 255);
+//
+//    rtv->cylinder[0] = new_cylinder(normalize(new_vector3(1, 1, 0)), new_vector3(-5, 0, 15), 1);
+//    rtv->cylinder[0].prop.reflective = 0.1;
+//    rtv->cylinder[0].prop.specular = 250;
+//    rtv->cylinder[0].prop.color = set_color(0, 127, 255);
+//
+//    rtv->cylinder[1] = new_cylinder(normalize(new_vector3(0, 1, 0)), new_vector3(5, 0, 40), 1);
+//    rtv->cylinder[1].prop.reflective = 0.1;
+//    rtv->cylinder[1].prop.specular = 250;
+//    rtv->cylinder[1].prop.color = set_color(255, 127, 255);
+//
+//    rtv->cone[0] = new_cone(normalize(new_vector3(0, 1, 0)), new_vector3(0, 0, 15), 0.1);
+//	rtv->cone[0].prop.reflective = 0.1;
+//	rtv->cone[0].prop.specular = 200;
+//	rtv->cone[0].prop.color = set_color(255, 0, 255);
 }
 
 

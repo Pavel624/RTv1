@@ -13,18 +13,18 @@
 #include "rtv1.h"
 #include <stdio.h>
 
-void color_diffuse(t_color *color, double f, t_light light, t_prop prop)
+void color_diffuse(t_color *color, double f, t_light light, t_prop prop, double dist2)
 {
-	color->r += f * (prop.color.r / 255) * (light.intensity.r / 255);
-	color->g += f * (prop.color.g / 255) * (light.intensity.g / 255);
-	color->b += f * (prop.color.b / 255) * (light.intensity.b / 255);
+	color->r += f * (prop.color.r / 255) * (light.intensity.r / 255) / dist2;
+	color->g += f * (prop.color.g / 255) * (light.intensity.g / 255) / dist2;
+	color->b += f * (prop.color.b / 255) * (light.intensity.b / 255) / dist2;
 }
 
-void color_phong(t_color *color, double f, t_light light, double coef)
+void color_phong(t_color *color, double f, t_light light, double coef, double dist2)
 {
-	color->r += f * coef * (light.intensity.r / 255);
-	color->g += f * coef * (light.intensity.g / 255);
-	color->b += f * coef * (light.intensity.b / 255);
+	color->r += f * coef * (light.intensity.r / 255) / dist2;
+	color->g += f * coef * (light.intensity.g / 255) / dist2;
+	color->b += f * coef * (light.intensity.b / 255) / dist2;
 }
 
 double diffuse(t_ray light_ray, t_vector3 norm, double k)

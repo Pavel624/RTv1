@@ -36,7 +36,7 @@
 # define THREAD_NUM 4
 # define THREAD_WIDTH (WIDTH / THREAD_NUM)
 # define ASPECT_RATIO (WIDTH / HEIGHT)
-# define FOV 60.0
+# define FOV 90.0
 
 # define CAM 0
 # define LIGHT 1
@@ -169,9 +169,9 @@ t_vector3 	calculate_ray_dir(int x, int y, t_rtv *rtv);
 int			calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray);
 void 		get_light(t_rtv *rtv,t_vector3 hit_vector, t_cur_ray *cur_ray, t_prop prop);
 double 		diffuse(t_ray light_ray, t_vector3 norm, double k);
-void 		color_diffuse(t_color *color, double f, t_light light, t_prop prop);
+void 		color_diffuse(t_color *color, double f, t_light light, t_prop prop, double dist2);
 double 		phong(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop);
-void 		color_phong(t_color *color, double f, t_light light, double coef);
+void 		color_phong(t_color *color, double f, t_light light, double coef, double dist2);
 t_prop 		find_prop(t_rtv *rtv, int item, int *current);
 int 		is_in_shadow(t_ray light_ray, t_rtv *rtv, double t);
 void		reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector);
