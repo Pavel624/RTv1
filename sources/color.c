@@ -136,8 +136,8 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 	t_light current_light;
 	t_vector3	dist;
 	t_ray	light_ray;
-	double 	dist2;
-	double k;
+	double kd; //diffuse coefficient
+	double ks; //specular coefficient
 
 	j = 0;
 	while (j < rtv->nbr[LIGHT])
@@ -152,14 +152,18 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 		}
 		light_ray.origin = hit_point;
 		light_ray.dir = normalize(dist);
-		dist2 = len_vector(light_ray.dir);
+		color_diffuse(&cur_ray->color, AMBIENT, current_light, prop);
 		if (!is_in_shadow(light_ray, rtv, len_vector(dist)))
 		{
-			k = diffuse(light_ray, cur_ray->norm, cur_ray->k);
-			color_diffuse(&cur_ray->color, k, current_light, prop, dist2);
-			k = phong(light_ray, cur_ray->norm, &cur_ray->ray, prop);
-			color_phong(&cur_ray->color, k, current_light, cur_ray->k, dist2);
+			kd = diffuse(light_ray, cur_ray->norm);
+			kd < 0 ? kd = 0 : 0;
+			color_diffuse(&cur_ray->color, kd, current_light, prop);
+			ks = phong(light_ray, cur_ray->norm, &cur_ray->ray, prop);
+			ks < 0 ? ks = 0 : 0;
+			color_phong(&cur_ray->color, ks, current_light);
 		}
+		//else
+			//color_diffuse(&cur_ray->color, AMBIENT, current_light, prop);
 		j++;
 	}
 }

@@ -1022,7 +1022,7 @@ void init_shapes(t_rtv *rtv)
 	rtv->cone = malloc(rtv->nbr[CONE] * sizeof(t_cone));
 
 	rtv->plane[0] = new_plane(new_vector3 (0, 1, 0), -300);
-  	rtv->plane[0].prop.reflective = 0; // any reflection from a plane will result in some strange results
+	rtv->plane[0].prop.reflective = 0; // any reflection from a plane will result in some strange results
 	rtv->plane[0].prop.specular = 200;
 	rtv->plane[0].prop.color = set_color(255, 0, 0);
 
@@ -1053,7 +1053,7 @@ void init_shapes(t_rtv *rtv)
 	rtv->cam->dir = new_vector3(0, 0, 1);
 
 	rtv->sphere[0] = new_sphere(new_vector3(-200, -140, 200), 100);
-	rtv->sphere[0].prop.reflective = 0.5; // FROM 0 to 1 or reflected light will produce more than a source
+	rtv->sphere[0].prop.reflective = 0.2; // FROM 0 to 1 or reflected light will produce more than a source
 	rtv->sphere[0].prop.specular = 200; // light absorption value
 	rtv->sphere[0].prop.color = set_color(255, 127, 0);
 
@@ -1091,7 +1091,7 @@ void init_shapes(t_rtv *rtv)
 //	rtv->light[0].pos = new_vector3(10, 0, -10);
 //	rtv->light[0].intensity = set_color(255, 255, 255);
 //
-//	rtv->light[1].pos = new_vector3(-10, 0, -10);
+//	rtv->light[1].pos = new_vector3(60, 30, -70);
 //	rtv->light[1].intensity = set_color(255, 255, 255);
 //
 //    rtv->plane[0] = new_plane(new_vector3 (0, 1, 0), -100); //plane norm not equal to (0;0;0)

@@ -13,23 +13,23 @@
 #include "rtv1.h"
 #include <stdio.h>
 
-void color_diffuse(t_color *color, double f, t_light light, t_prop prop, double dist2)
+void color_diffuse(t_color *color, double k, t_light light, t_prop prop)
 {
-	color->r += f * (prop.color.r / 255) * (light.intensity.r / 255) / dist2;
-	color->g += f * (prop.color.g / 255) * (light.intensity.g / 255) / dist2;
-	color->b += f * (prop.color.b / 255) * (light.intensity.b / 255) / dist2;
+	color->r += k * (prop.color.r / 255) * (light.intensity.r / 255);
+	color->g += k * (prop.color.g / 255) * (light.intensity.g / 255);
+	color->b += k * (prop.color.b / 255) * (light.intensity.b / 255);
 }
 
-void color_phong(t_color *color, double f, t_light light, double coef, double dist2)
+void color_phong(t_color *color, double f, t_light light)
 {
-	color->r += f * coef * (light.intensity.r / 255) / dist2;
-	color->g += f * coef * (light.intensity.g / 255) / dist2;
-	color->b += f * coef * (light.intensity.b / 255) / dist2;
+	color->r += f * (light.intensity.r / 255);
+	color->g += f * (light.intensity.g / 255);
+	color->b += f * (light.intensity.b / 255);
 }
 
-double diffuse(t_ray light_ray, t_vector3 norm, double k)
+double diffuse(t_ray light_ray, t_vector3 norm)
 {
-	return (dot_vector3(light_ray.dir, norm) * k / (len_vector(norm) * len_vector(light_ray.dir)));
+	return (dot_vector3(light_ray.dir, norm) / (len_vector(norm) * len_vector(light_ray.dir)));
 }
 
 double phong(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop)
