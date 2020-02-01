@@ -33,7 +33,7 @@ int intersect_cone(t_cone cone, t_ray ray, double *hit)
     a = dot_vector3(ray.dir, ray.dir) - (1 + k1 * k1) * dot_vector3(ray.dir, cone.dir) * dot_vector3(ray.dir, cone.dir);
     b = 2 * (dot_vector3(ray.dir, distance) - (1 + k1 * k1) * dot_vector3(ray.dir, cone.dir) * dot_vector3(distance, cone.dir));
     c = dot_vector3(distance, distance) - (1 + k1 * k1) * dot_vector3(distance, cone.dir) * dot_vector3(distance, cone.dir);
-    if (b * b - 4.0f * a * c < 0.0f)
+    if (b * b - 4.0f * a * c < 0.001f)
         return (0);
     else
         return (calc_intersect(a, b, c, hit));

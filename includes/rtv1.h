@@ -45,7 +45,7 @@
 # define CYLINDER 4
 # define CONE 5
 
-#define AMBIENT 0.11
+#define AMBIENT 0.15
 
 typedef struct	s_image
 {
@@ -86,14 +86,16 @@ typedef struct s_cur_ray
 typedef struct s_prop
 {
 	t_color		color;
-	double		reflective;
+	double		diffuse;
 	double 		specular;
+	double 		ambient;
 }				t_prop;
 
 typedef struct	s_light
 {
 	t_vector3	pos;
-	t_color		intensity;
+	t_color		color;
+	double 		brightness;
 }				t_light;
 
 typedef struct	s_cam
@@ -172,9 +174,8 @@ int			calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray);
 
 void 		get_light(t_rtv *rtv,t_vector3 hit_vector, t_cur_ray *cur_ray, t_prop prop);
 double 		diffuse(t_ray light_ray, t_vector3 norm);
-void 		color_diffuse(t_color *color, double f, t_light light, t_prop prop);
-double 		phong(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop);
-void 		color_phong(t_color *color, double f, t_light light);
+void 		color_diffuse(t_color *color, double f, t_light light, t_prop prop, double len);
+double 		specular(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop);
 t_prop 		find_prop(t_rtv *rtv, int item, int *current);
 
 int 		is_in_shadow(t_ray light_ray, t_rtv *rtv, double t);

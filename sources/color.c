@@ -54,8 +54,8 @@ t_vector3 calculate_ray_dir(int x, int y, t_rtv *rtv)
 	t_vector3 l;
 
 	(void) rtv;
-	i =  (2 * (x + 0.5) / (float) WIDTH  - 1) * tan(FOV / 2. * M_PI / 180) * WIDTH / (double) HEIGHT;
-	j = -(2 * (y + 0.5) / (float) HEIGHT - 1) * tan(FOV / 2. * M_PI / 180);
+	i =  (2 * (x + 0.5) / (double) WIDTH  - 1) * tan(FOV / 2. * M_PI / 180) * WIDTH / (double) HEIGHT;
+	j = (1 - 2 * (y + 0.5) / (double) HEIGHT) * tan(FOV / 2. * M_PI / 180);
 
 	l = new_vector3(i, j, 1);
 	l = normalize(l);
@@ -104,7 +104,7 @@ int	calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray)
 	cur_ray->norm = normalize(cur_ray->norm);
 	prop = find_prop(rtv, item, &current);
 	get_light(rtv, hit_point, cur_ray, prop);
-	cur_ray->k *= prop.reflective;
+	cur_ray->k *= prop.diffuse;
 	reflect_ray(&cur_ray->ray, cur_ray->norm, hit_point);
 	return (1);
 }
@@ -138,6 +138,7 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 	t_ray	light_ray;
 	double kd; //diffuse coefficient
 	double ks; //specular coefficient
+	double brightness;
 
 	j = 0;
 	while (j < rtv->nbr[LIGHT])
@@ -152,18 +153,19 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 		}
 		light_ray.origin = hit_point;
 		light_ray.dir = normalize(dist);
-		color_diffuse(&cur_ray->color, AMBIENT, current_light, prop);
+
+		brightness = current_light.brightness * 5000 / (4 * M_PI * pow(len_vector(dist), 2));
 		if (!is_in_shadow(light_ray, rtv, len_vector(dist)))
 		{
 			kd = diffuse(light_ray, cur_ray->norm);
 			kd < 0 ? kd = 0 : 0;
-			color_diffuse(&cur_ray->color, kd, current_light, prop);
-			ks = phong(light_ray, cur_ray->norm, &cur_ray->ray, prop);
+			color_diffuse(&cur_ray->color, kd, current_light, prop, brightness);
+			ks = specular(light_ray, cur_ray->norm, &cur_ray->ray, prop);
 			ks < 0 ? ks = 0 : 0;
-			color_phong(&cur_ray->color, ks, current_light);
+			color_diffuse(&cur_ray->color, ks, current_light, prop, brightness);
 		}
 		//else
-			//color_diffuse(&cur_ray->color, AMBIENT, current_light, prop);
+		//	color_diffuse(&cur_ray->color, AMBIENT, current_light, prop, brightness);
 		j++;
 	}
 }
