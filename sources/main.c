@@ -1002,6 +1002,80 @@ void	img_pixel_put_one(t_rtv *rtv, int x, int y, t_color color)
 	}
 }
 
+void scene1(t_rtv *rtv)
+{
+	int i = 0;
+	while (i++ < 6)
+		rtv->nbr[i] = 0;
+	rtv->nbr[SPHERE] = 4;
+	rtv->nbr[CYLINDER] = 2;
+	rtv->nbr[CAM] = 1; //there can be only 1 cam
+	rtv->nbr[LIGHT] = 2;
+	rtv->nbr[PLANE] = 3;
+	rtv->nbr[CONE] = 1;
+
+	rtv->sphere = malloc(rtv->nbr[SPHERE] * sizeof(t_sphere));
+	rtv->cylinder = malloc(rtv->nbr[CYLINDER] * sizeof(t_cylinder));
+	rtv->light = malloc(rtv->nbr[LIGHT] * sizeof(t_light));
+	rtv->cam = malloc(rtv->nbr[CAM] * sizeof(t_cam));
+	rtv->plane = malloc(rtv->nbr[PLANE] * sizeof(t_plane));
+	rtv->cone = malloc(rtv->nbr[CONE] * sizeof(t_cone));
+
+	rtv->plane[0] = new_plane(new_vector3 (0, 1, 0), -300);
+	rtv->plane[0].prop.reflective = 0; // any reflection from a plane will result in some strange results
+	rtv->plane[0].prop.specular = 200;
+	rtv->plane[0].prop.color = set_color(80, 80, 80);
+
+	rtv->plane[1] = new_plane(new_vector3 (0, 0, 1), 800);
+	rtv->plane[1].prop.reflective = 0;
+	rtv->plane[1].prop.specular = 200;
+	rtv->plane[1].prop.color = set_color(0, 80, 127);
+
+	rtv->plane[2] = new_plane(new_vector3 (0, 1, 0), 300);
+	rtv->plane[2].prop.reflective = 0;
+	rtv->plane[2].prop.specular = 200;
+	rtv->plane[2].prop.color = set_color(80, 80, 80);
+
+	rtv->light[0].pos = new_vector3(150, 60, 0);
+	rtv->light[0].intensity = set_color(255, 255, 255);
+
+	rtv->light[1].pos = new_vector3(-150, 60, 0);
+	rtv->light[1].intensity = set_color(255, 255, 255);
+
+	rtv->cam->pos = new_vector3(0, 0, -300);
+	rtv->cam->dir = new_vector3(0, 0, 1);
+
+	rtv->sphere[0] = new_sphere(new_vector3(-180, -300, 150), 60);
+	rtv->sphere[0].prop.reflective = 0; // FROM 0 to 1 or reflected light will produce more than a source
+	rtv->sphere[0].prop.specular = 200; // light absorption value
+	rtv->sphere[0].prop.color = set_color(80, 80, 80);
+
+	rtv->sphere[1] = new_sphere(new_vector3(180, -300, 150), 60);
+	rtv->sphere[1].prop.reflective = 0; // FROM 0 to 1 or reflected light will produce more than a source
+	rtv->sphere[1].prop.specular = 200; // light absorption value
+	rtv->sphere[1].prop.color = set_color(80, 80, 80);
+
+	rtv->sphere[2] = new_sphere(new_vector3(-180, 300, 150), 60);
+	rtv->sphere[2].prop.reflective = 0; // FROM 0 to 1 or reflected light will produce more than a source
+	rtv->sphere[2].prop.specular = 200; // light absorption value
+	rtv->sphere[2].prop.color = set_color(80, 80, 80);
+
+	rtv->sphere[3] = new_sphere(new_vector3(180, 300, 150), 60);
+	rtv->sphere[3].prop.reflective = 0; // FROM 0 to 1 or reflected light will produce more than a source
+	rtv->sphere[3].prop.specular = 200; // light absorption value
+	rtv->sphere[3].prop.color = set_color(80, 80, 80);
+
+	rtv->cylinder[0] = new_cylinder(normalize(new_vector3(0, 1, 0)), new_vector3(180, 300, 150), 40);
+	rtv->cylinder[0].prop.reflective = 0;
+	rtv->cylinder[0].prop.specular = 250;
+	rtv->cylinder[0].prop.color = set_color(80, 80, 80);
+
+	rtv->cylinder[1] = new_cylinder(normalize(new_vector3(0, 1, 0)), new_vector3(-180, 300, 150), 40);
+	rtv->cylinder[1].prop.reflective = 0;
+	rtv->cylinder[1].prop.specular = 250;
+	rtv->cylinder[1].prop.color = set_color(80, 80, 80);
+}
+
 void init_shapes(t_rtv *rtv)
 {
 	int i = 0;
@@ -1168,7 +1242,8 @@ int				main(int argc, char **argv)
 	if (!(rtv = (t_rtv *)malloc(sizeof(t_rtv))))
 		ft_error("can't allocate enough memory for the structure\n", 0);
 	rtv->name = argv[1];
-	init_shapes(rtv);
+	//init_shapes(rtv);
+	scene1(rtv);
 	//if (valid(rtv) != 0)
 	//{
 	//	free(rtv);
