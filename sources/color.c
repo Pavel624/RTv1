@@ -54,8 +54,8 @@ t_vector3 calculate_ray_dir(int x, int y, t_rtv *rtv)
 	t_vector3 l;
 
 	(void) rtv;
-	i =  (2 * (x + 0.5) / (double) WIDTH  - 1) * tan(FOV / 2. * M_PI / 180) * WIDTH / (double) HEIGHT;
-	j = (1 - 2 * (y + 0.5) / (double) HEIGHT) * tan(FOV / 2. * M_PI / 180);
+	i =  (2.0 * ((x + 0.5) / (double) WIDTH)  - 1.0) * tan(FOV / 2.0 * M_PI / 180.0) * (WIDTH / (double) HEIGHT);
+	j = (1.0 - 2.0 * ((y + 0.5) / (double) HEIGHT)) * tan(FOV / 2.0 * M_PI / 180.0);
 
 	l = new_vector3(i, j, 1);
 	l = normalize(l);

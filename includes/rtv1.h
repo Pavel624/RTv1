@@ -88,7 +88,6 @@ typedef struct s_prop
 	t_color		color;
 	double		diffuse;
 	double 		specular;
-	double 		ambient;
 }				t_prop;
 
 typedef struct	s_light
