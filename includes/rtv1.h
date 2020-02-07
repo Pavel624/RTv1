@@ -31,12 +31,11 @@
 # include <math.h>
 # include <pthread.h>
 
-# define WIDTH 1024
-# define HEIGHT 768
+# define WIDTH 1080
+# define HEIGHT 720
 # define THREAD_NUM 4
 # define THREAD_WIDTH (WIDTH / THREAD_NUM)
-# define ASPECT_RATIO (WIDTH / HEIGHT)
-# define FOV 90.0
+# define ASPECT_RATIO ((double) WIDTH / HEIGHT)
 
 # define CAM 0
 # define LIGHT 1
@@ -101,6 +100,7 @@ typedef struct	s_cam
 {
 	t_vector3	pos;
 	t_vector3	dir;
+	double		fov;
 }				t_cam;
 
 typedef struct	s_sphere
@@ -160,10 +160,10 @@ t_plane 	new_plane(t_vector3 norm, double point);
 t_cylinder  new_cylinder(t_vector3 dir, t_vector3 center, double radius);
 t_cone      new_cone(t_vector3 dir, t_vector3 center, double angle);
 
-int     	intersect_sphere(t_sphere sphere, t_ray ray, double *hit);
-int 		intersect_plane(t_plane plane, t_ray ray, double *hit);
-int 		intersect_cylinder(t_cylinder cylinder, t_ray ray, double *hit);
-int			intersect_cone(t_cone cone, t_ray ray, double *hit);
+int     	intersect_sphere(t_sphere sphere, t_ray *ray, double *hit);
+int 		intersect_plane(t_plane plane, t_ray *ray, double *hit);
+int 		intersect_cylinder(t_cylinder cylinder, t_ray *ray, double *hit);
+int			intersect_cone(t_cone cone, t_ray *ray, double *hit);
 
 int     	calc_intersect(double k1, double k2, double k3, double *hit);
 t_color 	set_color(double r, double g, double b);
@@ -177,7 +177,7 @@ void 		color_diffuse(t_color *color, double f, t_light light, t_prop prop, doubl
 double 		specular(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop);
 t_prop 		find_prop(t_rtv *rtv, int item, int *current);
 
-int 		is_in_shadow(t_ray light_ray, t_rtv *rtv, double t);
+int 		is_in_shadow(t_ray *light_ray, t_rtv *rtv, double t);
 void		reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector);
 
 int 		key_release(int key, t_rtv *rtv);

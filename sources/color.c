@@ -54,8 +54,8 @@ t_vector3 calculate_ray_dir(int x, int y, t_rtv *rtv)
 	t_vector3 l;
 
 	(void) rtv;
-	i =  (2.0 * ((x + 0.5) / (double) WIDTH)  - 1.0) * tan(FOV / 2.0 * M_PI / 180.0) * (WIDTH / (double) HEIGHT);
-	j = (1.0 - 2.0 * ((y + 0.5) / (double) HEIGHT)) * tan(FOV / 2.0 * M_PI / 180.0);
+	i =  (2.0 * ((x + 0.5) / (double) WIDTH)  - 1.0) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0) * ASPECT_RATIO;
+	j = (1.0 - 2.0 * ((y + 0.5) / (double) HEIGHT)) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0);
 
 	l = new_vector3(i, j, 1);
 	l = normalize(l);
@@ -127,7 +127,7 @@ t_vector3 find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_r
         norm = find_norm_cylinder(hit_point, rtv->cylinder[*current].center, rtv->cylinder[*current].dir);
 	else if (item == CONE)
 		norm = find_norm_cone(hit_point, rtv->cone[*current].center, rtv->cone[*current].dir, rtv->cone[*current].angle);
-	return (norm);
+	return (normalize(norm));
 }
 
 void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
@@ -155,7 +155,7 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 		light_ray.dir = normalize(dist);
 
 		brightness = current_light.brightness * 5000 / (4 * M_PI * pow(len_vector(dist), 2));
-		if (!is_in_shadow(light_ray, rtv, len_vector(dist)))
+		if (!is_in_shadow(&light_ray, rtv, len_vector(dist)))
 		{
 			kd = diffuse(light_ray, cur_ray->norm);
 			kd < 0 ? kd = 0 : 0;
@@ -211,7 +211,7 @@ int find_closest_sphere(t_ray ray, t_rtv *rtv, double *t)
 	current = -1;
 	while (i < rtv->nbr[SPHERE])
 	{
-		if (intersect_sphere(rtv->sphere[i], ray, t))
+		if (intersect_sphere(rtv->sphere[i], &ray, t))
 			current = i;
 		i++;
 	}

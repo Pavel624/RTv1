@@ -22,17 +22,17 @@ t_sphere new_sphere(t_vector3 center, double radius)
 	return (sphere);
 }
 
-int     intersect_sphere(t_sphere sphere, t_ray ray, double *hit)
+int     intersect_sphere(t_sphere sphere, t_ray *ray, double *hit)
 {
     double k1, k2, k3;
     double discriminant;
     t_vector3 distance;
 
-    k1 = dot_vector3(ray.dir, ray.dir);
+    k1 = dot_vector3(ray->dir, ray->dir);
     if (k1 == 0)
 		return (0);
-    distance = sub_vector3(ray.origin, sphere.center);
-    k2 = 2 * dot_vector3(distance, ray.dir);
+    distance = sub_vector3(ray->origin, sphere.center);
+    k2 = 2 * dot_vector3(distance, ray->dir);
     k3 = dot_vector3(distance, distance) - sphere.radius * sphere.radius;
     discriminant = k2 * k2 - 4 * k1 * k3;
     if (discriminant < 0)

@@ -18,25 +18,27 @@ t_cone new_cone(t_vector3 dir, t_vector3 center, double angle)
 
     cone.dir = dir;
     cone.center = center;
-    cone.angle = angle;
+    cone.angle = angle * M_PI / 180;
     return (cone);
 }
 
-int intersect_cone(t_cone cone, t_ray ray, double *hit)
+int intersect_cone(t_cone cone, t_ray *ray, double *hit)
 {
 	double k1;
     t_vector3 distance;
     double a, b, c;
 
     k1 = tan(cone.angle);
-    distance = sub_vector3(ray.origin, cone.center);
-    a = dot_vector3(ray.dir, ray.dir) - (1 + k1 * k1) * dot_vector3(ray.dir, cone.dir) * dot_vector3(ray.dir, cone.dir);
-    b = 2 * (dot_vector3(ray.dir, distance) - (1 + k1 * k1) * dot_vector3(ray.dir, cone.dir) * dot_vector3(distance, cone.dir));
+    distance = sub_vector3(ray->origin, cone.center);
+    a = dot_vector3(ray->dir, ray->dir) - (1 + k1 * k1) * dot_vector3(ray->dir, cone.dir) * dot_vector3(ray->dir, cone.dir);
+    b = (dot_vector3(ray->dir, distance) - (1 + k1 * k1) * dot_vector3(ray->dir, cone.dir) * dot_vector3(distance, cone.dir));
+    b *= 2;
     c = dot_vector3(distance, distance) - (1 + k1 * k1) * dot_vector3(distance, cone.dir) * dot_vector3(distance, cone.dir);
-    if (b * b - 4.0f * a * c < 0.001f)
+    double discr = b * b - 4.0f * a * c;
+    if (fabs(discr) < 0.001f)
         return (0);
     else
-        return (calc_intersect(a, b, c, hit));
+       return (calc_intersect(a, b, c, hit));
 }
 
 int find_closest_cone(t_ray ray, t_rtv *rtv, double *t)
@@ -47,7 +49,7 @@ int find_closest_cone(t_ray ray, t_rtv *rtv, double *t)
     current = -1;
     while (i < rtv->nbr[CONE])
     {
-        if (intersect_cone(rtv->cone[i], ray, t))
+        if (intersect_cone(rtv->cone[i], &ray, t))
             current = i;
         i++;
     }

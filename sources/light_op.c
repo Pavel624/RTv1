@@ -18,6 +18,12 @@ void color_diffuse(t_color *color, double k, t_light light, t_prop prop, double 
 	color->r += k * (prop.color.r / 255) * (light.color.r / 255) * brightness;
 	color->g += k * (prop.color.g / 255) * (light.color.g / 255) * brightness;
 	color->b += k * (prop.color.b / 255) * (light.color.b / 255) * brightness;
+	color->r > 255 ? color->r = 255 : 0;
+	color->g > 255 ? color->g = 255 : 0;
+	color->b > 255 ? color->b = 255 : 0;
+	color->r < 0 ? color->r = 0 : 0;
+	color->g < 0 ? color->g = 0 : 0;
+	color->b < 0 ? color->b = 0 : 0;
 }
 
 double diffuse(t_ray light_ray, t_vector3 norm)
@@ -48,7 +54,7 @@ double specular(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop)
 	return (k);
 }
 
-int is_in_shadow(t_ray light_ray, t_rtv *rtv, double t)
+int is_in_shadow(t_ray *light_ray, t_rtv *rtv, double t)
 {
 	int i;
 
