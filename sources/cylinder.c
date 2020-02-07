@@ -22,14 +22,14 @@ t_cylinder new_cylinder(t_vector3 dir, t_vector3 center, double radius)
     return (cylinder);
 }
 
-int intersect_cylinder(t_cylinder cylinder, t_ray ray, double *hit)
+int intersect_cylinder(t_cylinder cylinder, t_ray *ray, double *hit)
 {
     t_vector3 distance;
     double a, b, c;
 
-    distance = sub_vector3(ray.origin, cylinder.center);
-    a = dot_vector3(ray.dir, ray.dir) - (dot_vector3(ray.dir, cylinder.dir) * dot_vector3(ray.dir, cylinder.dir));
-    b = 2 * (dot_vector3(ray.dir, distance) - (dot_vector3(ray.dir, cylinder.dir) * dot_vector3(distance, cylinder.dir)));
+    distance = sub_vector3(ray->origin, cylinder.center);
+    a = dot_vector3(ray->dir, ray->dir) - (dot_vector3(ray->dir, cylinder.dir) * dot_vector3(ray->dir, cylinder.dir));
+    b = 2 * (dot_vector3(ray->dir, distance) - (dot_vector3(ray->dir, cylinder.dir) * dot_vector3(distance, cylinder.dir)));
     c = dot_vector3(distance, distance) - (dot_vector3(distance, cylinder.dir) * dot_vector3(distance, cylinder.dir)) - cylinder.radius * cylinder.radius;
     if (b * b - 4.0f * a * c < 0.001f)
         return (0);
@@ -45,7 +45,7 @@ int find_closest_cylinder(t_ray ray, t_rtv *rtv, double *t)
     current = -1;
     while (i < rtv->nbr[CYLINDER])
     {
-        if (intersect_cylinder(rtv->cylinder[i], ray, t))
+        if (intersect_cylinder(rtv->cylinder[i], &ray, t))
             current = i;
         i++;
     }

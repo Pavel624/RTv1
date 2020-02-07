@@ -1007,7 +1007,7 @@ void scene1(t_rtv *rtv)
 	int i = 0;
 	while (i++ < 6)
 		rtv->nbr[i] = 0;
-	rtv->nbr[SPHERE] = 10;
+	rtv->nbr[SPHERE] = 9;
 	rtv->nbr[CYLINDER] = 4;
 	rtv->nbr[CAM] = 1; //there can be only 1 cam
 	rtv->nbr[LIGHT] = 2;
@@ -1022,7 +1022,7 @@ void scene1(t_rtv *rtv)
 	rtv->cone = malloc(rtv->nbr[CONE] * sizeof(t_cone));
 
 	rtv->cam->pos = new_vector3(0, 0, 170);
-	rtv->cam->dir = new_vector3(0, 0, -1);
+	rtv->cam->dir = new_vector3(100, 0, -1);
 	rtv->cam->fov = 50.0;
 
 	rtv->plane[0] = new_plane(new_vector3 (0, 1, 0), 30);
@@ -1111,8 +1111,8 @@ void scene1(t_rtv *rtv)
 
 	rtv->sphere[8] = new_sphere(new_vector3(0, -20, 50), 6);
 	rtv->sphere[8].prop.diffuse = 0.1; // FROM 0 to 1 or reflected light will produce more than a source
-	rtv->sphere[8].prop.specular = 500; // light absorption value
-	rtv->sphere[8].prop.color = set_color(255, 127, 0);
+	rtv->sphere[8].prop.specular = 200; // light absorption value
+	rtv->sphere[8].prop.color = set_color(255, 0, 0);
 
 }
 
@@ -1149,7 +1149,7 @@ void scene2(t_rtv *rtv)
 	rtv->light[0].color = set_color(255, 255, 255);
 	rtv->light[0].brightness = 200;
 
-	rtv->cam->pos = new_vector3(0, 0, -600);
+	rtv->cam->pos = new_vector3(0, 0, -500);
 	rtv->cam->dir = normalize (new_vector3(0, 0, 1));
 	rtv->cam->fov = 120;
 
@@ -1163,9 +1163,9 @@ void scene2(t_rtv *rtv)
 	rtv->cylinder[0].prop.specular = 400;
 	rtv->cylinder[0].prop.color = set_color(80, 255, 80);
 
-    rtv->cone[0] = new_cone(normalize(new_vector3(0, 1, 0)), new_vector3(50, 20, -150), 45);
-	rtv->cone[0].prop.diffuse = 0.1;
-	rtv->cone[0].prop.specular = 500;
+    rtv->cone[0] = new_cone(normalize(new_vector3(1, -1, 0)), new_vector3(50, 20, 0), 45);
+	rtv->cone[0].prop.diffuse = 0;
+	rtv->cone[0].prop.specular = 300;
 	rtv->cone[0].prop.color = set_color(255, 0, 255);
 
 }
@@ -1289,8 +1289,8 @@ int				main(int argc, char **argv)
 		ft_error("can't allocate enough memory for the structure\n", 0);
 	rtv->name = argv[1];
 	//init_shapes(rtv);
-	//scene1(rtv);
-	scene2(rtv);
+	scene1(rtv);
+	//scene2(rtv);
 	//if (valid(rtv) != 0)
 	//{
 	//	free(rtv);

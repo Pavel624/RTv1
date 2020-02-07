@@ -51,15 +51,28 @@ t_vector3 calculate_ray_dir(int x, int y, t_rtv *rtv)
 {
 	double i;
 	double j;
+	//double k;
 	t_vector3 l;
+	//t_vector3 n, v, u;
 
 	(void) rtv;
-	i =  (2.0 * ((x + 0.5) / (double) WIDTH)  - 1.0) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0) * ASPECT_RATIO;
-	j = (1.0 - 2.0 * ((y + 0.5) / (double) HEIGHT)) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0);
+	i = (2 * ((x + 0.5) / (double) WIDTH)  - 1) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0) * ASPECT_RATIO;
+	j = (1 - 2 * ((y + 0.5) / (double) HEIGHT)) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0);
 
-	l = new_vector3(i, j, 1);
+	l = new_vector3(i, j, rtv->cam->dir.z);
 	l = normalize(l);
 	return (l);
+
+	//n = normalize(rtv->cam->dir);
+	//if (n.x == 0 && n.y == 0 && n.z == 1)
+	//	l = new_vector3(0, 1, 0);
+		//u = cross_vector3(n, new_vector3(0, 1, 0));
+	//else
+	//	l = new_vector3(0, 0, 1);
+		// u = cross_vector3(n, new_vector3(0, 0, 1));
+	//u = cross_vector3(n , l);
+	//v = cross_vector3(u , n);
+
 }
 
 /*
@@ -70,6 +83,9 @@ t_prop find_prop(t_rtv *rtv, int item, int *cur)
 {
 	t_prop prop;
 
+	prop.color = set_color(0 , 0, 0);
+	prop.diffuse = 0;
+	prop.specular = 0;
 	if (item == SPHERE)
 		prop = rtv->sphere[*cur].prop;
 	else if (item == PLANE)
@@ -78,11 +94,6 @@ t_prop find_prop(t_rtv *rtv, int item, int *cur)
         prop = rtv->cylinder[*cur].prop;
     else if (item == CONE)
         prop = rtv->cone[*cur].prop;
-	else
-	{
-		prop = rtv->sphere[*cur].prop;
-		ft_error("Unknown object!\n", 0);
-	}
 	return (prop);
 }
 
@@ -146,7 +157,7 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 		current_light = rtv->light[j];
 		// light.position - p
 		dist = sub_vector3(current_light.pos, hit_point);
-		if (dot_vector3(cur_ray->norm, dist) <= 0)
+		if (dot_vector3(cur_ray->norm, dist) <= 0.f || len_vector(dist) <= 0.f)
 		{
 			j++;
 			continue;
@@ -173,33 +184,33 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 int find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *cur_item)
 {
 	int i;
-	int k;
-	double closest_dist;
+	double distance;
 	int closest[4];
 
-	closest_dist = MAXFLOAT;
-    i = 0;
-    k = 0;
-	double dist[] = {-1, -1, -1, -1};
-	closest[0] = find_closest_sphere(ray, rtv, &dist[0]);
-	closest[1] = find_closest_plane(ray, rtv, &dist[1]);
-    closest[2] = find_closest_cylinder(ray, rtv, &dist[2]);
-	closest[3] = find_closest_cone(ray, rtv, &dist[3]);
+	distance = -1;
 
+	closest[0] = find_closest_sphere(ray, rtv, &distance);
+	closest[1] = find_closest_plane(ray, rtv, &distance);
+    closest[2] = find_closest_cylinder(ray, rtv, &distance);
+	closest[3] = find_closest_cone(ray, rtv, &distance);
+
+	*hit_vector = add_vector3(scale_vector3(ray.dir, distance), ray.origin);
+
+	i = 3;
+	while (closest[i] == -1 && i > 0)
+		i--;
+	while (--i >= 0)
+		closest[i] = -1;
+	i = 0;
 	while (i < 4)
     {
-        if (dist[i] < closest_dist && dist[i] > 0)
+        if (closest[i] > -1)
         {
-            closest_dist = dist[i];
             *cur_item = closest[i];
-            k = i;
+            return(i + 2);
         }
         i++;
     }
-    *hit_vector = add_vector3(scale_vector3(ray.dir, closest_dist), ray.origin);
-    if (closest_dist < MAXFLOAT)
-        return (k + 2);
-    else
 	    return (-1);
 }
 

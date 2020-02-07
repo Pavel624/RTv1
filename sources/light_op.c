@@ -38,10 +38,11 @@ double specular(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop)
 	double tmp;
 
 	(void) ray;
+
 	tmp = dot_vector3(norm, light_ray.dir);
 	dir = scale_vector3(norm, 2 * tmp);
 	dir = sub_vector3(dir, light_ray.dir);
-	if (dot_vector3(dir, dir) != 0)
+	if (len_vector(dir) != 0)
 	{
 		dir = normalize(dir);
 		k = dot_vector3(dir, norm);
