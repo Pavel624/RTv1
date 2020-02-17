@@ -1,43 +1,8 @@
-scene
-{
-	cam_pos(0 0 0)
-	cam_dir(0 0 1)
-}
-
-content
-{
-	object(light)
-	{
-		col(255 0 255)
-		pos(-50 50 -100)
-	}
-	object(light)
-	{
-		col(255 255 255)
-		pos(50 50 -100)
-	}
-	object(plane)
-	{
-		col(160 160 160)
-		pos(0 0 20)
-		rot(0 0 -1)
-	}
-	object(plane)
-	{
-		col(160 160 160)
-		pos(0 0 20)
-		rot(0 0 -1)
-	}
-	object(sphere)
-	{
-		col(255 127 0)
-		pos(0 0 10)
-		size(2)
-	}
-	object(sphere)
-	{
-		col(255 127 0)
-		pos(-70 70 10)
-		size(5)
-	}
-}
+CAMERA: position: (0 0 0), direction: (0 0 1), fov: 90;
+LIGHT: position: (80, 20, 150), color: (255, 255, 255), brightness :50;
+LIGHT: position: (-80, 20, 150), color: (255, 255, 255), brightness :50;
+PLANE: direction: (0, 1, 0), point: 30, color: (80, 80, 80);
+SPHERE: center: (-30 ,30, 0), radius: 10, diffuse: 0, specular: 200, color: (80, 80, 80);
+CONE: direction: (-1, 1, 0), center: (150, 0, 0), angle: 20, diffuse: 0, specular: 200, color: (80, 80, 80);
+CYLINDER: direction: (1, 1, 0), center: (-150, 0, 0), radius: 50, diffuse: 0, specular: 200, color: (80, 80, 80);
+// CYLINDER: direction: (1, 1, 0), center: (-150, 0, 0), radius: 50, diffuse: 0, specular: 200, color: (80, 80, 80);

@@ -13,26 +13,7 @@
 #include "rtv1.h"
 #include <stdio.h>
 
-/*int valid1(t_rtv *rtv)
-{
-	char *line;
-
-	rtv->fd = open(rtv->name, O_RDONLY);
-	if (rtv->fd < 0)
-	{
-		close(rtv->fd);
-		return (-1);
-	}
-	if ((get_next_line(rtv->fd, &line) < 0))
-	{
-		ft_strdel(&line);
-		return (-1);
-	}
-	ft_strdel(&line);
-	close(rtv->fd);
-	return (0);
-}
-
+/*
 int valid2(t_rtv *rtv)
 {
 	char *line;
@@ -1022,7 +1003,7 @@ void scene1(t_rtv *rtv)
 	rtv->cone = malloc(rtv->nbr[CONE] * sizeof(t_cone));
 
 	rtv->cam->pos = new_vector3(0, 0, 170);
-	rtv->cam->dir = new_vector3(100, 0, -1);
+	rtv->cam->dir = normalize(new_vector3(0, 0, -1));
 	rtv->cam->fov = 50.0;
 
 	rtv->plane[0] = new_plane(new_vector3 (0, 1, 0), 30);
@@ -1151,7 +1132,7 @@ void scene2(t_rtv *rtv)
 
 	rtv->cam->pos = new_vector3(0, 0, -500);
 	rtv->cam->dir = normalize (new_vector3(0, 0, 1));
-	rtv->cam->fov = 120;
+	rtv->cam->fov = 90;
 
 	rtv->sphere[0] = new_sphere(new_vector3(-50, -140, -100), 60);
 	rtv->sphere[0].prop.diffuse = 0.1; // FROM 0 to 1 or reflected light will produce more than a source
@@ -1217,7 +1198,7 @@ void init_shapes(t_rtv *rtv)
 	rtv->light[0].pos = new_vector3(0, 250, 200);
 	rtv->light[0].color = set_color(255, 255, 255);
 
-	rtv->cam->pos = new_vector3(0, 0, -200);
+	rtv->cam->pos = new_vector3(0, 0, -1);
 	rtv->cam->dir = new_vector3(0, 0, 1);
 
 	rtv->sphere[0] = new_sphere(new_vector3(-200, -140, 200), 100);
@@ -1250,25 +1231,28 @@ int draw(t_rtv *rtv)
 {
 	int 		x;
 	int			y;
-	int Sx;
-	int Sy;
+	//int Sx;
+	//int Sy;
 	int Cw;
 	int Ch;
 	t_color		color;
 
-	Cw = WIDTH / 2;
-	Ch = HEIGHT / 2;
-
-	x = -Cw;
+	//Cw = WIDTH / 2;
+	//Ch = HEIGHT / 2;
+	Cw = WIDTH;
+	Ch = HEIGHT;
+	//x = -Cw;
+	x = 0;
 	while (x < Cw)
 	{
-		y = -Ch;
+		//y = -Ch;
+		y = 0;
 		while (y < Ch)
 		{
-			Sx = Cw + x;
-			Sy = Ch - y;
-			color = calculate_color((t_rtv*)rtv, Sx , Sy);
-			img_pixel_put_one((t_rtv*)rtv, Sx , Sy, color);
+			//Sx = Cw + x;
+			//Sy = Ch - y;
+			color = calculate_color((t_rtv*)rtv, x , y);
+			img_pixel_put_one((t_rtv*)rtv, x , y, color);
 			y++;
 		}
 		x++;
@@ -1291,11 +1275,11 @@ int				main(int argc, char **argv)
 	//init_shapes(rtv);
 	scene1(rtv);
 	//scene2(rtv);
-	//if (valid(rtv) != 0)
-	//{
-	//	free(rtv);
-	//	ft_error("Something is wrong with scene input\n", 0);
-	//}
+	if (validation(rtv) != 1)
+	{
+		free(rtv);
+		ft_error("Something is wrong with scene input\n", 0);
+	}
 	init(rtv);
 	mlx_expose_hook(rtv->window, draw, rtv);
 	mlx_hook(rtv->window, 3, 1L << 1, key_release, rtv);
