@@ -39,11 +39,6 @@ t_color	calculate_color(t_rtv *rtv, int x, int y)
 			break;
 		num_intersect++;
 	}
-	
-	//cur_ray.color = intersect_sphere(rtv->sphere, cur_ray.ray);
-	//printf("%f\n", cur_ray.color.r);
-	//printf("%f\n", cur_ray.color.g);
-	//printf("%f\n", cur_ray.color.b);
 	return (cur_ray.color);
 }
 
@@ -51,28 +46,14 @@ t_vector3 calculate_ray_dir(int x, int y, t_rtv *rtv)
 {
 	double i;
 	double j;
-	//double k;
 	t_vector3 l;
-	//t_vector3 n, v, u;
 
-	(void) rtv;
 	i = (2 * ((x + 0.5) / (double) WIDTH)  - 1) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0) * ASPECT_RATIO;
 	j = (1 - 2 * ((y + 0.5) / (double) HEIGHT)) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0);
 
-	l = new_vector3(i, j, rtv->cam->dir.z);
+	l = new_vector3(i + rtv->cam->dir.x, j + rtv->cam->dir.y, rtv->cam->dir.z);
 	l = normalize(l);
 	return (l);
-
-	//n = normalize(rtv->cam->dir);
-	//if (n.x == 0 && n.y == 0 && n.z == 1)
-	//	l = new_vector3(0, 1, 0);
-		//u = cross_vector3(n, new_vector3(0, 1, 0));
-	//else
-	//	l = new_vector3(0, 0, 1);
-		// u = cross_vector3(n, new_vector3(0, 0, 1));
-	//u = cross_vector3(n , l);
-	//v = cross_vector3(u , n);
-
 }
 
 /*
@@ -110,7 +91,7 @@ int	calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray)
 		return (0);
 	cur_ray->norm = find_norm(rtv, item, &current, hit_point, cur_ray->ray);
 	//protection so cur_ray->norm is not zero
-	if (len_vector(cur_ray->norm) == 0)
+	if (len_vector(cur_ray->norm) < 0.001f)
 		return (0);
 	cur_ray->norm = normalize(cur_ray->norm);
 	prop = find_prop(rtv, item, &current);
@@ -156,6 +137,7 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 	{
 		current_light = rtv->light[j];
 		// light.position - p
+		hit_point = add_vector3(hit_point, scale_vector3(cur_ray->norm, 1.f));
 		dist = sub_vector3(current_light.pos, hit_point);
 		if (dot_vector3(cur_ray->norm, dist) <= 0.f || len_vector(dist) <= 0.f)
 		{
@@ -164,7 +146,6 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 		}
 		light_ray.origin = hit_point;
 		light_ray.dir = normalize(dist);
-
 		brightness = current_light.brightness * 5000 / (4 * M_PI * pow(len_vector(dist), 2));
 		if (!is_in_shadow(&light_ray, rtv, len_vector(dist)))
 		{

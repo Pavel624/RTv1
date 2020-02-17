@@ -49,7 +49,7 @@ int     calc_intersect(double k1, double k2, double k3, double *hit)
     sqrt_discr = sqrtf(k2 * k2 - 4 * k1 * k3);
     t1 = (-k2 + sqrt_discr) / (2 * k1);
     t2 = (-k2 - sqrt_discr) / (2 * k1);
-    if (t1 > t2)
+    if (t1 > t2 || t1 < 0.001f)
     	t1 = t2;
     if (t1 > 0.001f && (t1 < *hit || *hit == -1))
     {

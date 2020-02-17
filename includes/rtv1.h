@@ -153,6 +153,8 @@ typedef struct	s_rtv
 
 }				t_rtv;
 
+int			validation (t_rtv *rtv);
+
 void		ft_error(char *msg, int i);
 
 t_sphere 	new_sphere(t_vector3 center, double radius);
