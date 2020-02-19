@@ -1,6 +1,6 @@
 NAME = RTv1
 
-SRC_FILES  = main.c keys.c vector3.c color.c sphere.c plane.c light_op.c cylinder.c cone.c parser.c
+SRC_FILES  = main.c keys.c vector3.c color.c sphere.c plane.c light_op.c cylinder.c cone.c parser.c parse_shapes.c
 SRC_FOLDER = ./sources
 INC_FOLDER = ./includes
 SRC = $(addprefix $(SRC_FOLDER)/, $(SRC_FILES))

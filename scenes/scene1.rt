@@ -1,8 +1,7 @@
-CAMERA: position: (0 0 0), direction: (0 0 1), fov: 90;
-LIGHT: position: (80, 20, 150), color: (255, 255, 255), brightness :50;
-LIGHT: position: (-80, 20, 150), color: (255, 255, 255), brightness :50;
-PLANE: direction: (0, 1, 0), point: 30, color: (80, 80, 80);
-SPHERE: center: (-30 ,30, 0), radius: 10, diffuse: 0, specular: 200, color: (80, 80, 80);
-CONE: direction: (-1, 1, 0), center: (150, 0, 0), angle: 20, diffuse: 0, specular: 200, color: (80, 80, 80);
-CYLINDER: direction: (1, 1, 0), center: (-150, 0, 0), radius: 50, diffuse: 0, specular: 200, color: (80, 80, 80);
-// CYLINDER: direction: (1, 1, 0), center: (-150, 0, 0), radius: 50, diffuse: 0, specular: 200, color: (80, 80, 80);
+CAMERA: position: (0, 0, -500), direction: (0, 0, 1), fov: 90;
+LIGHT: position: (100, 50, -300), color: (255, 255, 255), brightness: 200;
+PLANE: direction: (0, 1, 0), point: -200, diffuse: 0, specular: 0 color: (80, 80, 80);
+PLANE: direction: (0, 0, 1), point: 200, diffuse: 11, specular: 10 color: (0, 80, 127);
+SPHERE: center: (-50, -140, -100), radius: 60, diffuse: 10, specular: 40, color: (255, 50, 50);
+CYLINDER: direction: (1, 1, 0), center: (180, 300, 70), radius: 90, diffuse: 0, specular: 400, color: (80, 255, 80);
+CONE: direction (1, 0, 0), center: (0, 30, 70), angle: 20, diffuse: 0, specular: 400, color: (0, 127, 80);

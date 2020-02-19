@@ -85,36 +85,36 @@ typedef struct s_cur_ray
 typedef struct s_prop
 {
 	t_color		color;
-	double		diffuse;
-	double 		specular;
+	double			diffuse;
+	int 		specular;
 }				t_prop;
 
 typedef struct	s_light
 {
 	t_vector3	pos;
 	t_color		color;
-	double 		brightness;
+	int 		brightness;
 }				t_light;
 
 typedef struct	s_cam
 {
 	t_vector3	pos;
 	t_vector3	dir;
-	double		fov;
+	int			fov;
 }				t_cam;
 
 typedef struct	s_sphere
 {
 	t_prop		prop;
 	t_vector3	center;
-	double		radius;
+	int			radius;
 }				t_sphere;
 
 typedef struct	s_plane
 {
 	t_prop		prop;
 	t_vector3	norm;
-	double		point;
+	int			point;
 }				t_plane;
 
 typedef struct	s_cylinder
@@ -122,7 +122,7 @@ typedef struct	s_cylinder
 	t_prop		prop;
     t_vector3	center;
     t_vector3   dir;
-    double      radius;
+    int     	 radius;
 }				t_cylinder;
 
 typedef struct	s_cone
@@ -130,7 +130,7 @@ typedef struct	s_cone
 	t_prop		prop;
 	t_vector3	center;
 	t_vector3   dir;
-	double      angle;
+	double 	    angle;
 }				t_cone;
 
 typedef struct	s_rtv
@@ -152,6 +152,18 @@ typedef struct	s_rtv
 	char		*buf;
 
 }				t_rtv;
+
+/* 		----------------
+** 		|parse_shapes.c|
+**		----------------
+*/
+
+void		parse_plane(t_rtv *rtv, char **words, int *index);
+void		parse_sphere(t_rtv *rtv, char **words, int *index);
+void		parse_cylinder(t_rtv *rtv, char **words, int *index);
+void		parse_cone(t_rtv *rtv, char **words, int *index);
+
+int			check_color(t_color color);
 
 int			validation (t_rtv *rtv);
 
