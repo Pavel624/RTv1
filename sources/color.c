@@ -156,8 +156,8 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 			ks < 0 ? ks = 0 : 0;
 			color_diffuse(&cur_ray->color, ks, current_light, prop, brightness);
 		}
-		//else
-		//	color_diffuse(&cur_ray->color, AMBIENT, current_light, prop, brightness);
+		else
+			color_diffuse(&cur_ray->color, AMBIENT, current_light, prop, 0.5);
 		j++;
 	}
 }
