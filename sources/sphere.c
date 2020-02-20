@@ -24,21 +24,19 @@ t_sphere new_sphere(t_vector3 center, double radius)
 
 int     intersect_sphere(t_sphere sphere, t_ray *ray, double *hit)
 {
-    double k1, k2, k3;
-    double discriminant;
+    double a, b, c;
     t_vector3 distance;
 
-    k1 = dot_vector3(ray->dir, ray->dir);
-    if (k1 == 0)
+    a = dot_vector3(ray->dir, ray->dir);
+    if (a == 0)
 		return (0);
     distance = sub_vector3(ray->origin, sphere.center);
-    k2 = 2 * dot_vector3(distance, ray->dir);
-    k3 = dot_vector3(distance, distance) - sphere.radius * sphere.radius;
-    discriminant = k2 * k2 - 4 * k1 * k3;
-    if (discriminant < 0)
+    b = 2 * dot_vector3(distance, ray->dir);
+    c = dot_vector3(distance, distance) - sphere.radius * sphere.radius;
+    if (b * b - 4 * a * c < T_RAY_MIN)
         return (0);
     else
-		return (calc_intersect(k1, k2, k3, hit));
+		return (calc_intersect(a, b, c, hit));
 }
 
 int     calc_intersect(double k1, double k2, double k3, double *hit)
@@ -49,9 +47,9 @@ int     calc_intersect(double k1, double k2, double k3, double *hit)
     sqrt_discr = sqrtf(k2 * k2 - 4 * k1 * k3);
     t1 = (-k2 + sqrt_discr) / (2 * k1);
     t2 = (-k2 - sqrt_discr) / (2 * k1);
-    if (t1 > t2 && t2 > 0.001f)
+    if (t1 > t2 || t1 < T_RAY_MIN)
     	t1 = t2;
-    if (t1 > 0.001f && (t1 < *hit || *hit == -1))
+    if (t1 > T_RAY_MIN && (t1 < *hit || *hit == -1))
     {
         *hit = t1;
         return (1);
