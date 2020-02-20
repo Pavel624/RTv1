@@ -76,9 +76,10 @@ void parse_cone(t_rtv *rtv, char **words, int *index)
 	if (len_vector(rtv->cone[*index].dir) < 0.0001f)
 		ft_error("Direction of cone cannot be a null vector\n", 0);
 	rtv->cone[*index].center = new_vector3(ft_atoi(words[6] + 1), ft_atoi(words[7]), ft_atoi(words[8]));
-	rtv->cone[*index].angle = (double)ft_atoi(words[10]) * M_PI / 180;
-	if (rtv->cone[*index].angle < 0 || rtv->cone[*index].angle > 45)
-		ft_error("Angle of cone ranges from 0 to 45\n", 0);
+	rtv->cone[*index].angle = (double) ft_atoi(words[10]);
+	if (rtv->cone[*index].angle < 0 || rtv->cone[*index].angle > 90)
+		ft_error("Angle of cone ranges from 0 to 90\n", 0);
+	rtv->cone[*index].angle = rtv->cone[*index].angle * M_PI / 180;
 	rtv->cone[*index].prop.diffuse = (double)ft_atoi(words[12]) / 100;
 	rtv->cone[*index].prop.specular = ft_atoi(words[14]);
 	if (rtv->cone[*index].prop.specular < 0 || rtv->cone[*index].prop.diffuse < 0)
