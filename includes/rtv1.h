@@ -44,6 +44,8 @@
 # define CYLINDER 4
 # define CONE 5
 
+# define T_RAY_MIN 0.001f
+
 #define AMBIENT 0.15
 
 typedef struct	s_image
@@ -87,6 +89,7 @@ typedef struct s_prop
 	t_color		color;
 	double			diffuse;
 	int 		specular;
+	int 		ambient;
 }				t_prop;
 
 typedef struct	s_light
@@ -145,6 +148,7 @@ typedef struct	s_rtv
 	t_cylinder  *cylinder;
 	t_cone      *cone;
 	int 		nbr[6];
+	int			index[6];
 	pthread_t	threads[THREAD_NUM];
 	char		*name;
 	int			fd;

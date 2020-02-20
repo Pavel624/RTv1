@@ -34,8 +34,7 @@ int intersect_cone(t_cone cone, t_ray *ray, double *hit)
     b = (dot_vector3(ray->dir, distance) - (1 + k1 * k1) * dot_vector3(ray->dir, cone.dir) * dot_vector3(distance, cone.dir));
     b *= 2;
     c = dot_vector3(distance, distance) - (1 + k1 * k1) * dot_vector3(distance, cone.dir) * dot_vector3(distance, cone.dir);
-    double discr = b * b - 4.0f * a * c;
-    if (fabs(discr) < 0.00001f)
+    if (b * b - 4.0f * a * c < T_RAY_MIN)
         return (0);
     else
        return (calc_intersect(a, b, c, hit));

@@ -31,7 +31,7 @@ int intersect_cylinder(t_cylinder cylinder, t_ray *ray, double *hit)
     a = dot_vector3(ray->dir, ray->dir) - (dot_vector3(ray->dir, cylinder.dir) * dot_vector3(ray->dir, cylinder.dir));
     b = 2 * (dot_vector3(ray->dir, distance) - (dot_vector3(ray->dir, cylinder.dir) * dot_vector3(distance, cylinder.dir)));
     c = dot_vector3(distance, distance) - (dot_vector3(distance, cylinder.dir) * dot_vector3(distance, cylinder.dir)) - cylinder.radius * cylinder.radius;
-    if (b * b - 4.0f * a * c < 0.001f)
+    if (b * b - 4.0f * a * c < T_RAY_MIN)
         return (0);
     else
         return (calc_intersect(a, b, c, hit));
