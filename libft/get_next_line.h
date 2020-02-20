@@ -3,20 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbethany <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: rsatterf <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/01/17 04:49:15 by nbethany          #+#    #+#             */
-/*   Updated: 2019/04/12 19:04:04 by nbethany         ###   ########.fr       */
+/*   Created: 2018/12/10 14:51:52 by rsatterf          #+#    #+#             */
+/*   Updated: 2019/01/31 20:16:11 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# include <stdlib.h>
-# include <unistd.h>
-# include "./libft.h"
-# define BUFF_SIZE 40
 
-int get_next_line(const int fd, char **line);
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include "libft.h"
+# define BUFF_SIZE 2
+
+char	*one(char **s, int ret, char *buf, int fd);
+char	*two(char **s, char **line, int fd);
+char	*get_line(char **s, char **line, int fd);
+int		get_next_line(const int fd, char **line);
 
 #endif
