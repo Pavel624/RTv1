@@ -2,7 +2,7 @@ light
 {
 	col(255 0 255)
 	pos(-50 50 -100)
-	bright(-200)
+	bright(200)
 }
 
 light
@@ -35,4 +35,24 @@ camera
 	pos(0 0 0)
 	dir(0 0 1)
 	fov(90)
+}
+
+cylinder
+{
+	col(80 255 80)
+	dir(1 1 0)
+	center(180 300 70)
+	radius(90)
+	diffuse(0)
+	specular(400)
+}
+
+cone
+{
+	col(0 127 80)
+	dir(1 1 0)
+	center(0 30 -10)
+	angle(60)
+	diffuse(0)
+	specular(400)
 }
