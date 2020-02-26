@@ -33,7 +33,7 @@ t_color	calculate_color(t_rtv *rtv, int x, int y)
 	cur_ray.k = 1.0;
 	cur_ray.ray.origin = rtv->cam->pos;
 	cur_ray.ray.dir = calculate_ray_dir(x, y, rtv); //calculate where ray goes depending on screen parameters (x and y)
-	while (cur_ray.k > 0.1f && num_intersect < 3)
+	while (cur_ray.k > 0.3f && num_intersect < 5)
 	{
 		if (calculate_ray(rtv, &cur_ray) != 1)
 			break;
@@ -47,11 +47,24 @@ t_vector3 calculate_ray_dir(int x, int y, t_rtv *rtv)
 	double i;
 	double j;
 	t_vector3 l;
+	t_vector3 up;
+	t_vector3 right;
+	t_vector3 image_point;
 
 	i = (2 * ((x + 0.5) / (double) WIDTH)  - 1) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0) * ASPECT_RATIO;
 	j = (1 - 2 * ((y + 0.5) / (double) HEIGHT)) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0);
 
-	l = new_vector3(i + rtv->cam->dir.x, j + rtv->cam->dir.y, rtv->cam->dir.z);
+	up = new_vector3(0, 1, 0);
+	right = cross_vector3(up, rtv->cam->dir);
+	right = normalize(right);
+	up = cross_vector3(rtv->cam->dir, right);
+	up = normalize(up);
+	image_point = add_vector3(scale_vector3(right, i), scale_vector3(up, j));
+	image_point = add_vector3(image_point, rtv->cam->pos);
+	image_point = add_vector3(image_point, rtv->cam->dir);
+
+	l = sub_vector3(image_point, rtv->cam->pos);
+	//l = new_vector3(i + rtv->cam->dir.x, j + rtv->cam->dir.y, rtv->cam->dir.z);
 	l = normalize(l);
 	return (l);
 }
@@ -139,7 +152,7 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 		// light.position - p
 		hit_point = add_vector3(hit_point, scale_vector3(cur_ray->norm, 1.f));
 		dist = sub_vector3(current_light.pos, hit_point);
-		if (dot_vector3(cur_ray->norm, dist) <= 0.f || len_vector(dist) <= 0.f)
+		if (dot_vector3(cur_ray->norm, dist) < T_RAY_MIN || len_vector(dist) < T_RAY_MIN)
 		{
 			j++;
 			continue;
@@ -212,12 +225,12 @@ int find_closest_sphere(t_ray ray, t_rtv *rtv, double *t)
 
 void	reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector)
 {
-	double f;
+	double k;
 	t_vector3 tmp;
 
 	ray->origin = hit_vector;
-	f = dot_vector3(ray->dir, norm);
-	tmp = scale_vector3(norm, 2.f * f);
+	k = dot_vector3(ray->dir, norm);
+	tmp = scale_vector3(norm, 2.f * k);
 	ray->dir = sub_vector3(ray->dir, tmp);
 	ray->dir = normalize(ray->dir);
 }

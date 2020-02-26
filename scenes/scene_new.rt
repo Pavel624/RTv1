@@ -1,47 +1,49 @@
 light
 {
-	col(255 0 255)
-	pos(-50 50 -100)
-	bright(200)
-}
-
-light
-{
 	col(255 255 255)
-	pos(50 50 -100)
-	bright(100)
+	pos(100 50 -300)
+	bright(400)
 }
 
 plane
 {
-	col(160 160 160)
-	norm(0 0 20)
-	point(-1)
-	ambient(11)
+	col(80 80 80)
+	norm(0 20 0)
+	point(-200)
+	ambient(1)
+	specular(200)
+}
+
+plane
+{
+	col(255 80 80)
+	norm(0 0 1)
+	point(200)
+	ambient(1)
 	specular(200)
 }
 
 sphere
 {
-	col(255 127 0)
-	center(0 0 10)
-	radius(2)
-	diffuse(1)
-	specular(100)
+	col(255 50 50)
+	center(-50 -140 -100)
+	radius(40)
+	diffuse(0)
+	specular(1000)
 }
 
 camera
 {
-	pos(0 0 0)
+	pos(0 0 -400)
 	dir(0 0 1)
 	fov(90)
 }
 
 cylinder
 {
-	col(80 255 80)
+	col(50 255 50)
 	dir(1 1 0)
-	center(180 300 70)
+	center(180 300 150)
 	radius(90)
 	diffuse(0)
 	specular(400)
@@ -49,10 +51,10 @@ cylinder
 
 cone
 {
-	col(0 127 80)
-	dir(1 1 0)
+	col(0 50 80)
+	dir(-1 1 0)
 	center(0 30 -10)
-	angle(60)
+	angle(30)
 	diffuse(0)
 	specular(400)
 }

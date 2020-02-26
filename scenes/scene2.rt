@@ -1,0 +1,22 @@
+light
+{
+	col(255 255 255)
+	pos(100 50 -500)
+	bright(400)
+}
+
+sphere
+{
+	col(255 50 50)
+	center(50 0 50)
+	radius(10)
+	diffuse(0)
+	specular(200)
+}
+
+camera
+{
+	pos(0 0 0)
+	dir(1 0 1)
+	fov(30)
+}
