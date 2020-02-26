@@ -166,6 +166,36 @@ int	data_vector(char *str, t_vector3 *vec, int k)
 	return (0);
 }
 
+int	data_vector_norm(char *str, t_vector3 *vec, int k)
+{
+	int i;
+	t_vector3 new_vector;
+
+	i = 0;
+	while (i != k)
+	{
+		str++;
+		i++;
+	}
+	if (valid_count(str) != 0)
+		return (-1);
+	new_vector.x = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	str++;
+	new_vector.y = ft_atoi(str);
+	while (*str != ' ')
+		str++;
+	new_vector.z = ft_atoi(str);
+	if (len_vector(new_vector) < T_RAY_MIN)
+		return (-1);
+	new_vector = normalize(new_vector);
+	vec->x = new_vector.x;
+	vec->y = new_vector.y;
+	vec->z = new_vector.z;
+	return (0);
+}
+
 int valid_prop(t_prop *object)
 {
 	if ((object->specular <= 0) || (object->diffuse < 0) || (object->ambient) < 0)
@@ -174,10 +204,6 @@ int valid_prop(t_prop *object)
 		return (0);
 }
 
-// int valid_camera(t_cam *cam)
-// {
-// 	if (cam->dir.x)
-// }
 
 int valid_objects(t_rtv *rtv)
 {
@@ -209,7 +235,7 @@ int valid_objects(t_rtv *rtv)
 			if (data_vector(str, &rtv->cam[rtv->index[CAM]].pos, 5) != 0)
 				return (-1);
 			str = rtv->scene[i + 3];
-			if (data_vector(str, &rtv->cam[rtv->index[CAM]].dir, 5) != 0)
+			if (data_vector_norm(str, &rtv->cam[rtv->index[CAM]].dir, 5) != 0)
 				return (-1);
 			str = rtv->scene[i + 4];
 			j = 0;
@@ -221,6 +247,8 @@ int valid_objects(t_rtv *rtv)
 			if (valid_count2(str) != 0)
 				return (-1);
 			rtv->cam[rtv->index[CAM]].fov = ft_atoi(str);
+			if (rtv->cam->fov < 0 || rtv->cam->fov > 360)
+				return (-1);
 			i = i + 6;
 		}
 		else if (ft_strcmp(rtv->scene[i], "light\0") == 0)
@@ -276,9 +304,7 @@ int valid_objects(t_rtv *rtv)
 			if (data_color(str, &rtv->plane[rtv->index[PLANE]].prop.color, 5) != 0)
 				return (-1);
 			str = rtv->scene[i + 3];
-			if (data_vector(str, &rtv->plane[rtv->index[PLANE]].norm, 6) != 0)
-				return (-1);
-			if ((rtv->plane[rtv->index[PLANE]].norm.x == 0) && (rtv->plane[rtv->index[PLANE]].norm.y == 0) && (rtv->plane[rtv->index[PLANE]].norm.z == 0)) // check!
+			if (data_vector_norm(str, &rtv->plane[rtv->index[PLANE]].norm, 6) != 0)
 				return (-1);
 			str = rtv->scene[i + 4];
 			j = 0;
@@ -310,7 +336,7 @@ int valid_objects(t_rtv *rtv)
 			if (valid_count2(str) != 0)
 				return (-1);
 			rtv->plane[rtv->index[PLANE]].prop.specular = ft_atoi(str);
-			rtv->plane[rtv->index[PLANE]].prop.diffuse = 0;
+			rtv->plane[rtv->index[PLANE]].prop.diffuse = 0.2;
 			if (valid_prop(&rtv->plane[rtv->index[PLANE]].prop) != 0)
 				return (-1);
 			i = i + 8;
@@ -398,7 +424,7 @@ int valid_objects(t_rtv *rtv)
 			if (data_color(str, &rtv->cylinder[rtv->index[CYLINDER]].prop.color, 5) != 0)
 				return (-1);
 			str = rtv->scene[i + 3];
-			if (data_vector(str, &rtv->cylinder[rtv->index[CYLINDER]].dir, 5) != 0)
+			if (data_vector_norm(str, &rtv->cylinder[rtv->index[CYLINDER]].dir, 5) != 0)
 				return (-1);
 			str = rtv->scene[i + 4];
 			if (data_vector(str, &rtv->cylinder[rtv->index[CYLINDER]].center, 8) != 0)
@@ -461,7 +487,7 @@ int valid_objects(t_rtv *rtv)
 			if (data_color(str, &rtv->cone[rtv->index[CONE]].prop.color, 5) != 0)
 				return (-1);
 			str = rtv->scene[i + 3];
-			if (data_vector(str, &rtv->cone[rtv->index[CONE]].dir, 5) != 0)
+			if (data_vector_norm(str, &rtv->cone[rtv->index[CONE]].dir, 5) != 0)
 				return (-1);
 			str = rtv->scene[i + 4];
 			if (data_vector(str, &rtv->cone[rtv->index[CONE]].center, 8) != 0)
@@ -476,8 +502,9 @@ int valid_objects(t_rtv *rtv)
 			if (valid_count2(str) != 0)
 				return (-1);
 			rtv->cone[rtv->index[CONE]].angle = ft_atoi(str);
-			if ((rtv->cone[rtv->index[CONE]].angle < 0) || (rtv->cone[rtv->index[CONE]].angle > 90)) // check!
+			if ((rtv->cone[rtv->index[CONE]].angle <= 0) || (rtv->cone[rtv->index[CONE]].angle > 90)) // check!
 				return (-1);
+			rtv->cone[rtv->index[CONE]].angle *= M_PI / 180;
 			str = rtv->scene[i + 6];
 			j = 0;
 			while (j != 9)
@@ -543,6 +570,8 @@ void render2(t_rtv *rtv)
 	char *line;
 	char *str;
 
+	line = NULL;
+	str = NULL;
 	rtv->buf = ft_strnew(1);
 	rtv->fd = open(rtv->name, O_RDONLY);
 	while (get_next_line(rtv->fd, &line) > 0)
@@ -618,15 +647,22 @@ int valid(t_rtv *rtv)
 		write(1, "five\n", 5);
 		return (-1);
 	}
-	// printf("%f\n", rtv->cam[0].pos.x);
-	// printf("%f\n", rtv->cam[0].pos.y);
-	// printf("%f\n", rtv->cam[0].pos.z);
-	// printf("%d\n", rtv->cam[0].fov);
 
-	// printf("%f\n", rtv->light[0].color.r);
-	// printf("%f\n", rtv->light[0].color.g);
-	// printf("%f\n", rtv->light[0].color.b);
-	// printf("%d\n", rtv->light[0].brightness);
+	printf("camera - %d\n", rtv->nbr[CAM]);
+	printf("light - %d\n", rtv->nbr[LIGHT]);
+	printf("plane - %d\n", rtv->nbr[PLANE]);
+	printf("sphere - %d\n", rtv->nbr[SPHERE]);
+	printf("cylinder - %d\n", rtv->nbr[CYLINDER]);
+	printf("cone - %d\n", rtv->nbr[CONE]);
+//
+//	 printf("%d\n", rtv->cam[0].pos.y);
+//	 printf("%d\n", rtv->cam[0].pos.z);
+//	 printf("%d\n", rtv->cam[0].fov);
+//
+//	 printf("%f\n", rtv->light[0].color.r);
+//	 printf("%f\n", rtv->light[0].color.g);
+//	 printf("%f\n", rtv->light[0].color.b);
+//	 printf("%d\n", rtv->light[0].brightness);
 
 	// printf("%f\n", rtv->light[1].color.r);
 	// printf("%f\n", rtv->light[1].color.g);
@@ -647,14 +683,41 @@ int valid(t_rtv *rtv)
 	// printf("%f\n", rtv->cylinder[0].dir.z);
 	// printf("%d\n", rtv->cylinder[0].prop.specular);
 
-	printf("%f\n", rtv->cone[0].prop.color.r);
-	printf("%f\n", rtv->cone[0].prop.color.g);
-	printf("%f\n", rtv->cone[0].prop.color.b);
-	printf("%f\n", rtv->cone[0].angle);
-	printf("%f\n", rtv->cone[0].center.x);
-	printf("%f\n", rtv->cone[0].center.y);
-	printf("%f\n", rtv->cone[0].center.z);
-	printf("%d\n", rtv->cone[0].prop.specular);
+//	printf("%f\n", rtv->cone[0].prop.color.r);
+//	printf("%f\n", rtv->cone[0].prop.color.g);
+//	printf("%f\n", rtv->cone[0].prop.color.b);
+//	printf("%f\n", rtv->cone[0].angle);
+//	printf("%f\n", rtv->cone[0].center.x);
+//	printf("%f\n", rtv->cone[0].center.y);
+//	printf("%f\n", rtv->cone[0].center.z);
+//	printf("%d\n", rtv->cone[0].prop.specular);
+
+
+	printf("%f\n", rtv->cylinder[0].prop.color.r);
+	printf("%f\n", rtv->cylinder[0].prop.color.g);
+	printf("%f\n", rtv->cylinder[0].prop.color.b);
+	printf("%f\n", rtv->cylinder[0].dir.x);
+	printf("%f\n", rtv->cylinder[0].dir.y);
+	printf("%f\n", rtv->cylinder[0].dir.z);
+	//printf("%f\n", rtv->cylinder[0].angle);
+	printf("%f\n", rtv->cylinder[0].center.x);
+	printf("%f\n", rtv->cylinder[0].center.y);
+	printf("%f\n", rtv->cylinder[0].center.z);
+	printf("%d\n", rtv->cylinder[0].prop.specular);
+	printf("%d\n", rtv->cylinder[0].radius);
+
+
+	printf("sphere -------------\n");
+
+	printf("%f\n", rtv->sphere[0].prop.color.r);
+	printf("%f\n", rtv->sphere[0].prop.color.g);
+	printf("%f\n", rtv->sphere[0].prop.color.b);
+	//printf("%f\n", rtv->cylinder[0].angle);
+	printf("%f\n", rtv->sphere[0].center.x);
+	printf("%f\n", rtv->sphere[0].center.y);
+	printf("%f\n", rtv->sphere[0].center.z);
+	printf("%d\n", rtv->sphere[0].prop.specular);
+	printf("%d\n", rtv->sphere[0].radius);
 
 	return (0);
 }
