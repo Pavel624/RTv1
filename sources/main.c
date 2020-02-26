@@ -6,7 +6,7 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 13:32:35 by rsatterf          #+#    #+#             */
-/*   Updated: 2020/02/26 15:20:37 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/02/26 17:18:32 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -524,14 +524,22 @@ void print_m(t_rtv *rtv)
 void render2(t_rtv *rtv)
 {
 	char *line;
+	char *str;
 
 	rtv->buf = ft_strnew(1);
 	rtv->fd = open(rtv->name, O_RDONLY);
 	while (get_next_line(rtv->fd, &line) > 0)
-		rtv->buf = ft_strjoin(rtv->buf, (ft_strjoin(line, "\n")));
+	{
+		str = ft_strjoin(line, "\n");
+		rtv->buf = ft_strjoin(rtv->buf, str);
+		ft_strdel(&str);
+		//rtv->buf = ft_strjoin(rtv->buf, (ft_strjoin(line, "\n")));
+		ft_strdel(&line);
+	}
 	//printf("%s\n", rtv->buf);
 	rtv->scene = ft_strsplit(rtv->buf, '\n');
 	ft_strdel(&line);
+	ft_strdel(&str);
 	ft_strdel(&rtv->buf);
 	//print_m(rtv);
 }
@@ -573,6 +581,8 @@ void malloc_structures(t_rtv *rtv)
 int valid(t_rtv *rtv)
 {
 
+	int i;
+
 	if ((valid1(rtv) != 0))     // norm
 	{
 		write(1, "one\n", 4);
@@ -588,19 +598,74 @@ int valid(t_rtv *rtv)
 	if (count_items(rtv) != 0) // if no content or scene?
 	{
 		write(1, "three\n", 6);
+		ft_strdel(rtv->scene);
 		return (-1);
 	}
 	malloc_structures(rtv);
 	if (valid_objects(rtv) != 0) // norm
 	{
 		write(1, "five\n", 5);
-		free(rtv->scene);
+		ft_strdel(rtv->scene);
+		i = 0;
 		free(rtv->cam);
 		free(rtv->light);
-		free(rtv->sphere);
 		free(rtv->plane);
+		free(rtv->sphere);
 		free(rtv->cylinder);
 		free(rtv->cone);
+		// if (rtv->nbr[CAM] != 0)
+		// {
+		// 	while (i != rtv->nbr[CAM])
+		// 	{
+		// 		free(&rtv->cam[i]);
+		// 		i++;
+		// 	}
+		// }
+		// i = 0;
+		// if (rtv->nbr[LIGHT] != 0)
+		// {
+		// 	while (i != rtv->nbr[LIGHT])
+		// 	{
+		// 		free(&rtv->cam[i]);
+		// 		i++;
+		// 	}
+		// }
+		// i = 0;
+		// if (rtv->nbr[SPHERE] != 0)
+		// {
+		// 	while (i != rtv->nbr[SPHERE])
+		// 	{
+		// 		free(&rtv->cam[i]);
+		// 		i++;
+		// 	}
+		// }
+		// i = 0;
+		// if (rtv->nbr[PLANE] != 0)
+		// {
+		// 	while (i != rtv->nbr[PLANE])
+		// 	{
+		// 		free(&rtv->cam[i]);
+		// 		i++;
+		// 	}
+		// }
+		// i = 0;
+		// if (rtv->nbr[CYLINDER] != 0)
+		// {
+		// 	while (i != rtv->nbr[CYLINDER])
+		// 	{
+		// 		free(&rtv->cam[i]);
+		// 		i++;
+		// 	}
+		// }
+		// i = 0;
+		// if (rtv->nbr[CONE] != 0)
+		// {
+		// 	while (i != rtv->nbr[CONE])
+		// 	{
+		// 		free(&rtv->cam[i]);
+		// 		i++;
+		// 	}
+		// }
 		return (-1);
 	}
 	// printf("%f\n", rtv->cam[0].pos.x);
