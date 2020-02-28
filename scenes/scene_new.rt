@@ -10,7 +10,7 @@ plane
 	col(80 80 80)
 	norm(0 20 0)
 	point(-200)
-	ambient(1)
+	diffuse(1)
 	specular(200)
 }
 
@@ -19,13 +19,13 @@ plane
 	col(255 80 80)
 	norm(0 0 1)
 	point(200)
-	ambient(1)
+	diffuse(1)
 	specular(200)
 }
 
 sphere
 {
-	col(255 50 50)
+	col(255 127 0)
 	center(-50 -140 -100)
 	radius(40)
 	diffuse(0)

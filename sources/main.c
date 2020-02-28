@@ -6,7 +6,7 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 13:32:35 by rsatterf          #+#    #+#             */
-/*   Updated: 2020/02/28 16:53:54 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/02/28 19:14:02 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,7 @@ int	data_vector_norm(char *str, t_vector3 *vec, int k)
 
 int valid_prop(t_prop *object)
 {
-	if ((object->specular <= 0) || (object->diffuse < 0) || (object->ambient) < 0)
+	if ((object->specular < 0) || (object->diffuse < 0) || (object->diffuse > 100) || (object->ambient) < 0)
 		return (-1);
 	else
 		return (0);
@@ -307,7 +307,7 @@ int valid_objects(t_rtv *rtv)
 				return (-1);
 			if (ft_strncmp(rtv->scene[i + 4], "	point(", 7) != 0)
 				return (-1);
-			if (ft_strncmp(rtv->scene[i + 5], "	ambient(", 9) != 0)
+			if (ft_strncmp(rtv->scene[i + 5], "	diffuse(", 9) != 0)
 				return (-1);
 			if (ft_strncmp(rtv->scene[i + 6], "	specular(", 10) != 0)
 				return (-1);
@@ -336,7 +336,7 @@ int valid_objects(t_rtv *rtv)
 			}
 			if (valid_count2(str) != 0)
 				return (-1);
-			rtv->plane[rtv->index[PLANE]].prop.ambient = ft_atoi(str);
+			rtv->plane[rtv->index[PLANE]].prop.diffuse = ft_atoi(str);
 			str = rtv->scene[i + 6];
 			j = 0;
 			while (j != 10)
@@ -347,7 +347,6 @@ int valid_objects(t_rtv *rtv)
 			if (valid_count2(str) != 0)
 				return (-1);
 			rtv->plane[rtv->index[PLANE]].prop.specular = ft_atoi(str);
-			rtv->plane[rtv->index[PLANE]].prop.diffuse = 0.2;
 			if (valid_prop(&rtv->plane[rtv->index[PLANE]].prop) != 0)
 				return (-1);
 			i = i + 8;
@@ -385,7 +384,7 @@ int valid_objects(t_rtv *rtv)
 			if (valid_count2(str) != 0)
 				return (-1);
 			rtv->sphere[rtv->index[SPHERE]].radius = ft_atoi(str);
-			if (rtv->sphere[rtv->index[SPHERE]].radius <= 0) // check!
+			if (rtv->sphere[rtv->index[SPHERE]].radius < 0) // check!
 				return (-1);
 			str = rtv->scene[i + 5];
 			j = 0;
@@ -407,7 +406,6 @@ int valid_objects(t_rtv *rtv)
 			if (valid_count2(str) != 0)
 				return (-1);
 			rtv->sphere[rtv->index[SPHERE]].prop.specular = ft_atoi(str);
-			rtv->sphere[rtv->index[SPHERE]].prop.ambient = 0;
 			if (valid_prop(&rtv->sphere[rtv->index[SPHERE]].prop) != 0)
 				return (-1);
 			i = i + 8;
@@ -450,6 +448,8 @@ int valid_objects(t_rtv *rtv)
 			if (valid_count2(str) != 0)
 				return (-1);
 			rtv->cylinder[rtv->index[CYLINDER]].radius = ft_atoi(str);
+			if (rtv->cylinder[rtv->index[CYLINDER]].radius < 0)
+				return (-1);
 			str = rtv->scene[i + 6];
 			j = 0;
 			while (j != 9)
@@ -470,7 +470,6 @@ int valid_objects(t_rtv *rtv)
 			if (valid_count2(str) != 0)
 				return (-1);
 			rtv->cylinder[rtv->index[CYLINDER]].prop.specular = ft_atoi(str);
-			rtv->cylinder[rtv->index[CYLINDER]].prop.ambient = 0;
 			if (valid_prop(&rtv->cylinder[rtv->index[CYLINDER]].prop) != 0)
 				return (-1);
 			i = i + 9;
@@ -513,7 +512,7 @@ int valid_objects(t_rtv *rtv)
 			if (valid_count2(str) != 0)
 				return (-1);
 			rtv->cone[rtv->index[CONE]].angle = ft_atoi(str);
-			if ((rtv->cone[rtv->index[CONE]].angle <= 0) || (rtv->cone[rtv->index[CONE]].angle > 90)) // check!
+			if ((rtv->cone[rtv->index[CONE]].angle <= 0) || (rtv->cone[rtv->index[CONE]].angle >= 45)) // check!
 				return (-1);
 			rtv->cone[rtv->index[CONE]].angle *= M_PI / 180;
 			str = rtv->scene[i + 6];
@@ -536,7 +535,6 @@ int valid_objects(t_rtv *rtv)
 			if (valid_count2(str) != 0)
 				return (-1);
 			rtv->cone[rtv->index[CONE]].prop.specular = ft_atoi(str);
-			rtv->cone[rtv->index[CONE]].prop.ambient = 0;
 			if (valid_prop(&rtv->cone[rtv->index[CONE]].prop) != 0)
 				return (-1);
 			i = i + 9;
