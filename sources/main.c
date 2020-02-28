@@ -6,7 +6,7 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 13:32:35 by rsatterf          #+#    #+#             */
-/*   Updated: 2020/02/26 17:29:23 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/02/28 16:53:54 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,17 @@ int valid1(t_rtv *rtv)
 		close(rtv->fd);
 		return (-1);
 	}
-	if ((get_next_line(rtv->fd, &line) < 0))
+	if ((get_next_line(rtv->fd, &line) <= 0))
 	{
-		ft_strdel(&line);
+		close(rtv->fd);
 		return (-1);
 	}
-	ft_strdel(&line);
-	close(rtv->fd);
-	return (0);
+	else
+	{
+		ft_strdel(&line);
+		close(rtv->fd);
+		return (0);
+	}
 }
 
 int valid2(t_rtv *rtv)
@@ -67,14 +70,22 @@ int valid_count(char *str)
 	int i;
 	int j;
 	int k;
+	int e;
 
 	i = 0;
 	k = 0;
 	j = 0;
+	e = 0;
 	while (str[i] != '\0')
 	{
-		if ((str[i] >= 48 && str[i] <= 57) || (str[i] == '-'))
+		if (str[i] == '-')
 			i++;
+		else if (str[i] >= 48 && str[i] <= 57)
+		{
+			e++;
+			while (str[i] >= 48 && str[i] <= 57 && str[i] != '\0')
+				i++;
+		}
 		else if (str[i] == ' ')
 		{
 			j++;
@@ -88,7 +99,7 @@ int valid_count(char *str)
 		else
 			return (-1);
 	}
-	if ((j != 2) && (k != 1))
+	if ((j != 2) || (k != 1) || (e != 3))
 		return (-1);
 	return (0);
 }
@@ -397,7 +408,7 @@ int valid_objects(t_rtv *rtv)
 				return (-1);
 			rtv->sphere[rtv->index[SPHERE]].prop.specular = ft_atoi(str);
 			rtv->sphere[rtv->index[SPHERE]].prop.ambient = 0;
-			if (valid_prop(&rtv->plane[rtv->index[SPHERE]].prop) != 0)
+			if (valid_prop(&rtv->sphere[rtv->index[SPHERE]].prop) != 0)
 				return (-1);
 			i = i + 8;
 			rtv->index[SPHERE]++;
@@ -460,7 +471,7 @@ int valid_objects(t_rtv *rtv)
 				return (-1);
 			rtv->cylinder[rtv->index[CYLINDER]].prop.specular = ft_atoi(str);
 			rtv->cylinder[rtv->index[CYLINDER]].prop.ambient = 0;
-			if (valid_prop(&rtv->plane[rtv->index[CYLINDER]].prop) != 0)
+			if (valid_prop(&rtv->cylinder[rtv->index[CYLINDER]].prop) != 0)
 				return (-1);
 			i = i + 9;
 			rtv->index[CYLINDER]++;
@@ -526,7 +537,7 @@ int valid_objects(t_rtv *rtv)
 				return (-1);
 			rtv->cone[rtv->index[CONE]].prop.specular = ft_atoi(str);
 			rtv->cone[rtv->index[CONE]].prop.ambient = 0;
-			if (valid_prop(&rtv->plane[rtv->index[CONE]].prop) != 0)
+			if (valid_prop(&rtv->cone[rtv->index[CONE]].prop) != 0)
 				return (-1);
 			i = i + 9;
 			rtv->index[CONE]++;
@@ -634,7 +645,6 @@ int valid(t_rtv *rtv)
 		return (-1);
 	}
 	render2(rtv);  // norm
-
 	if (count_items(rtv) != 0) // if no content or scene?
 	{
 		write(1, "three\n", 6);

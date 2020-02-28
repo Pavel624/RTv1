@@ -7,8 +7,8 @@ light
 
 sphere
 {
-	col(255 50 50)
-	center(50 0 50)
+	col(255 1 50)
+	center(50 1 50)
 	radius(10)
 	diffuse(0)
 	specular(200)
