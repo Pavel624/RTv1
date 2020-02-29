@@ -10,8 +10,9 @@ plane
 	col(80 80 80)
 	norm(0 20 0)
 	point(-200)
-	diffuse(1)
+	diffuse(0)
 	specular(200)
+	reflection(1)
 }
 
 plane
@@ -19,9 +20,9 @@ plane
 	col(255 80 80)
 	norm(0 0 1)
 	point(200)
-	diffuse(1)
+	diffuse(0)
 	specular(200)
-}
+	reflection(1)
 
 sphere
 {

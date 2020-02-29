@@ -1,22 +1,31 @@
 light
 {
 	col(255 255 255)
-	pos(11 50 -500)
-	bright(400)
+	pos(0 0 0)
+	bright(10)
 }
 
 sphere
 {
-	col(255 1 50)
-	center(50 1 50)
+	col(255 50 50)
+	center(-10 0 50)
 	radius(10)
 	diffuse(0)
-	specular(200)
+	specular(100)
+}
+
+sphere
+{
+	col(255 255 50)
+	center(30 0 50)
+	radius(10)
+	diffuse(0)
+	specular(100)
 }
 
 camera
 {
 	pos(0 0 0)
-	dir(1 0 1)
-	fov(30)
+	dir(0 0 1)
+	fov(60)
 }
