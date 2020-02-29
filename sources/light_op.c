@@ -26,6 +26,19 @@ void color_diffuse(t_color *color, double k, t_light light, t_prop prop, double 
 	color->b < 0 ? color->b = 0 : 0;
 }
 
+void color_specular(t_color *color, double k, t_light light, double brightness)
+{
+	color->r += k  * (light.color.r / 255) * brightness;
+	color->g += k  * (light.color.g / 255) * brightness;
+	color->b += k  * (light.color.b / 255) * brightness;
+	color->r > 255 ? color->r = 255 : 0;
+	color->g > 255 ? color->g = 255 : 0;
+	color->b > 255 ? color->b = 255 : 0;
+	color->r < 0 ? color->r = 0 : 0;
+	color->g < 0 ? color->g = 0 : 0;
+	color->b < 0 ? color->b = 0 : 0;
+}
+
 double diffuse(t_ray light_ray, t_vector3 norm)
 {
 	return (dot_vector3(light_ray.dir, norm) / (len_vector(norm) * len_vector(light_ray.dir)));
@@ -35,20 +48,14 @@ double specular(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop)
 {
 	t_vector3	dir;
 	double	k;
-	double tmp;
 
-	(void) ray;
-
-	tmp = dot_vector3(norm, light_ray.dir);
-	dir = scale_vector3(norm, 2 * tmp);
-	dir = sub_vector3(dir, light_ray.dir);
-	if (len_vector(dir) != 0)
+	dir = sub_vector3(light_ray.dir, ray->dir);
+	if (len_vector(dir) > T_RAY_MIN)
 	{
 		dir = normalize(dir);
 		k = dot_vector3(dir, norm);
-		if (k < 0)
-			return (0);
-		k = pow(k / (len_vector(dir) * len_vector(norm)), prop.specular);
+		k < 0 ? k = 0 : k;
+		k = SPECULAR_COEF * pow (k, prop.specular);
 	}
 	else
 		k = 0;

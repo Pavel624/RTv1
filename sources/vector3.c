@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/vector3.h"
+#include "vector3.h"
 
 t_vector3	new_vector3(double x, double y, double z)
 {

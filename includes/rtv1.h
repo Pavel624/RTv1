@@ -45,6 +45,7 @@
 # define CONE 5
 
 # define T_RAY_MIN 0.001f
+# define SPECULAR_COEF 1
 
 #define AMBIENT 0.15
 
@@ -87,9 +88,9 @@ typedef struct s_cur_ray
 typedef struct s_prop
 {
 	t_color		color;
-	double			diffuse;
+	double		diffuse;
 	int 		specular;
-	int 		ambient;
+	int			reflection;
 }				t_prop;
 
 typedef struct	s_light
@@ -104,6 +105,8 @@ typedef struct	s_cam
 	t_vector3	pos;
 	t_vector3	dir;
 	int			fov;
+	t_vector3	i;
+	t_vector3	j;
 }				t_cam;
 
 typedef struct	s_sphere
@@ -192,11 +195,12 @@ int			calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray);
 void 		get_light(t_rtv *rtv,t_vector3 hit_vector, t_cur_ray *cur_ray, t_prop prop);
 double 		diffuse(t_ray light_ray, t_vector3 norm);
 void 		color_diffuse(t_color *color, double f, t_light light, t_prop prop, double len);
+void		color_specular(t_color *color, double k, t_light light, double brightness);
 double 		specular(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop);
 t_prop 		find_prop(t_rtv *rtv, int item, int *current);
 
 int 		is_in_shadow(t_ray *light_ray, t_rtv *rtv, double t);
-void		reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector);
+void		reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector, t_prop prop);
 
 int 		key_release(int key, t_rtv *rtv);
 
