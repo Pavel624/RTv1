@@ -39,6 +39,21 @@ int     intersect_sphere(t_sphere sphere, t_ray *ray, double *hit)
 		return (calc_intersect(a, b, c, hit));
 }
 
+int find_closest_sphere(t_ray ray, t_rtv *rtv, double *t)
+{
+	int i, current;
+
+	i = 0;
+	current = -1;
+	while (i < rtv->nbr[SPHERE])
+	{
+		if (intersect_sphere(rtv->sphere[i], &ray, t))
+			current = i;
+		i++;
+	}
+	return (current);
+}
+
 int     calc_intersect(double k1, double k2, double k3, double *hit)
 {
     double sqrt_discr;

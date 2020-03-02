@@ -33,7 +33,7 @@ t_color	calculate_color(t_rtv *rtv, int x, int y)
 	cur_ray.k = 1.0;
 	cur_ray.ray.origin = rtv->cam->pos;
 	cur_ray.ray.dir = calculate_ray_dir(x, y, rtv);
-	while (cur_ray.k != 0.0f && num_intersect < 5)
+	while (cur_ray.k > T_RAY_MIN && num_intersect < 5)
 	{
 		if (calculate_ray(rtv, &cur_ray) != 1)
 			break;
@@ -58,10 +58,6 @@ t_vector3 calculate_ray_dir(int x, int y, t_rtv *rtv)
 	ray = normalize(ray);
 	return (ray);
 }
-
-/*
-** Find color, reflective and specular values from item and its number
-*/
 
 t_prop find_prop(t_rtv *rtv, int item, int *cur)
 {
@@ -99,12 +95,7 @@ int	calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray)
 	cur_ray->norm = normalize(cur_ray->norm);
 	prop = find_prop(rtv, item, &current);
 	get_light(rtv, hit_point, cur_ray, prop);
-	cur_ray->k *= prop.reflection;
-//	if (cur_ray->k > 0) {
-//		cur_ray->color.r *= 0.2f;
-//		cur_ray->color.g *= 0.2f;
-//		cur_ray->color.b *= 0.2f;
-//	}
+	cur_ray->k *= prop.reflection / 100.f;
 	reflect_ray(&cur_ray->ray, cur_ray->norm, hit_point, prop);
 	return (1);
 }
@@ -144,7 +135,6 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 	while (j < rtv->nbr[LIGHT])
 	{
 		current_light = rtv->light[j];
-		// light.position - p
 		hit_point = add_vector3(hit_point, scale_vector3(cur_ray->norm, 1.f));
 		dist = sub_vector3(current_light.pos, hit_point);
 		if (dot_vector3(cur_ray->norm, dist) < T_RAY_MIN || len_vector(dist) < T_RAY_MIN)
@@ -157,11 +147,9 @@ void get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop)
 		brightness = current_light.brightness * 1000 / (M_PI * pow(len_vector(dist), 2));
 		if (!is_in_shadow(&light_ray, rtv, len_vector(dist)))
 		{
-			kd = diffuse(light_ray, cur_ray->norm);
-			kd < 0 ? kd = 0 : kd;
+			kd = diffuse(light_ray, cur_ray);
 			color_diffuse(&cur_ray->color, kd, current_light, prop, brightness);
-			ks = specular(light_ray, cur_ray->norm, &cur_ray->ray, prop);
-			ks < 0 ? ks = 0 : ks;
+			ks = specular(light_ray, cur_ray, prop);
 			color_specular(&cur_ray->color, ks, current_light, brightness);
 		}
 		else
@@ -200,22 +188,7 @@ int find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *cur_i
         }
         i++;
     }
-	    return (-1);
-}
-
-int find_closest_sphere(t_ray ray, t_rtv *rtv, double *t)
-{
-	int i, current;
-
-	i = 0;
-	current = -1;
-	while (i < rtv->nbr[SPHERE])
-	{
-		if (intersect_sphere(rtv->sphere[i], &ray, t))
-			current = i;
-		i++;
-	}
-	return (current);
+	return (-1);
 }
 
 void	reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector, t_prop prop)

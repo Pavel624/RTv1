@@ -675,7 +675,10 @@ void malloc_structures(t_rtv *rtv)
 	if (!(rtv->cam = (t_cam*)malloc(rtv->nbr[CAM] * sizeof(t_cam))) || !(rtv->light = (t_light*)malloc(rtv->nbr[LIGHT] * sizeof(t_light))) ||
 		!(rtv->sphere = (t_sphere*)malloc(rtv->nbr[SPHERE] * sizeof(t_sphere))) || !(rtv->plane = (t_plane*)malloc(rtv->nbr[PLANE] * sizeof(t_plane))) ||
 		!(rtv->cylinder = (t_cylinder*)malloc(rtv->nbr[CYLINDER] * sizeof(t_cylinder))) || !(rtv->cone = (t_cone*)malloc(rtv->nbr[CONE] * sizeof(t_cone))))
-		ft_error("Memory allocation error!\n", 0);
+	{
+		free(rtv);
+		ft_error(MEM_ALLOC_ERR);
+	}
 }
 
 int valid(t_rtv *rtv)
@@ -683,17 +686,23 @@ int valid(t_rtv *rtv)
 	if ((valid1(rtv) != 0))     // norm
 	{
 		write(1, "one\n", 4);
+		free(rtv);
+		ft_error(OPEN_FILE_ERR);
 		return (-1);
 	}
 	else if ((valid2(rtv) != 0)) // norm
 	{
 		write(1, "two\n", 4);
+		free(rtv);
+		ft_error(INVALID_SYMBOLS);
 		return (-1);
 	}
 	render2(rtv);  // norm
 	if (count_items(rtv) != 0) // if no content or scene?
 	{
 		write(1, "three\n", 6);
+		free(rtv);
+		ft_error(CAM_OR_LIGHT_ERR);
 		ft_strdel(rtv->scene);
 		return (-1);
 	}
@@ -701,6 +710,8 @@ int valid(t_rtv *rtv)
 	if (valid_objects(rtv) != 0) // norm
 	{
 		write(1, "five\n", 5);
+		free(rtv);
+		ft_error(INVALID_OBJ);
 		return (-1);
 	}
 
@@ -785,10 +796,27 @@ static	int		close_app(t_rtv *rtv)
 	exit(0);
 }
 
-void	ft_error(char *msg, int i)
+void	ft_error(int code)
 {
-	ft_putstr(msg);
-	exit(i);
+	if (code == TOO_MANY_PARAMS)
+		ft_putstr("Too many parameters\n");
+	else if (code == USE_SCENE)
+		ft_putstr("Use scene from scenes folder\n");
+	else if (code == RTV_ERR)
+		ft_putstr("Can't allocate enough memory for the structure\n");
+	else if (code == MEM_ALLOC_ERR)
+		ft_putstr("Memory allocation error!\n");
+	else if (code == OPEN_FILE_ERR)
+		ft_putstr("Can't open specified file\n");
+	else if (code == INVALID_SYMBOLS)
+		ft_putstr("Invalid symbols were found in the file\n");
+	else if (code == CAM_OR_LIGHT_ERR)
+		ft_putstr("No light or not one camera in the file\n");
+	else if (code == INVALID_OBJ)
+		ft_putstr("Invalid scene or content description\n");
+	else
+		ft_putstr("Something went wrong\n");
+	exit(0);
 }
 
 static	void	init(t_rtv *rtv)
@@ -857,16 +885,16 @@ int				main(int argc, char **argv)
 	t_rtv *rtv;
 
 	if (argc > 2)
-		ft_error("Too many parameters\n", 0);
+		ft_error(TOO_MANY_PARAMS);
 	else if (argc == 1)
-		ft_error("Use scene from scenes\n", 0);
+		ft_error(USE_SCENE);
 	if (!(rtv = (t_rtv *)malloc(sizeof(t_rtv))))
-		ft_error("Can't allocate enough memory for the structure\n", 0);
+		ft_error(RTV_ERR);
 	rtv->name = argv[1];
 	if (valid(rtv) != 0)
 	{
 		free(rtv);
-		ft_error("Something is wrong with scene input\n", 0);
+		ft_error(0);
 	}
 	init(rtv);
 	mlx_expose_hook(rtv->window, draw, rtv);

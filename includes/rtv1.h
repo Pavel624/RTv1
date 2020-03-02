@@ -49,6 +49,17 @@
 
 #define AMBIENT 0.15
 
+enum {
+	TOO_MANY_PARAMS = 1,
+	USE_SCENE,
+	RTV_ERR,
+	MEM_ALLOC_ERR,
+	OPEN_FILE_ERR,
+	INVALID_SYMBOLS,
+	CAM_OR_LIGHT_ERR,
+	INVALID_OBJ
+};
+
 typedef struct	s_image
 {
 	void		*image;
@@ -174,7 +185,7 @@ int			check_color(t_color color);
 
 int			validation (t_rtv *rtv);
 
-void		ft_error(char *msg, int i);
+void		ft_error(int i);
 
 t_sphere 	new_sphere(t_vector3 center, double radius);
 t_plane 	new_plane(t_vector3 norm, double point);
@@ -193,10 +204,10 @@ t_vector3 	calculate_ray_dir(int x, int y, t_rtv *rtv);
 int			calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray);
 
 void 		get_light(t_rtv *rtv,t_vector3 hit_vector, t_cur_ray *cur_ray, t_prop prop);
-double 		diffuse(t_ray light_ray, t_vector3 norm);
+double 		diffuse(t_ray light_ray, t_cur_ray *cur_ray);
 void 		color_diffuse(t_color *color, double f, t_light light, t_prop prop, double len);
 void		color_specular(t_color *color, double k, t_light light, double brightness);
-double 		specular(t_ray light_ray, t_vector3 norm, t_ray *ray, t_prop prop);
+double 		specular(t_ray light_ray, t_cur_ray *cur_ray, t_prop prop);
 t_prop 		find_prop(t_rtv *rtv, int item, int *current);
 
 int 		is_in_shadow(t_ray *light_ray, t_rtv *rtv, double t);
