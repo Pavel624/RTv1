@@ -10,8 +10,8 @@ sphere
 	col(255 50 50)
 	center(-10 0 50)
 	radius(10)
-	diffuse(0)
 	specular(100)
+	reflection(10)
 }
 
 sphere
@@ -19,8 +19,8 @@ sphere
 	col(255 255 50)
 	center(30 0 50)
 	radius(10)
-	diffuse(0)
 	specular(100)
+	reflection(100)
 }
 
 camera

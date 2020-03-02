@@ -6,7 +6,7 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 20:42:17 by nbethany          #+#    #+#             */
-/*   Updated: 2019/10/23 14:57:34 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/03/02 12:56:11 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ t_prop find_prop(t_rtv *rtv, int item, int *cur)
 	t_prop prop;
 
 	prop.color = set_color(0 , 0, 0);
-	prop.diffuse = 0;
+	prop.reflection = 0; // CHEK!!!!
 	prop.specular = 0;
 	if (item == SPHERE)
 		prop = rtv->sphere[*cur].prop;

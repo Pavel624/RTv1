@@ -6,7 +6,7 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 13:24:18 by rsatterf          #+#    #+#             */
-/*   Updated: 2019/10/23 14:56:14 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/03/02 12:47:15 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ typedef struct s_cur_ray
 typedef struct s_prop
 {
 	t_color		color;
-	double		diffuse;
 	int 		specular;
 	int			reflection;
 }				t_prop;
