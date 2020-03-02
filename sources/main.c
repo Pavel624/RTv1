@@ -149,7 +149,7 @@ void	render2(t_rtv *rtv)
 	ft_strdel(&rtv->buf);
 }
 
-void	initialization_massive(t_rtv *rtv)
+void	init_array(t_rtv *rtv)
 {
 	rtv->nbr[CAM] = 0;
 	rtv->nbr[LIGHT] = 0;
@@ -170,7 +170,7 @@ int		count_items(t_rtv *rtv)
 	int i;
 
 	i = 0;
-	initialization_massive(rtv);
+	init_array(rtv);
 	while (rtv->scene[i])
 	{
 		if (ft_strcmp(rtv->scene[i], "camera\0") == 0)
@@ -207,36 +207,31 @@ void	malloc_structures(t_rtv *rtv)
 	}
 }
 
-int		valid(t_rtv *rtv)
+void		valid(t_rtv *rtv)
 {
 	if ((valid1(rtv) != 0))
 	{
 		free(rtv);
 		ft_error(OPEN_FILE_ERR);
-		return (-1);
 	}
 	else if ((valid2(rtv) != 0))
 	{
 		free(rtv);
 		ft_error(INVALID_SYMBOLS);
-		return (-1);
 	}
 	render2(rtv);
 	if (count_items(rtv) != 0)
 	{
 		free(rtv);
-		ft_error(CAM_OR_LIGHT_ERR);
 		ft_strdel(rtv->scene);
-		return (-1);
+		ft_error(CAM_OR_LIGHT_ERR);
 	}
 	malloc_structures(rtv);
 	if (valid_objects(rtv) != 0)
 	{
 		free(rtv);
 		ft_error(INVALID_OBJ);
-		return (-1);
 	}
-	return (0);
 }
 
 
@@ -344,11 +339,7 @@ int				main(int argc, char **argv)
 	if (!(rtv = (t_rtv *)malloc(sizeof(t_rtv))))
 		ft_error(RTV_ERR);
 	rtv->name = argv[1];
-	if (valid(rtv) != 0)
-	{
-		free(rtv);
-		ft_error(0);
-	}
+	valid(rtv);
 	init(rtv);
 	mlx_expose_hook(rtv->window, draw, rtv);
 	mlx_hook(rtv->window, 3, 1L << 1, key_release, rtv);

@@ -46,8 +46,8 @@
 
 # define T_RAY_MIN 0.001f
 # define SPECULAR_COEF 1
-
-#define AMBIENT 0.15
+# define BRIGHTNESS 1000
+# define AMBIENT 0.015
 
 enum {
 	TOO_MANY_PARAMS = 1,
@@ -68,12 +68,6 @@ typedef struct	s_image
 	int			line_s;
 	int			endian;
 }				t_image;
-
-typedef struct	s_threads
-{
-	int			start;
-	int			end;
-}				t_threads;
 
 typedef struct	s_color
 {
@@ -138,7 +132,7 @@ typedef struct	s_cylinder
 	t_prop		prop;
     t_vector3	center;
     t_vector3   dir;
-    int     	 radius;
+    int     	radius;
 }				t_cylinder;
 
 typedef struct	s_cone
@@ -162,7 +156,6 @@ typedef struct	s_rtv
 	t_cone      *cone;
 	int 		nbr[6];
 	int			index[6];
-	pthread_t	threads[THREAD_NUM];
 	char		*name;
 	int			i;
 	int			fd;
@@ -183,47 +176,66 @@ void		parse_cone(t_rtv *rtv, char **words, int *index);
 
 int			check_color(t_color color);
 
-int			validation (t_rtv *rtv);
-
 void		ft_error(int i);
-
-t_sphere 	new_sphere(t_vector3 center, double radius);
-t_plane 	new_plane(t_vector3 norm, double point);
-t_cylinder  new_cylinder(t_vector3 dir, t_vector3 center, double radius);
-t_cone      new_cone(t_vector3 dir, t_vector3 center, double angle);
 
 int     	intersect_sphere(t_sphere sphere, t_ray *ray, double *hit);
 int 		intersect_plane(t_plane plane, t_ray *ray, double *hit);
 int 		intersect_cylinder(t_cylinder cylinder, t_ray *ray, double *hit);
 int			intersect_cone(t_cone cone, t_ray *ray, double *hit);
 
-int     	calc_intersect(double k1, double k2, double k3, double *hit);
-t_color 	set_color(double r, double g, double b);
-t_color		calculate_color(t_rtv *rtv, int x, int y);
-t_vector3 	calculate_ray_dir(int x, int y, t_rtv *rtv);
-int			calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray);
+void		img_pixel_put_one(t_rtv *rtv, int x, int y, t_color color);
 
-void 		get_light(t_rtv *rtv,t_vector3 hit_vector, t_cur_ray *cur_ray, t_prop prop);
-double 		diffuse(t_ray light_ray, t_cur_ray *cur_ray);
-void 		color_diffuse(t_color *color, double f, t_light light, t_prop prop, double len);
-void		color_specular(t_color *color, double k, t_light light, double brightness);
-double 		specular(t_ray light_ray, t_cur_ray *cur_ray, t_prop prop);
-t_prop 		find_prop(t_rtv *rtv, int item, int *current);
-
-int 		is_in_shadow(t_ray *light_ray, t_rtv *rtv, double t);
-void		reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector, t_prop prop);
+/* 		--------
+** 		|keys.c|
+**		--------
+*/
 
 int 		key_release(int key, t_rtv *rtv);
 
-void		img_pixel_put_one(t_rtv *rtv, int x, int y, t_color color);
+/* 		----------------
+** 		|shape_utils.c|
+**		----------------
+*/
 
-t_vector3 	find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_ray ray);
+t_prop		find_prop(t_rtv *rtv, int item, int *cur);
+t_vector3	find_norm_plane(t_rtv *rtv, int *current, t_ray ray);
+t_vector3	find_norm_not_plane(t_rtv *rtv, int item, int *current, t_vector3 hit_point);
+int			find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *cur_item);
+int			calc_intersect(double k1, double k2, double k3, double *hit);
+
+/* 		------------
+** 		|light_op.c|
+**		------------
+*/
+
+void		get_light(t_rtv *rtv, t_vector3 hit_point, t_cur_ray *cur_ray, t_prop prop);
+
+/* 		-------
+** 		|ray.c|
+**		-------
+*/
+
+t_vector3	calculate_ray_dir(int x, int y, t_rtv *rtv);
+int			calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray);
+void		reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector);
+
+/* 		---------
+** 		|color.c|
+**		---------
+*/
+
+t_color		set_color(double r, double g, double b);
+void		color_diffuse(t_color *color, double k_mult_bright,
+					  t_light light, t_prop prop);
+void		color_specular(t_color *color, double k,
+					   t_light light, double brightness);
+t_color		calculate_color(t_rtv *rtv, int x, int y);
+
 
 int 		find_closest_plane(t_ray ray, t_rtv *rtv, double *t);
 int 		find_closest_sphere(t_ray ray, t_rtv *rtv, double *t);
 int 		find_closest_cylinder(t_ray ray, t_rtv *rtv, double *t);
 int			find_closest_cone(t_ray ray, t_rtv *rtv, double *t);
-int 		find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *current);
 
 t_vector3   find_norm_cylinder(t_vector3 hit_point, t_vector3 center, t_vector3 dir);
 t_vector3	find_norm_cone(t_vector3 hit_point, t_vector3 center, t_vector3 dir, double angle);
