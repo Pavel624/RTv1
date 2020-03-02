@@ -6,7 +6,7 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 13:24:18 by rsatterf          #+#    #+#             */
-/*   Updated: 2020/03/02 12:47:15 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/03/02 16:33:23 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,5 +226,30 @@ int 		find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *cur
 
 t_vector3   find_norm_cylinder(t_vector3 hit_point, t_vector3 center, t_vector3 dir);
 t_vector3	find_norm_cone(t_vector3 hit_point, t_vector3 center, t_vector3 dir, double angle);
+
+/* 		----------------
+** 		|validation_objects.c|
+**		----------------
+*/
+
+int		valid_camera(t_rtv *rtv, int i, int k);
+int		valid_light(t_rtv *rtv, int i, int k);
+int		valid_plane(t_rtv *rtv, int i, int k);
+int		valid_sphere(t_rtv *rtv, int i, int k);
+int		valid_cylinder(t_rtv *rtv, int i, int k);
+int		valid_cone(t_rtv *rtv, int i, int k);
+char	*sdvig_str(char *str, int k);
+
+/* 		----------------
+** 		|help_valid.c|
+**		----------------
+*/
+
+int		valid_count(char *str);
+int		valid_count2(char *str);
+int		data_color(char *str, t_color *vec, int k);
+int		data_vector(char *str, t_vector3 *vec, int k);
+int		data_vector_norm(char *str, t_vector3 *vec, int k);
+int		valid_prop(t_prop *object);
 
 #endif

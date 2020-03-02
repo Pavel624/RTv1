@@ -10,7 +10,6 @@ plane
 	col(80 80 80)
 	norm(0 20 0)
 	point(-200)
-	diffuse(0)
 	specular(200)
 	reflection(1)
 }
@@ -20,17 +19,17 @@ plane
 	col(255 80 80)
 	norm(0 0 1)
 	point(200)
-	diffuse(0)
 	specular(200)
 	reflection(1)
+}
 
 sphere
 {
 	col(255 127 0)
 	center(-50 -140 -100)
 	radius(40)
-	diffuse(0)
 	specular(1000)
+	reflection(0)
 }
 
 camera
@@ -46,8 +45,8 @@ cylinder
 	dir(1 1 0)
 	center(180 300 150)
 	radius(90)
-	diffuse(0)
 	specular(400)
+	reflection(0)
 }
 
 cone
@@ -56,6 +55,6 @@ cone
 	dir(-1 1 0)
 	center(0 30 -10)
 	angle(30)
-	diffuse(0)
 	specular(400)
+	reflection(0)
 }

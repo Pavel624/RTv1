@@ -6,7 +6,7 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 13:32:35 by rsatterf          #+#    #+#             */
-/*   Updated: 2020/03/02 13:40:40 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/03/02 16:31:58 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int valid1(t_rtv *rtv)
 	}
 }
 
-int valid2(t_rtv *rtv)
+int		valid2(t_rtv *rtv)
 {
 	char *line;
 	int i;
@@ -50,7 +50,8 @@ int valid2(t_rtv *rtv)
 			if (((line[i] >= 48) && (line[i] <= 57)) || (line[i] == ' ')
 				|| (line[i] == '\n') || (line[i] == '-') || (line[i] == '\t')
 				|| ((line[i] >= 97) && (line[i] <= 122)) || (line[i] == ')') ||
-				(line[i] == '(') || (line[i] == '{') || (line[i] == '}') || (line[i] == '_'))
+				(line[i] == '(') || (line[i] == '{') || (line[i] == '}') ||
+				(line[i] == '_'))
 				i++;
 			else
 			{
@@ -65,487 +66,48 @@ int valid2(t_rtv *rtv)
 	return (0);
 }
 
-int valid_count(char *str)
+int		init_k(t_rtv *rtv)
 {
 	int i;
-	int j;
-	int k;
-	int e;
-
-	i = 0;
-	k = 0;
-	j = 0;
-	e = 0;
-	while (str[i] != '\0')
-	{
-		if (str[i] == '-')
-			i++;
-		else if (str[i] >= 48 && str[i] <= 57)
-		{
-			e++;
-			while (str[i] >= 48 && str[i] <= 57 && str[i] != '\0')
-				i++;
-		}
-		else if (str[i] == ' ')
-		{
-			j++;
-			i++;
-		}
-		else if (str[i] == ')')
-		{
-			k++;
-			i++;
-		}
-		else
-			return (-1);
-	}
-	if ((j != 2) || (k != 1) || (e != 3))
-		return (-1);
-	return (0);
-}
-
-int valid_count2(char *str)
-{
-	int i;
-	int k;
-
-	i = 0;
-	k = 0;
-	while (str[i] != '\0')
-	{
-		if ((str[i] >= 48 && str[i] <= 57) || (str[i] == '-'))
-			i++;
-		else if (str[i] == ')')
-		{
-			k++;
-			i++;
-		}
-		else
-			return (-1);
-	}
-	if (k != 1)
-		return (-1);
-	return (0);
-}
-
-int	data_color(char *str, t_color *vec, int k)
-{
-	int i;
-
-	i = 0;
-	while (i != k)
-	{
-		str++;
-		i++;
-	}
-	if (valid_count(str) != 0)
-		return (-1);
-	vec->r = ft_atoi(str);
-	while (*str != ' ')
-		str++;
-	str++;
-	vec->g = ft_atoi(str);
-	while (*str != ' ')
-		str++;
-	vec->b = ft_atoi(str);
-	if (((vec->r >= 0) && (vec->r <= 255)) && ((vec->g >= 0) && (vec->g <= 255)) && ((vec->b >= 0) && (vec->b <= 255)))
-		return (0);
-	else
-		return (-1);
-}
-
-int	data_vector(char *str, t_vector3 *vec, int k)
-{
-	int i;
-
-	i = 0;
-	while (i != k)
-	{
-		str++;
-		i++;
-	}
-	if (valid_count(str) != 0)
-		return (-1);
-	vec->x = ft_atoi(str);
-	while (*str != ' ')
-		str++;
-	str++;
-	vec->y = ft_atoi(str);
-	while (*str != ' ')
-		str++;
-	vec->z = ft_atoi(str);
-	return (0);
-}
-
-int	data_vector_norm(char *str, t_vector3 *vec, int k)
-{
-	int i;
-	t_vector3 new_vector;
-
-	i = 0;
-	while (i != k)
-	{
-		str++;
-		i++;
-	}
-	if (valid_count(str) != 0)
-		return (-1);
-	new_vector.x = ft_atoi(str);
-	while (*str != ' ')
-		str++;
-	str++;
-	new_vector.y = ft_atoi(str);
-	while (*str != ' ')
-		str++;
-	new_vector.z = ft_atoi(str);
-	if (len_vector(new_vector) < T_RAY_MIN)
-		return (-1);
-	new_vector = normalize(new_vector);
-	vec->x = new_vector.x;
-	vec->y = new_vector.y;
-	vec->z = new_vector.z;
-	return (0);
-}
-
-int valid_prop(t_prop *object)
-{
-	if ((object->specular < 0) || (object->reflection < 0) || (object->reflection > 100))
-		return (-1);
-	else
-		return (0);
-}
-
-
-int valid_objects(t_rtv *rtv)
-{
-	char *str;
-	int i;
-	int k;
-	int j;
 
 	i = 0;
 	while (rtv->scene[i] != NULL)
 		i++;
-	k = i;
+	return (i);
+}
+
+int		valid_objects(t_rtv *rtv)
+{
+	int		i;
+	int		k;
+
+	k = init_k(rtv);
 	i = 0;
 	while (i < k)
 	{
-		if (ft_strcmp(rtv->scene[i], "camera\0") == 0)
-		{
-			if ((i + 5) >= k)
-				return (-1);
-			if (ft_strcmp(rtv->scene[i + 1], "{\0") != 0 || ft_strcmp(rtv->scene[i + 5], "}\0") != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 2], "	pos(", 5) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 3], "	dir(", 5) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 4], "	fov(", 5) != 0)
-				return (-1);
-			str = rtv->scene[i + 2];
-			if (data_vector(str, &rtv->cam[rtv->index[CAM]].pos, 5) != 0)
-				return (-1);
-			str = rtv->scene[i + 3];
-			if (data_vector_norm(str, &rtv->cam[rtv->index[CAM]].dir, 5) != 0)
-				return (-1);
-			str = rtv->scene[i + 4];
-			j = 0;
-			while (j != 5)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->cam[rtv->index[CAM]].fov = ft_atoi(str);
-			if (rtv->cam->fov < 0 || rtv->cam->fov > 360)
-				return (-1);
+		if ((ft_strcmp(rtv->scene[i], "camera\0") == 0 &&
+			valid_camera(rtv, i, k) == 0) ||
+			(ft_strcmp(rtv->scene[i], "light\0") == 0 &&
+			valid_light(rtv, i, k) == 0))
 			i = i + 6;
-		}
-		else if (ft_strcmp(rtv->scene[i], "light\0") == 0)
-		{
-			if ((i + 5) >= k)
-				return (-1);
-			if (ft_strcmp(rtv->scene[i + 1], "{\0") != 0 || ft_strcmp(rtv->scene[i + 5], "}\0") != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 2], "	col(", 5) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 3], "	pos(", 5) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 4], "	bright(", 8) != 0)
-				return (-1);
-			str = rtv->scene[i + 2];
-			if (data_color(str, &rtv->light[rtv->index[LIGHT]].color, 5) != 0)
-				return (-1);
-			str = rtv->scene[i + 3];
-			if (data_vector(str, &rtv->light[rtv->index[LIGHT]].pos, 5) != 0)
-				return (-1);
-			str = rtv->scene[i + 4];
-			j = 0;
-			while (j != 8)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->light[rtv->index[LIGHT]].brightness = ft_atoi(str);
-			if ((rtv->light[rtv->index[LIGHT]].brightness < 0) || (rtv->light[rtv->index[LIGHT]].brightness > 1000)) // check!
-				return (-1);
-			rtv->index[LIGHT]++;
-			i = i + 6;
-		}
-		else if (ft_strcmp(rtv->scene[i], "plane\0") == 0)
-		{
-			if ((i + 7) >= k)
-				return (-1);
-			if (ft_strcmp(rtv->scene[i + 1], "{\0") != 0 || ft_strcmp(rtv->scene[i + 7], "}\0") != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 2], "	col(", 5) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 3], "	norm(", 6) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 4], "	point(", 7) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 5], "	specular(", 10) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 6], "	reflection(", 12) != 0)
-				return (-1);
-			str = rtv->scene[i + 2];
-			if (data_color(str, &rtv->plane[rtv->index[PLANE]].prop.color, 5) != 0)
-				return (-1);
-			str = rtv->scene[i + 3];
-			if (data_vector_norm(str, &rtv->plane[rtv->index[PLANE]].norm, 6) != 0)
-				return (-1);
-			str = rtv->scene[i + 4];
-			j = 0;
-			while (j != 7)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->plane[rtv->index[PLANE]].point = ft_atoi(str);
-			str = rtv->scene[i + 5];
-			j = 0;
-			while (j != 10)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->plane[rtv->index[PLANE]].prop.specular = ft_atoi(str);
-			str = rtv->scene[i + 6];
-			j = 0;
-			while (j != 12)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->plane[rtv->index[PLANE]].prop.reflection = ft_atoi(str);
-			if (valid_prop(&rtv->plane[rtv->index[PLANE]].prop) != 0)
-				return (-1);
+		else if ((ft_strcmp(rtv->scene[i], "plane\0") == 0 &&
+			valid_plane(rtv, i, k) == 0) ||
+			(ft_strcmp(rtv->scene[i], "sphere\0") == 0 &&
+			valid_sphere(rtv, i, k) == 0))
 			i = i + 8;
-			rtv->index[PLANE]++;
-		}
-		else if (ft_strcmp(rtv->scene[i], "sphere\0") == 0)
-		{
-			if ((i + 7) >= k)
-				return (-1);
-			if (ft_strcmp(rtv->scene[i + 1], "{\0") != 0 || ft_strcmp(rtv->scene[i + 7], "}\0") != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 2], "	col(", 5) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 3], "	center(", 8) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 4], "	radius(", 8) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 5], "	specular(", 10) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 6], "	reflection(", 12) != 0)
-				return (-1);
-			str = rtv->scene[i + 2];
-			if (data_color(str, &rtv->sphere[rtv->index[SPHERE]].prop.color, 5) != 0)
-				return (-1);
-			str = rtv->scene[i + 3];
-			if (data_vector(str, &rtv->sphere[rtv->index[SPHERE]].center, 8) != 0)
-				return (-1);
-			str = rtv->scene[i + 4];
-			j = 0;
-			while (j != 8)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->sphere[rtv->index[SPHERE]].radius = ft_atoi(str);
-			if (rtv->sphere[rtv->index[SPHERE]].radius < 0) // check!
-				return (-1);
-			str = rtv->scene[i + 5];
-			j = 0;
-			while (j != 10)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->sphere[rtv->index[SPHERE]].prop.specular = ft_atoi(str);
-			str = rtv->scene[i + 6];
-			j = 0;
-			while (j != 12)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->sphere[rtv->index[SPHERE]].prop.reflection = ft_atoi(str);
-			if (valid_prop(&rtv->sphere[rtv->index[SPHERE]].prop) != 0)
-				return (-1);
-			i = i + 8;
-			rtv->index[SPHERE]++;
-		}
-		else if (ft_strcmp(rtv->scene[i], "cylinder\0") == 0)
-		{
-			if ((i + 8) >= k)
-				return (-1);
-			if (ft_strcmp(rtv->scene[i + 1], "{\0") != 0 || ft_strcmp(rtv->scene[i + 8], "}\0") != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 2], "	col(", 5) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 3], "	dir(", 5) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 4], "	center(", 8) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 5], "	radius(", 8) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 6], "	specular(", 10) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 7], "	reflection(", 12) != 0)
-				return (-1);
-			str = rtv->scene[i + 2];
-			if (data_color(str, &rtv->cylinder[rtv->index[CYLINDER]].prop.color, 5) != 0)
-				return (-1);
-			str = rtv->scene[i + 3];
-			if (data_vector_norm(str, &rtv->cylinder[rtv->index[CYLINDER]].dir, 5) != 0)
-				return (-1);
-			str = rtv->scene[i + 4];
-			if (data_vector(str, &rtv->cylinder[rtv->index[CYLINDER]].center, 8) != 0)
-				return (-1);
-			str = rtv->scene[i + 5];
-			j = 0;
-			while (j != 8)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->cylinder[rtv->index[CYLINDER]].radius = ft_atoi(str);
-			if (rtv->cylinder[rtv->index[CYLINDER]].radius < 0)
-				return (-1);
-			str = rtv->scene[i + 6];
-			j = 0;
-			while (j != 10)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->cylinder[rtv->index[CYLINDER]].prop.specular = ft_atoi(str);
-			str = rtv->scene[i + 7];
-			j = 0;
-			while (j != 12)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->cylinder[rtv->index[CYLINDER]].prop.reflection = ft_atoi(str);
-			if (valid_prop(&rtv->cylinder[rtv->index[CYLINDER]].prop) != 0)
-				return (-1);
+		else if ((ft_strcmp(rtv->scene[i], "cylinder\0") == 0 &&
+			valid_cylinder(rtv, i, k) == 0) ||
+			(ft_strcmp(rtv->scene[i], "cone\0") == 0 &&
+			valid_cone(rtv, i, k) == 0))
 			i = i + 9;
-			rtv->index[CYLINDER]++;
-		}
-		else if (ft_strcmp(rtv->scene[i], "cone\0") == 0)
-		{
-			if ((i + 8) >= k)
-				return (-1);
-			if (ft_strcmp(rtv->scene[i + 1], "{\0") != 0 || ft_strcmp(rtv->scene[i + 8], "}\0") != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 2], "	col(", 5) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 3], "	dir(", 5) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 4], "	center(", 8) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 5], "	angle(", 7) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 6], "	specular(", 10) != 0)
-				return (-1);
-			if (ft_strncmp(rtv->scene[i + 7], "	reflection(", 12) != 0)
-				return (-1);
-			str = rtv->scene[i + 2];
-			if (data_color(str, &rtv->cone[rtv->index[CONE]].prop.color, 5) != 0)
-				return (-1);
-			str = rtv->scene[i + 3];
-			if (data_vector_norm(str, &rtv->cone[rtv->index[CONE]].dir, 5) != 0)
-				return (-1);
-			str = rtv->scene[i + 4];
-			if (data_vector(str, &rtv->cone[rtv->index[CONE]].center, 8) != 0)
-				return (-1);
-			str = rtv->scene[i + 5];
-			j = 0;
-			while (j != 7)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->cone[rtv->index[CONE]].angle = ft_atoi(str);
-			if ((rtv->cone[rtv->index[CONE]].angle <= 0) || (rtv->cone[rtv->index[CONE]].angle >= 90)) // check!
-				return (-1);
-			rtv->cone[rtv->index[CONE]].angle *= M_PI / 180;
-			str = rtv->scene[i + 6];
-			j = 0;
-			while (j != 10)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->cone[rtv->index[CONE]].prop.specular = ft_atoi(str);
-			str = rtv->scene[i + 7];
-			j = 0;
-			while (j != 12)
-			{
-				str++;
-				j++;
-			}
-			if (valid_count2(str) != 0)
-				return (-1);
-			rtv->cone[rtv->index[CONE]].prop.reflection = ft_atoi(str);
-			if (valid_prop(&rtv->cone[rtv->index[CONE]].prop) != 0)
-				return (-1);
-			i = i + 9;
-			rtv->index[CONE]++;
-		}
+		else
+			return (-1);
 	}
 	return (0);
 }
 
 
-void print_m(t_rtv *rtv)
+void	print_m(t_rtv *rtv)
 {
 	int i;
 
@@ -574,10 +136,10 @@ char		*ft_strjoin_2(char *s1, char *s2)
 	return (snew);
 }
 
-void render2(t_rtv *rtv)
+void	render2(t_rtv *rtv)
 {
-	char *line;
-	char *str;
+	char	*line;
+	char	*str;
 
 	line = NULL;
 	str = NULL;
@@ -596,7 +158,7 @@ void render2(t_rtv *rtv)
 	ft_strdel(&rtv->buf);
 }
 
-void initialization_massive(t_rtv *rtv)
+void	initialization_massive(t_rtv *rtv)
 {
 	rtv->nbr[CAM] = 0;
 	rtv->nbr[LIGHT] = 0;
@@ -612,7 +174,7 @@ void initialization_massive(t_rtv *rtv)
 	rtv->index[CONE] = 0;
 }
 
-int count_items(t_rtv *rtv)
+int		count_items(t_rtv *rtv)
 {
 	int i;
 
@@ -639,11 +201,15 @@ int count_items(t_rtv *rtv)
 	return (0);
 }
 
-void malloc_structures(t_rtv *rtv)
+void	malloc_structures(t_rtv *rtv)
 {
-	if (!(rtv->cam = (t_cam*)malloc(rtv->nbr[CAM] * sizeof(t_cam))) || !(rtv->light = (t_light*)malloc(rtv->nbr[LIGHT] * sizeof(t_light))) ||
-		!(rtv->sphere = (t_sphere*)malloc(rtv->nbr[SPHERE] * sizeof(t_sphere))) || !(rtv->plane = (t_plane*)malloc(rtv->nbr[PLANE] * sizeof(t_plane))) ||
-		!(rtv->cylinder = (t_cylinder*)malloc(rtv->nbr[CYLINDER] * sizeof(t_cylinder))) || !(rtv->cone = (t_cone*)malloc(rtv->nbr[CONE] * sizeof(t_cone))))
+	if (!(rtv->cam = (t_cam*)malloc(rtv->nbr[CAM] * sizeof(t_cam))) ||
+	!(rtv->light = (t_light*)malloc(rtv->nbr[LIGHT] * sizeof(t_light))) ||
+	!(rtv->sphere = (t_sphere*)malloc(rtv->nbr[SPHERE] * sizeof(t_sphere))) ||
+	!(rtv->plane = (t_plane*)malloc(rtv->nbr[PLANE] * sizeof(t_plane))) ||
+	!(rtv->cylinder = (t_cylinder*)malloc(rtv->nbr[CYLINDER] *
+		sizeof(t_cylinder)))
+	|| !(rtv->cone = (t_cone*)malloc(rtv->nbr[CONE] * sizeof(t_cone))))
 	{
 		free(rtv);
 		ft_error(MEM_ALLOC_ERR);
@@ -652,22 +218,22 @@ void malloc_structures(t_rtv *rtv)
 
 int valid(t_rtv *rtv)
 {
-	if ((valid1(rtv) != 0))     // norm
+	if ((valid1(rtv) != 0))
 	{
 		write(1, "one\n", 4);
 		free(rtv);
 		ft_error(OPEN_FILE_ERR);
 		return (-1);
 	}
-	else if ((valid2(rtv) != 0)) // norm
+	else if ((valid2(rtv) != 0))
 	{
 		write(1, "two\n", 4);
 		free(rtv);
 		ft_error(INVALID_SYMBOLS);
 		return (-1);
 	}
-	render2(rtv);  // norm
-	if (count_items(rtv) != 0) // if no content or scene?
+	render2(rtv);
+	if (count_items(rtv) != 0)
 	{
 		write(1, "three\n", 6);
 		free(rtv);
@@ -676,7 +242,7 @@ int valid(t_rtv *rtv)
 		return (-1);
 	}
 	malloc_structures(rtv);
-	if (valid_objects(rtv) != 0) // norm
+	if (valid_objects(rtv) != 0)
 	{
 		write(1, "five\n", 5);
 		free(rtv);
@@ -805,18 +371,21 @@ void	img_pixel_put_one(t_rtv *rtv, int x, int y, t_color color)
 {
 	if (x > 0 && x < WIDTH && y > 0 && y < HEIGHT)
 	{
-		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp + 2] = (char) fmin(color.r * 255.0f, 255.0f);
-		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp + 1] = (char) fmin(color.g * 255.0f, 255.0f);
-		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp] = (char) fmin(color.b * 255.0f, 255.0f);
+		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp + 2] =
+		(char)fmin(color.r * 255.0f, 255.0f);
+		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp + 1] =
+		(char)fmin(color.g * 255.0f, 255.0f);
+		rtv->image.ptr[(WIDTH * y + x) * rtv->image.bpp] =
+		(char)fmin(color.b * 255.0f, 255.0f);
 	}
 }
 
-void find_basis(t_cam *cam)
+void	find_basis(t_cam *cam)
 {
 	t_vector3 tmp;
 
 	if (cam->dir.x == 0 && fabs(cam->dir.y) == 1 && cam->dir.z == 0)
-		 tmp = new_vector3(0, 0, -cam->dir.y);
+		tmp = new_vector3(0, 0, -cam->dir.y);
 	else
 		tmp = new_vector3(0, 1, 0);
 
@@ -826,10 +395,10 @@ void find_basis(t_cam *cam)
 	cam->j = normalize(cam->j);
 }
 
-int draw(t_rtv *rtv)
+int		draw(t_rtv *rtv)
 {
-	int 		x;
-	int			y;
+	int				x;
+	int				y;
 	t_color		color;
 
 	x = 0;
@@ -839,8 +408,8 @@ int draw(t_rtv *rtv)
 		y = 0;
 		while (y < HEIGHT)
 		{
-			color = calculate_color((t_rtv*)rtv, x , y);
-			img_pixel_put_one((t_rtv*)rtv, x , y, color);
+			color = calculate_color((t_rtv*)rtv, x, y);
+			img_pixel_put_one((t_rtv*)rtv, x, y, color);
 			y++;
 		}
 		x++;
