@@ -6,7 +6,7 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 13:24:18 by rsatterf          #+#    #+#             */
-/*   Updated: 2020/03/02 16:33:23 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/03/02 18:01:12 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,7 @@ typedef struct	s_rtv
 	int			index[6];
 	pthread_t	threads[THREAD_NUM];
 	char		*name;
+	int			i;
 	int			fd;
 	char		**scene;
 	char		*buf;
@@ -239,6 +240,13 @@ int		valid_sphere(t_rtv *rtv, int i, int k);
 int		valid_cylinder(t_rtv *rtv, int i, int k);
 int		valid_cone(t_rtv *rtv, int i, int k);
 char	*sdvig_str(char *str, int k);
+int		help_valid_plane(t_rtv *rtv, int i, int k);
+int		help_valid_sphere(t_rtv *rtv, int i, int k);
+int		help_valid_sphere2(t_rtv *rtv, int i);
+int		help_valid_cylinder(t_rtv *rtv, int i, int k);
+int		help_valid_cylinder2(t_rtv *rtv, int i);
+int		help_valid_cone(t_rtv *rtv, int i, int k);
+int		help_valid_cone2(t_rtv *rtv, int i);
 
 /* 		----------------
 ** 		|help_valid.c|

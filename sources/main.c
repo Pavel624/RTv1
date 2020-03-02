@@ -6,14 +6,13 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 13:32:35 by rsatterf          #+#    #+#             */
-/*   Updated: 2020/03/02 16:31:58 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/03/02 17:35:35 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
-#include <stdio.h>
 
-int valid1(t_rtv *rtv)
+int		valid1(t_rtv *rtv)
 {
 	char *line;
 
@@ -36,24 +35,30 @@ int valid1(t_rtv *rtv)
 	}
 }
 
+int		help_valid2(char k, t_rtv *rtv)
+{
+	if (((k >= 48) && (k <= 57)) || (k == ' ') || (k == '\n') ||
+		(k == '-') || (k == '\t') || ((k >= 97) && (k <= 122)) ||
+		(k == ')') || (k == '(') || (k == '{') || (k == '}') || (k == '_'))
+	{
+		rtv->i++;
+		return (0);
+	}
+	else
+		return (-1);
+}
+
 int		valid2(t_rtv *rtv)
 {
 	char *line;
-	int i;
 
 	rtv->fd = open(rtv->name, O_RDONLY);
 	while (get_next_line(rtv->fd, &line) > 0)
 	{
-		i = 0;
-		while (line[i])
+		rtv->i = 0;
+		while (line[rtv->i])
 		{
-			if (((line[i] >= 48) && (line[i] <= 57)) || (line[i] == ' ')
-				|| (line[i] == '\n') || (line[i] == '-') || (line[i] == '\t')
-				|| ((line[i] >= 97) && (line[i] <= 122)) || (line[i] == ')') ||
-				(line[i] == '(') || (line[i] == '{') || (line[i] == '}') ||
-				(line[i] == '_'))
-				i++;
-			else
+			if (help_valid2(line[rtv->i], rtv) != 0)
 			{
 				ft_strdel(&line);
 				return (-1);
@@ -78,45 +83,31 @@ int		init_k(t_rtv *rtv)
 
 int		valid_objects(t_rtv *rtv)
 {
-	int		i;
 	int		k;
 
 	k = init_k(rtv);
-	i = 0;
-	while (i < k)
+	rtv->i = 0;
+	while (rtv->i < k)
 	{
-		if ((ft_strcmp(rtv->scene[i], "camera\0") == 0 &&
-			valid_camera(rtv, i, k) == 0) ||
-			(ft_strcmp(rtv->scene[i], "light\0") == 0 &&
-			valid_light(rtv, i, k) == 0))
-			i = i + 6;
-		else if ((ft_strcmp(rtv->scene[i], "plane\0") == 0 &&
-			valid_plane(rtv, i, k) == 0) ||
-			(ft_strcmp(rtv->scene[i], "sphere\0") == 0 &&
-			valid_sphere(rtv, i, k) == 0))
-			i = i + 8;
-		else if ((ft_strcmp(rtv->scene[i], "cylinder\0") == 0 &&
-			valid_cylinder(rtv, i, k) == 0) ||
-			(ft_strcmp(rtv->scene[i], "cone\0") == 0 &&
-			valid_cone(rtv, i, k) == 0))
-			i = i + 9;
+		if ((ft_strcmp(rtv->scene[rtv->i], "camera\0") == 0 &&
+			valid_camera(rtv, rtv->i, k) == 0) ||
+			(ft_strcmp(rtv->scene[rtv->i], "light\0") == 0 &&
+			valid_light(rtv, rtv->i, k) == 0))
+			rtv->i = rtv->i + 6;
+		else if ((ft_strcmp(rtv->scene[rtv->i], "plane\0") == 0 &&
+			valid_plane(rtv, rtv->i, k) == 0) ||
+			(ft_strcmp(rtv->scene[rtv->i], "sphere\0") == 0 &&
+			valid_sphere(rtv, rtv->i, k) == 0))
+			rtv->i = rtv->i + 8;
+		else if ((ft_strcmp(rtv->scene[rtv->i], "cylinder\0") == 0 &&
+			valid_cylinder(rtv, rtv->i, k) == 0) ||
+			(ft_strcmp(rtv->scene[rtv->i], "cone\0") == 0 &&
+			valid_cone(rtv, rtv->i, k) == 0))
+			rtv->i = rtv->i + 9;
 		else
 			return (-1);
 	}
 	return (0);
-}
-
-
-void	print_m(t_rtv *rtv)
-{
-	int i;
-
-	i = 0;
-	while (rtv->scene[i])
-	{
-		printf("%s;", rtv->scene[i]);
-		i++;
-	}
 }
 
 char		*ft_strjoin_2(char *s1, char *s2)
@@ -216,18 +207,16 @@ void	malloc_structures(t_rtv *rtv)
 	}
 }
 
-int valid(t_rtv *rtv)
+int		valid(t_rtv *rtv)
 {
 	if ((valid1(rtv) != 0))
 	{
-		write(1, "one\n", 4);
 		free(rtv);
 		ft_error(OPEN_FILE_ERR);
 		return (-1);
 	}
 	else if ((valid2(rtv) != 0))
 	{
-		write(1, "two\n", 4);
 		free(rtv);
 		ft_error(INVALID_SYMBOLS);
 		return (-1);
@@ -235,7 +224,6 @@ int valid(t_rtv *rtv)
 	render2(rtv);
 	if (count_items(rtv) != 0)
 	{
-		write(1, "three\n", 6);
 		free(rtv);
 		ft_error(CAM_OR_LIGHT_ERR);
 		ft_strdel(rtv->scene);
@@ -244,83 +232,10 @@ int valid(t_rtv *rtv)
 	malloc_structures(rtv);
 	if (valid_objects(rtv) != 0)
 	{
-		write(1, "five\n", 5);
 		free(rtv);
 		ft_error(INVALID_OBJ);
 		return (-1);
 	}
-
-	printf("camera - %d\n", rtv->nbr[CAM]);
-	printf("light - %d\n", rtv->nbr[LIGHT]);
-	printf("plane - %d\n", rtv->nbr[PLANE]);
-	printf("sphere - %d\n", rtv->nbr[SPHERE]);
-	printf("cylinder - %d\n", rtv->nbr[CYLINDER]);
-	printf("cone - %d\n", rtv->nbr[CONE]);
-//
-//	 printf("%d\n", rtv->cam[0].pos.y);
-//	 printf("%d\n", rtv->cam[0].pos.z);
-//	 printf("%d\n", rtv->cam[0].fov);
-//
-//	 printf("%f\n", rtv->light[0].color.r);
-//	 printf("%f\n", rtv->light[0].color.g);
-//	 printf("%f\n", rtv->light[0].color.b);
-//	 printf("%d\n", rtv->light[0].brightness);
-
-	// printf("%f\n", rtv->light[1].color.r);
-	// printf("%f\n", rtv->light[1].color.g);
-	// printf("%f\n", rtv->light[1].color.b);
-	// printf("%d\n", rtv->light[1].brightness);
-
-	// printf("%f\n", rtv->sphere[0].prop.color.r);
-	// printf("%f\n", rtv->sphere[0].prop.color.g);
-	// printf("%f\n", rtv->sphere[0].prop.color.b);
-	// printf("%d\n", rtv->sphere[0].radius);
-
-	// printf("%f\n", rtv->cylinder[0].prop.color.r);
-	// printf("%f\n", rtv->cylinder[0].prop.color.g);
-	// printf("%f\n", rtv->cylinder[0].prop.color.b);
-	// printf("%d\n", rtv->cylinder[0].radius);
-	// printf("%f\n", rtv->cylinder[0].dir.x);
-	// printf("%f\n", rtv->cylinder[0].dir.y);
-	// printf("%f\n", rtv->cylinder[0].dir.z);
-	// printf("%d\n", rtv->cylinder[0].prop.specular);
-
-//	printf("%f\n", rtv->cone[0].prop.color.r);
-//	printf("%f\n", rtv->cone[0].prop.color.g);
-//	printf("%f\n", rtv->cone[0].prop.color.b);
-//	printf("%f\n", rtv->cone[0].angle);
-//	printf("%f\n", rtv->cone[0].center.x);
-//	printf("%f\n", rtv->cone[0].center.y);
-//	printf("%f\n", rtv->cone[0].center.z);
-//	printf("%d\n", rtv->cone[0].prop.specular);
-
-
-	printf("%f\n", rtv->cylinder[0].prop.color.r);
-	printf("%f\n", rtv->cylinder[0].prop.color.g);
-	printf("%f\n", rtv->cylinder[0].prop.color.b);
-	printf("%f\n", rtv->cylinder[0].dir.x);
-	printf("%f\n", rtv->cylinder[0].dir.y);
-	printf("%f\n", rtv->cylinder[0].dir.z);
-	//printf("%f\n", rtv->cylinder[0].angle);
-	printf("%f\n", rtv->cylinder[0].center.x);
-	printf("%f\n", rtv->cylinder[0].center.y);
-	printf("%f\n", rtv->cylinder[0].center.z);
-	printf("%d\n", rtv->cylinder[0].prop.specular);
-	printf("%d\n", rtv->cylinder[0].radius);
-
-
-	printf("sphere -------------\n");
-
-	printf("%f\n", rtv->sphere[0].prop.color.r);
-	printf("%f\n", rtv->sphere[0].prop.color.g);
-	printf("%f\n", rtv->sphere[0].prop.color.b);
-	//printf("%f\n", rtv->cylinder[0].angle);
-	printf("%f\n", rtv->sphere[0].center.x);
-	printf("%f\n", rtv->sphere[0].center.y);
-	printf("%f\n", rtv->sphere[0].center.z);
-	printf("%d\n", rtv->sphere[0].prop.specular);
-	printf("%d\n", rtv->sphere[0].radius);
-
 	return (0);
 }
 

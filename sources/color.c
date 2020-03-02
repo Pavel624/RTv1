@@ -6,24 +6,24 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 20:42:17 by nbethany          #+#    #+#             */
-/*   Updated: 2020/03/02 12:56:11 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/03/02 16:48:01 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 #include <stdio.h>
 
-t_color set_color(double r, double g, double b)
+t_color		set_color(double r, double g, double b)
 {
-    t_color color;
+	t_color color;
 
-    color.r = r;
-    color.g = g;
-    color.b = b;
-    return (color);
+	color.r = r;
+	color.g = g;
+	color.b = b;
+	return (color);
 }
 
-t_color	calculate_color(t_rtv *rtv, int x, int y)
+t_color		calculate_color(t_rtv *rtv, int x, int y)
 {
 	t_cur_ray	cur_ray;
 	int			num_intersect;
@@ -36,22 +36,25 @@ t_color	calculate_color(t_rtv *rtv, int x, int y)
 	while (cur_ray.k > T_RAY_MIN && num_intersect < 5)
 	{
 		if (calculate_ray(rtv, &cur_ray) != 1)
-			break;
+			break ;
 		num_intersect++;
 	}
 	return (cur_ray.color);
 }
 
-t_vector3 calculate_ray_dir(int x, int y, t_rtv *rtv)
+t_vector3		calculate_ray_dir(int x, int y, t_rtv *rtv)
 {
 	double i;
 	double j;
 	t_vector3 ray;
 	t_vector3 image_point;
 
-	i = (2 * ((x + 0.5) / (double) WIDTH)  - 1) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0) * ASPECT_RATIO;
-	j = (1 - 2 * ((y + 0.5) / (double) HEIGHT)) * tan(rtv->cam->fov / 2.0 * M_PI / 180.0);
-	image_point = add_vector3(scale_vector3(rtv->cam->i, i), scale_vector3(rtv->cam->j, j));
+	i = (2 * ((x + 0.5) / (double)WIDTH) - 1) *
+		tan(rtv->cam->fov / 2.0 * M_PI / 180.0) * ASPECT_RATIO;
+	j = (1 - 2 * ((y + 0.5) / (double)HEIGHT)) *
+		tan(rtv->cam->fov / 2.0 * M_PI / 180.0);
+	image_point = add_vector3(scale_vector3(rtv->cam->i, i),
+		scale_vector3(rtv->cam->j, j));
 	image_point = add_vector3(image_point, rtv->cam->pos);
 	image_point = add_vector3(image_point, rtv->cam->dir);
 	ray = sub_vector3(image_point, rtv->cam->pos);
@@ -59,28 +62,28 @@ t_vector3 calculate_ray_dir(int x, int y, t_rtv *rtv)
 	return (ray);
 }
 
-t_prop find_prop(t_rtv *rtv, int item, int *cur)
+t_prop	find_prop(t_rtv *rtv, int item, int *cur)
 {
 	t_prop prop;
 
-	prop.color = set_color(0 , 0, 0);
+	prop.color = set_color(0, 0, 0);
 	prop.reflection = 0; // CHEK!!!!
 	prop.specular = 0;
 	if (item == SPHERE)
 		prop = rtv->sphere[*cur].prop;
 	else if (item == PLANE)
 		prop = rtv->plane[*cur].prop;
-    else if (item == CYLINDER)
-        prop = rtv->cylinder[*cur].prop;
-    else if (item == CONE)
-        prop = rtv->cone[*cur].prop;
+	else if (item == CYLINDER)
+		prop = rtv->cylinder[*cur].prop;
+	else if (item == CONE)
+		prop = rtv->cone[*cur].prop;
 	return (prop);
 }
 
-int	calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray)
+int		calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray)
 {
-	int 		current;
-	int 		item;
+	int		current;
+	int		item;
 	t_vector3	hit_point;
 	t_prop		prop;
 
@@ -100,7 +103,7 @@ int	calculate_ray(t_rtv *rtv, t_cur_ray *cur_ray)
 	return (1);
 }
 
-t_vector3 find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_ray ray)
+t_vector3	find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_ray ray)
 {
 	t_vector3 norm;
 
@@ -115,9 +118,11 @@ t_vector3 find_norm(t_rtv *rtv, int item, int *current, t_vector3 hit_point, t_r
 			norm = scale_vector3(rtv->plane[*current].norm, -1);
 	}
 	else if (item == CYLINDER)
-        norm = find_norm_cylinder(hit_point, rtv->cylinder[*current].center, rtv->cylinder[*current].dir);
+		norm = find_norm_cylinder(hit_point,
+		rtv->cylinder[*current].center, rtv->cylinder[*current].dir);
 	else if (item == CONE)
-		norm = find_norm_cone(hit_point, rtv->cone[*current].center, rtv->cone[*current].dir, rtv->cone[*current].angle);
+		norm = find_norm_cone(hit_point, rtv->cone[*current].center,
+		rtv->cone[*current].dir, rtv->cone[*current].angle);
 	return (normalize(norm));
 }
 
@@ -168,7 +173,7 @@ int find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *cur_i
 
 	closest[0] = find_closest_sphere(ray, rtv, &distance);
 	closest[1] = find_closest_plane(ray, rtv, &distance);
-    closest[2] = find_closest_cylinder(ray, rtv, &distance);
+	closest[2] = find_closest_cylinder(ray, rtv, &distance);
 	closest[3] = find_closest_cone(ray, rtv, &distance);
 
 	*hit_vector = add_vector3(scale_vector3(ray.dir, distance), ray.origin);
@@ -180,14 +185,14 @@ int find_closest_object(t_ray ray, t_rtv *rtv, t_vector3 *hit_vector, int *cur_i
 		closest[i] = -1;
 	i = 0;
 	while (i < 4)
-    {
-        if (closest[i] > -1)
-        {
-            *cur_item = closest[i];
-            return(i + 2);
-        }
-        i++;
-    }
+	{
+		if (closest[i] > -1)
+		{
+			*cur_item = closest[i];
+			return (i + 2);
+		}
+		i++;
+	}
 	return (-1);
 }
 
@@ -196,8 +201,7 @@ void	reflect_ray(t_ray *ray, t_vector3 norm, t_vector3 hit_vector, t_prop prop)
 	double k;
 	t_vector3 tmp;
 
-	(void) prop;
-
+	(void)prop;
 	ray->origin = hit_vector;
 	k = dot_vector3(ray->dir, norm);
 	tmp = scale_vector3(norm, 2.f * k);
