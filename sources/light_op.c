@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   light_op.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbethany <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/24 01:19:56 by nbethany          #+#    #+#             */
-/*   Updated: 2019/10/24 01:19:58 by nbethany         ###   ########.fr       */
+/*   Updated: 2020/03/03 12:03:07 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
-#include <stdio.h>
 
 static double	get_brightness(t_light light, t_vector3 dist)
 {

@@ -6,12 +6,11 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 20:42:17 by nbethany          #+#    #+#             */
-/*   Updated: 2020/03/02 16:48:01 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/03/03 12:26:52 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
-#include <stdio.h>
 
 t_color	set_color(double r, double g, double b)
 {

@@ -6,12 +6,64 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 21:28:51 by nbethany          #+#    #+#             */
-/*   Updated: 2019/10/23 14:59:57 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/03/03 13:09:59 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
-#include <stdio.h>
+
+int	help_valid_sphere(t_rtv *rtv, int i, int k)
+{
+	if ((i + 7) >= k || ft_strcmp(rtv->scene[i + 1], "{\0") != 0 ||
+		ft_strcmp(rtv->scene[i + 7], "}\0") != 0 ||
+		ft_strncmp(rtv->scene[i + 2], "	col(", 5) != 0 ||
+		ft_strncmp(rtv->scene[i + 3], "	center(", 8) != 0 ||
+		ft_strncmp(rtv->scene[i + 4], "	radius(", 8) != 0 ||
+		ft_strncmp(rtv->scene[i + 5], "	specular(", 10) != 0 ||
+		ft_strncmp(rtv->scene[i + 6], "	reflection(", 12) != 0)
+		return (-1);
+	else
+		return (0);
+}
+
+int	help_valid_sphere2(t_rtv *rtv, int i)
+{
+	if (data_color(rtv->scene[i + 2],
+	&rtv->sphere[rtv->index[SPHERE]].prop.color, 5, rtv) != 0
+	|| data_vector(rtv->scene[i + 3],
+	&rtv->sphere[rtv->index[SPHERE]].center, 8, rtv) != 0)
+		return (-1);
+	else
+		return (0);
+}
+
+int	valid_sphere(t_rtv *rtv, int i, int k)
+{
+	char *str;
+
+	if (help_valid_sphere(rtv, i, k) != 0)
+		return (-1);
+	if (help_valid_sphere2(rtv, i))
+		return (-1);
+	str = shift_str(rtv->scene[i + 4], 8);
+	if (valid_count2(str) != 0)
+		return (-1);
+	rtv->sphere[rtv->index[SPHERE]].radius = ft_atoi(str);
+	if (rtv->sphere[rtv->index[SPHERE]].radius < 0)
+		return (-1);
+	str = shift_str(rtv->scene[i + 5], 10);
+	if (valid_count2(str) != 0)
+		return (-1);
+	rtv->sphere[rtv->index[SPHERE]].prop.specular = ft_atoi(str);
+	str = shift_str(rtv->scene[i + 6], 12);
+	if (valid_count2(str) != 0)
+		return (-1);
+	rtv->sphere[rtv->index[SPHERE]].prop.reflection = ft_atoi(str);
+	if (valid_prop(&rtv->sphere[rtv->index[SPHERE]].prop) != 0)
+		return (-1);
+	rtv->index[SPHERE]++;
+	return (0);
+}
 
 int	intersect_sphere(t_sphere sphere, t_ray *ray, double *hit)
 {

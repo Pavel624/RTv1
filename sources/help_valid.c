@@ -6,76 +6,13 @@
 /*   By: rsatterf <rsatterf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 14:59:57 by rsatterf          #+#    #+#             */
-/*   Updated: 2020/03/02 15:14:07 by rsatterf         ###   ########.fr       */
+/*   Updated: 2020/03/03 13:32:07 by rsatterf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
-int		valid_count(char *str)
-{
-	int i;
-	int j;
-	int k;
-	int e;
-
-	i = 0;
-	k = 0;
-	j = 0;
-	e = 0;
-	while (str[i] != '\0')
-	{
-		if (str[i] == '-')
-			i++;
-		else if (str[i] >= 48 && str[i] <= 57)
-		{
-			e++;
-			while (str[i] >= 48 && str[i] <= 57 && str[i] != '\0')
-				i++;
-		}
-		else if (str[i] == ' ')
-		{
-			j++;
-			i++;
-		}
-		else if (str[i] == ')')
-		{
-			k++;
-			i++;
-		}
-		else
-			return (-1);
-	}
-	if ((j != 2) || (k != 1) || (e != 3))
-		return (-1);
-	return (0);
-}
-
-int		valid_count2(char *str)
-{
-	int i;
-	int k;
-
-	i = 0;
-	k = 0;
-	while (str[i] != '\0')
-	{
-		if ((str[i] >= 48 && str[i] <= 57) || (str[i] == '-'))
-			i++;
-		else if (str[i] == ')')
-		{
-			k++;
-			i++;
-		}
-		else
-			return (-1);
-	}
-	if (k != 1)
-		return (-1);
-	return (0);
-}
-
-int		data_color(char *str, t_color *vec, int k)
+int	data_color(char *str, t_color *vec, int k, t_rtv *rtv)
 {
 	int i;
 
@@ -85,7 +22,7 @@ int		data_color(char *str, t_color *vec, int k)
 		str++;
 		i++;
 	}
-	if (valid_count(str) != 0)
+	if (valid_count(str, rtv) != 0)
 		return (-1);
 	vec->r = ft_atoi(str);
 	while (*str != ' ')
@@ -102,7 +39,7 @@ int		data_color(char *str, t_color *vec, int k)
 		return (-1);
 }
 
-int	data_vector(char *str, t_vector3 *vec, int k)
+int	data_vector(char *str, t_vector3 *vec, int k, t_rtv *rtv)
 {
 	int i;
 
@@ -112,7 +49,7 @@ int	data_vector(char *str, t_vector3 *vec, int k)
 		str++;
 		i++;
 	}
-	if (valid_count(str) != 0)
+	if (valid_count(str, rtv) != 0)
 		return (-1);
 	vec->x = ft_atoi(str);
 	while (*str != ' ')
@@ -125,18 +62,17 @@ int	data_vector(char *str, t_vector3 *vec, int k)
 	return (0);
 }
 
-int		data_vector_norm(char *str, t_vector3 *vec, int k)
+int	data_vector_norm(char *str, t_vector3 *vec, int k, t_rtv *rtv)
 {
-	int i;
 	t_vector3 new_vector;
 
-	i = 0;
-	while (i != k)
+	rtv->j = 0;
+	while (rtv->j != k)
 	{
 		str++;
-		i++;
+		rtv->j++;
 	}
-	if (valid_count(str) != 0)
+	if (valid_count(str, rtv) != 0)
 		return (-1);
 	new_vector.x = ft_atoi(str);
 	while (*str != ' ')
@@ -155,7 +91,7 @@ int		data_vector_norm(char *str, t_vector3 *vec, int k)
 	return (0);
 }
 
-int		valid_prop(t_prop *object)
+int	valid_prop(t_prop *object)
 {
 	if ((object->specular < 0) || (object->reflection < 0)
 		|| (object->reflection > 100))
