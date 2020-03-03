@@ -251,7 +251,7 @@ int		valid_plane(t_rtv *rtv, int i, int k);
 int		valid_sphere(t_rtv *rtv, int i, int k);
 int		valid_cylinder(t_rtv *rtv, int i, int k);
 int		valid_cone(t_rtv *rtv, int i, int k);
-char	*sdvig_str(char *str, int k);
+char	*shift_str(char *str, int k);
 int		help_valid_plane(t_rtv *rtv, int i, int k);
 int		help_valid_sphere(t_rtv *rtv, int i, int k);
 int		help_valid_sphere2(t_rtv *rtv, int i);

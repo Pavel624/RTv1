@@ -1,0 +1,74 @@
+light
+{
+	col(255 255 255)
+	pos(100 50 -400)
+	bright(200)
+}
+
+light
+{
+	col(255 255 255)
+	pos(-100 50 -400)
+	bright(200)
+}
+
+plane
+{
+	col(80 80 80)
+	norm(0 20 0)
+	point(-200)
+	specular(200)
+	reflection(25)
+}
+
+plane
+{
+	col(80 80 80)
+	norm(0 20 0)
+	point(200)
+	specular(200)
+	reflection(25)
+}
+
+plane
+{
+	col(127 80 80)
+	norm(0 0 1)
+	point(0)
+	specular(200)
+	reflection(25)
+}
+
+plane
+{
+	col(255 80 255)
+	norm(1 0 0)
+	point(200)
+	specular(200)
+	reflection(25)
+}
+
+plane
+{
+	col(255 255 80)
+	norm(1 0 0)
+	point(-200)
+	specular(200)
+	reflection(25)
+}
+
+sphere
+{
+	col(50 255 10)
+	center(0 -70 -200)
+	radius(40)
+	specular(1000)
+	reflection(25)
+}
+
+camera
+{
+	pos(0 0 -400)
+	dir(0 0 1)
+	fov(90)
+}

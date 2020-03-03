@@ -12,7 +12,7 @@
 
 #include "rtv1.h"
 
-char	*sdvig_str(char *str, int k)
+char	*shift_str(char *str, int k)
 {
 	int j;
 
@@ -39,7 +39,7 @@ int		valid_camera(t_rtv *rtv, int i, int k)
 	|| data_vector_norm(str = rtv->scene[i + 3],
 		&rtv->cam[rtv->index[CAM]].dir, 5) != 0)
 		return (-1);
-	str = sdvig_str(rtv->scene[i + 4], 5);
+	str = shift_str(rtv->scene[i + 4], 5);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->cam[rtv->index[CAM]].fov = ft_atoi(str);
@@ -63,7 +63,7 @@ int		valid_light(t_rtv *rtv, int i, int k)
 	|| data_vector(str = rtv->scene[i + 3],
 		&rtv->light[rtv->index[LIGHT]].pos, 5) != 0)
 		return (-1);
-	str = sdvig_str(rtv->scene[i + 4], 8);
+	str = shift_str(rtv->scene[i + 4], 8);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->light[rtv->index[LIGHT]].brightness = ft_atoi(str);
@@ -99,15 +99,15 @@ int		valid_plane(t_rtv *rtv, int i, int k)
 		|| data_vector_norm(rtv->scene[i + 3],
 		&rtv->plane[rtv->index[PLANE]].norm, 6) != 0)
 		return (-1);
-	str = sdvig_str(rtv->scene[i + 4], 7);
+	str = shift_str(rtv->scene[i + 4], 7);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->plane[rtv->index[PLANE]].point = ft_atoi(str);
-	str = sdvig_str(rtv->scene[i + 5], 10);
+	str = shift_str(rtv->scene[i + 5], 10);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->plane[rtv->index[PLANE]].prop.specular = ft_atoi(str);
-	str = sdvig_str(rtv->scene[i + 6], 12);
+	str = shift_str(rtv->scene[i + 6], 12);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->plane[rtv->index[PLANE]].prop.reflection = ft_atoi(str);
@@ -150,17 +150,17 @@ int		valid_sphere(t_rtv *rtv, int i, int k)
 		return (-1);
 	if (help_valid_sphere2(rtv, i))
 		return (-1);
-	str = sdvig_str(rtv->scene[i + 4], 8);
+	str = shift_str(rtv->scene[i + 4], 8);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->sphere[rtv->index[SPHERE]].radius = ft_atoi(str);
 	if (rtv->sphere[rtv->index[SPHERE]].radius < 0)
 		return (-1);
-	str = sdvig_str(rtv->scene[i + 5], 10);
+	str = shift_str(rtv->scene[i + 5], 10);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->sphere[rtv->index[SPHERE]].prop.specular = ft_atoi(str);
-	str = sdvig_str(rtv->scene[i + 6], 12);
+	str = shift_str(rtv->scene[i + 6], 12);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->sphere[rtv->index[SPHERE]].prop.reflection = ft_atoi(str);
@@ -205,17 +205,17 @@ int		valid_cylinder(t_rtv *rtv, int i, int k)
 		return (-1);
 	if (help_valid_cylinder2(rtv, i) != 0)
 		return (-1);
-	str = sdvig_str(rtv->scene[i + 5], 8);
+	str = shift_str(rtv->scene[i + 5], 8);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->cylinder[rtv->index[CYLINDER]].radius = ft_atoi(str);
 	if (rtv->cylinder[rtv->index[CYLINDER]].radius < 0)
 		return (-1);
-	str = sdvig_str(rtv->scene[i + 6], 10);
+	str = shift_str(rtv->scene[i + 6], 10);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->cylinder[rtv->index[CYLINDER]].prop.specular = ft_atoi(str);
-	str = sdvig_str(rtv->scene[i + 7], 12);
+	str = shift_str(rtv->scene[i + 7], 12);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->cylinder[rtv->index[CYLINDER]].prop.reflection = ft_atoi(str);
@@ -261,7 +261,7 @@ int		valid_cone(t_rtv *rtv, int i, int k)
 		return (-1);
 	if (help_valid_cone2(rtv, i) != 0)
 		return (-1);
-	str = sdvig_str(rtv->scene[i + 5], 7);
+	str = shift_str(rtv->scene[i + 5], 7);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->cone[rtv->index[CONE]].angle = ft_atoi(str);
@@ -269,11 +269,11 @@ int		valid_cone(t_rtv *rtv, int i, int k)
 		(rtv->cone[rtv->index[CONE]].angle >= 90))
 		return (-1);
 	rtv->cone[rtv->index[CONE]].angle *= M_PI / 180;
-	str = sdvig_str(rtv->scene[i + 6], 10);
+	str = shift_str(rtv->scene[i + 6], 10);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->cone[rtv->index[CONE]].prop.specular = ft_atoi(str);
-	str = sdvig_str(rtv->scene[i + 7], 12);
+	str = shift_str(rtv->scene[i + 7], 12);
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->cone[rtv->index[CONE]].prop.reflection = ft_atoi(str);
