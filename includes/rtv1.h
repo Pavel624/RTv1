@@ -27,14 +27,10 @@
 
 # include <stdlib.h>
 # include <fcntl.h>
-# include <sys/types.h>
 # include <math.h>
-# include <pthread.h>
 
 # define WIDTH 1080
 # define HEIGHT 720
-# define THREAD_NUM 4
-# define THREAD_WIDTH (WIDTH / THREAD_NUM)
 # define ASPECT_RATIO ((double) WIDTH / HEIGHT)
 
 # define CAM 0
@@ -167,11 +163,6 @@ typedef struct	s_rtv
 	char		*buf;
 }				t_rtv;
 
-void			parse_plane(t_rtv *rtv, char **words, int *index);
-void			parse_sphere(t_rtv *rtv, char **words, int *index);
-void			parse_cylinder(t_rtv *rtv, char **words, int *index);
-void			parse_cone(t_rtv *rtv, char **words, int *index);
-int				check_color(t_color color);
 void			ft_error(int i);
 int				intersect_sphere(t_sphere sphere, t_ray *ray, double *hit);
 int				intersect_plane(t_plane plane, t_ray *ray, double *hit);

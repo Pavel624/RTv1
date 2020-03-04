@@ -44,7 +44,7 @@ int		valid_camera(t_rtv *rtv, int i, int k)
 	if (valid_count2(str) != 0)
 		return (-1);
 	rtv->cam[rtv->index[CAM]].fov = ft_atoi(str);
-	if (rtv->cam->fov < 0 || rtv->cam->fov > 360)
+	if (rtv->cam->fov < 1 || rtv->cam->fov > 180)
 		return (-1);
 	return (0);
 }
