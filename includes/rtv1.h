@@ -13,7 +13,7 @@
 #ifndef RTV1_H
 # define RTV1_H
 
-# include "../libft/libft.h"
+# include "libft.h"
 # include "vector3.h"
 # ifdef __APPLE__
 #  include <mlx.h>
