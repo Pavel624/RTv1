@@ -12,7 +12,7 @@
 
 #include "rtv1.h"
 
-int 	key_release(int key, t_rtv *rtv)
+int	key_release(int key, t_rtv *rtv)
 {
 	if (key == KEY_ESC)
 	{

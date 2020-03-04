@@ -1,6 +1,8 @@
 NAME = RTv1
 
-SRC_FILES  = main.c keys.c vector3.c color.c sphere.c
+SRC_FILES  = main.c keys.c color.c sphere.c plane.c light_op.c cylinder.c cone.c validation_objects.c \
+			help_valid.c ray.c shape_utils.c vector3_op.c vector3_op2.c valid_cone.c valid_cylinder.c \
+			base_valid.c errors.c init.c valid_count.c
 SRC_FOLDER = ./sources
 INC_FOLDER = ./includes
 SRC = $(addprefix $(SRC_FOLDER)/, $(SRC_FILES))
@@ -12,11 +14,11 @@ OBJ = $(addprefix $(OBJ_FOLDER)/, $(OBJ_FILES))
 OSVER := $(shell uname -s)
 
 ifeq ($(OSVER), Linux)
-	LIBFLAGS = -L/usr/X11/lib /usr/X11/lib/libmlx.a -g3 -lXext -lX11 -lm -lmlx -pthread
-	FLAGS = -Wall -O3
+	LIBFLAGS = -L/usr/X11/lib /usr/X11/lib/libmlx.a -g3 -lXext -lX11 -lm -lmlx
+	FLAGS = -Wall -Werror -Wextra -O2
 else
-	LIBFLAGS = -framework OpenGL -framework AppKit -lm -lmlx -pthread
-	FLAGS = -Wall -Werror -Wextra -O3
+	LIBFLAGS = -framework OpenGL -framework AppKit -lmlx
+	FLAGS = -Wall -Werror -Wextra -O2
 endif
 
 LIBFT = libft/libft.a
@@ -33,30 +35,33 @@ VIOLET= \033[1;35m
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(LIBFT)
-	@gcc $(FLAGS) $(OBJ) $(LIBFT) $(LIBFLAGS) -I $(INC_LIB) -o $(NAME)
-	@echo "$(GREEN)Project is successfully compiled"
+$(NAME): $(LIBFT) $(OBJ)
+	@echo "$(GREEN)Compiling project$(VIOLET)"
+	gcc $(FLAGS) $(OBJ) $(LIBFT) $(LIBFLAGS) -I$(INC_LIB) -o $(NAME)
+	@echo "$(GREEN)Project is successfully compiled$(VIOLET)"
 
 $(LIBFT):
+	@echo "$(GREEN)Compiling object files$(VIOLET)"
 	@make -C libft/
-	@echo "$(GREEN)Compiling library files$(VIOLET)"
 
 $(OBJ_FOLDER)/%.o : $(SRC_FOLDER)/%.c
 	@mkdir -p $(OBJ_FOLDER)
-	@gcc $(FLAGS) -c $< -o $@ -I$(INC_LIB) -I$(INC_FOLDER)
+	gcc $(FLAGS) -c $< -o $@ -I $(INC_LIB) -I$(INC_FOLDER)
 
 clean:
+	@echo "$(RED)Suspending library object files$(VIOLET)"
 	@make -C libft clean
-	@rm -f $(OBJ)
-	@rm -rf $(OBJ_FOLDER)
-	@echo "$(RED)Suspending library files$(VIOLET)"
+	@echo "$(RED)Suspending object files$(VIOLET)"
+	rm -f $(OBJ)
+	rm -rf $(OBJ_FOLDER)
 
 fclean: clean
+	@echo "$(RED)Suspending library files$(VIOLET)"
 	@make -C libft fclean
-	@rm -f $(OBJ)
-	@rm -rf $(OBJ_FOLDER)
-	@rm -f $(NAME)
 	@echo "$(RED)Suspending project files$(VIOLET)"
+	rm -f $(OBJ)
+	rm -rf $(OBJ_FOLDER)
+	rm -f $(NAME)
 
 re: fclean all
 

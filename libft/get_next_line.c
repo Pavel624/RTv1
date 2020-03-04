@@ -90,4 +90,3 @@ int		get_next_line(const int fd, char **line)
 		s[fd] = two(s, line, fd);
 	return (1);
 }
-

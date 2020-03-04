@@ -1,0 +1,169 @@
+camera
+{
+	pos(0 0 -400)
+	dir(0 0 1)
+	fov(60)
+}
+
+light
+{
+	col(255 255 255)
+	pos(150 30 -400)
+	bright(200)
+}
+
+light
+{
+	col(255 255 255)
+	pos(-150 30 -400)
+	bright(200)
+}
+
+plane
+{
+	col(80 80 80)
+	norm(0 20 0)
+	point(-50)
+	specular(200)
+	reflection(0)
+}
+
+plane
+{
+	col(80 80 80)
+	norm(0 20 0)
+	point(50)
+	specular(200)
+	reflection(0)
+}
+
+plane
+{
+	col(80 80 255)
+	norm(0 0 1)
+	point(0)
+	specular(200)
+	reflection(0)
+}
+
+
+sphere
+{
+	col(255 10 10)
+	center(0 -35 -230)
+	radius(5)
+	specular(1000)
+	reflection(0)
+}
+
+sphere
+{
+	col(80 80 80)
+	center(50 50 -100)
+	radius(23)
+	specular(1000)
+	reflection(0)
+}
+
+sphere
+{
+	col(80 80 80)
+	center(-50 50 -100)
+	radius(23)
+	specular(1000)
+	reflection(0)
+}
+
+sphere
+{
+	col(80 80 80)
+	center(50 50 -250)
+	radius(23)
+	specular(1000)
+	reflection(0)
+}
+
+sphere
+{
+	col(80 80 80)
+	center(-50 50 -250)
+	radius(23)
+	specular(1000)
+	reflection(0)
+}
+
+sphere
+{
+	col(80 80 80)
+	center(50 -50 -100)
+	radius(23)
+	specular(1000)
+	reflection(0)
+}
+
+sphere
+{
+	col(80 80 80)
+	center(-50 -50 -100)
+	radius(23)
+	specular(1000)
+	reflection(0)
+}
+
+sphere
+{
+	col(80 80 80)
+	center(50 -50 -250)
+	radius(23)
+	specular(1000)
+	reflection(0)
+}
+
+sphere
+{
+	col(80 80 80)
+	center(-50 -50 -250)
+	radius(23)
+	specular(1000)
+	reflection(0)
+}
+
+cylinder
+{
+	col(80 80 80)
+	dir(0 1 0)
+	center(50 0 -100)
+	radius(15)
+	specular(200)
+	reflection(0)
+}
+
+cylinder
+{
+	col(80 80 80)
+	dir(0 1 0)
+	center(-50 0 -100)
+	radius(15)
+	specular(200)
+	reflection(0)
+}
+
+cylinder
+{
+	col(80 80 80)
+	dir(0 1 0)
+	center(-50 0 -250)
+	radius(15)
+	specular(200)
+	reflection(0)
+}
+
+cylinder
+{
+	col(80 80 80)
+	dir(0 1 0)
+	center(50 0 -250)
+	radius(15)
+	specular(200)
+	reflection(0)
+}

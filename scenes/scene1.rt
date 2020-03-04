@@ -1,26 +1,32 @@
-scene
+camera
 {
-	cam_pos(100 100 -250)
-	cam_dir(1 1 1)
+	pos(0 0 -400)
+	dir(0 0 1)
+	fov(90)
 }
 
-content
+light
 {
-	object(light)
-	{
-		col(250 250 250)
-		pos(-60 30 -60)
-	}
-	object(plane)
-	{
-		col(160 160 160)
-		pos(0 0 20)
-		rot(0 0 -1)
-	}
-	object(sphere)
-	{
-		col(0 250 250)
-		pos(0 0 -20)
-		size(10)
-	}
+	col(255 255 255)
+	pos(0 50 -300)
+	bright(300)
+}
+
+sphere
+{
+	col(255 255 0)
+	center(-50 -140 -100)
+	radius(70)
+	specular(100)
+	reflection(0)
+}
+
+cylinder
+{
+	col(50 10 255)
+	dir(1 0 0)
+	center(180 300 150)
+	radius(70)
+	specular(200)
+	reflection(0)
 }
